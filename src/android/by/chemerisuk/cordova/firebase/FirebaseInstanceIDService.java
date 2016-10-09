@@ -7,8 +7,7 @@ import com.google.firebase.iid.FirebaseInstanceIdService;
 
 
 public class FirebaseInstanceIDService extends FirebaseInstanceIdService {
-
-    private static final String TAG = "FirebasePlugin";
+    private static final String TAG = "FirebaseMessagingPlugin";
 
     /**
      * Called if InstanceID token is updated. This may occur if the security of
@@ -17,8 +16,12 @@ public class FirebaseInstanceIDService extends FirebaseInstanceIdService {
      */
     @Override
     public void onTokenRefresh() {
-        // Get updated InstanceID token.
-        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-        Log.d(TAG, "Refreshed token: " + refreshedToken);
+        String token = FirebaseInstanceId.getInstance().getToken();
+
+        Log.d(TAG, "Refreshed token: " + token);
+
+        if (token != null) {
+            FirebaseMessagingPlugin.sendDeviceToken(token);
+        }
     }
 }

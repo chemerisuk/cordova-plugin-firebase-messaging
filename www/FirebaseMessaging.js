@@ -7,5 +7,8 @@ module.exports = {
     },
     unsubscribe: function(topic, success, error) {
         exec(success, error, PLUGIN_NAME, "unsubscribe", [topic]);
+    },
+    getDeviceToken: function(success, error) {
+        exec(success, error, PLUGIN_NAME, "getDeviceToken", []);
     }
 };
