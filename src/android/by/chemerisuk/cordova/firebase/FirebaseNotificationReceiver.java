@@ -6,19 +6,22 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 
 
-public class FirebaseMessagingNotificationReceiver extends BroadcastReceiver {
+public class FirebaseNotificationReceiver extends BroadcastReceiver {
+    private static final String TAG = "FirebaseMessagingPlugin";
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        Log.d(TAG, "onReceive");
+
         PackageManager pm = context.getPackageManager();
         Intent launchIntent = pm.getLaunchIntentForPackage(context.getPackageName());
 
         launchIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        Bundle data = intent.getExtras();
-        launchIntent.putExtras(data);
+        launchIntent.putExtras(intent.getExtras());
+
         context.startActivity(launchIntent);
-        FirebaseMessagingPlugin.onNotificationOpen(data);
     }
 }

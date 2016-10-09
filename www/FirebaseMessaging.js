@@ -10,5 +10,8 @@ module.exports = {
     },
     getDeviceToken: function(success, error) {
         exec(success, error, PLUGIN_NAME, "getDeviceToken", []);
+    },
+    handleNotification: function(success, error) {
+        exec(success, error, PLUGIN_NAME, "handleNotification", []);
     }
 };
