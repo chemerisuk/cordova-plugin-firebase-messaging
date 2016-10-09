@@ -1,0 +1,69 @@
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+xmlns:android="http://schemas.android.com/apk/res/android"
+           id="cordova-plugin-firebase-messaging"
+      version="0.9.0">
+
+    <name>FirebaseMessagingPlugin</name>
+    <description>Cordova plugin for Firebase Crash</description>
+    <license>MIT</license>
+    <keywords>cordova</keywords>
+    <repo>https://github.com/chemerisuk/cordova-plugin-firebase-messaging</repo>
+    <issue>https://github.com/chemerisuk/cordova-plugin-firebase-messaging/issues</issue>
+
+    <js-module src="www/FirebaseMessaging.js" name="FirebaseMessagingPlugin">
+        <merges target="cordova.plugins.firebase.messaging" />
+    </js-module>
+
+    <engines>
+        <engine name="cordova" version=">=3.5.0"/>
+    </engines>
+
+    <dependency id="cordova-plugin-firebase-hooks" url="https://github.com/chemerisuk/cordova-plugin-firebase-hooks.git"/>
+
+    <platform name="ios">
+        <config-file target="config.xml" parent="/*">
+            <feature name="FirebaseMessagingPlugin">
+                <param name="ios-package" value="FirebaseMessagingPlugin" />
+            </feature>
+        </config-file>
+
+        <header-file src="src/ios/FirebaseMessagingPlugin.h" />
+        <source-file src="src/ios/FirebaseMessagingPlugin.m" />
+
+        <pod id="Firebase/Messaging" />
+    </platform>
+
+    <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="FirebaseMessagingPlugin">
+                <param name="android-package" value="by.chemerisuk.cordova.firebase.FirebaseMessagingPlugin" />
+            </feature>
+        </config-file>
+
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+            <service android:name="by.chemerisuk.cordova.firebase.FirebaseMessagingPluginService">
+                <intent-filter>
+                    <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                </intent-filter>
+            </service>
+            <service android:name="by.chemerisuk.cordova.firebase.FirebaseInstanceIDService">
+                <intent-filter>
+                    <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+                </intent-filter>
+            </service>
+            <receiver android:name="by.chemerisuk.cordova.firebase.FirebaseMessagingNotificationReceiver"></receiver>
+        </config-file>
+
+        <framework src="com.google.firebase:firebase-messaging:+" />
+
+        <source-file src="src/android/by/chemerisuk/cordova/firebase/FirebaseMessagingPlugin.java"
+            target-dir="src/by/chemerisuk/cordova/firebase/" />
+        <source-file src="src/android/by/chemerisuk/cordova/firebase/FirebaseInstanceIDService.java"
+            target-dir="src/by/chemerisuk/cordova/firebase" />
+        <source-file src="src/android/by/chemerisuk/cordova/firebase/FirebaseMessagingPluginService.java"
+            target-dir="src/by/chemerisuk/cordova/firebase" />
+        <source-file src="src/android/by/chemerisuk/cordova/firebase/FirebaseMessagingNotificationReceiver.java"
+            target-dir="src/by/chemerisuk/cordova/firebase" />
+    </platform>
+
+</plugin>
