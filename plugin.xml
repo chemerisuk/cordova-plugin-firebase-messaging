@@ -27,9 +27,18 @@ xmlns:android="http://schemas.android.com/apk/res/android"
             </feature>
         </config-file>
 
+        <config-file target="*-Info.plist" parent="UIBackgroundModes">
+            <array>
+                <string>remote-notification</string>
+            </array>
+        </config-file>
+
+        <header-file src="src/ios/AppDelegate+FirebaseMessagingPlugin.h" />
+        <source-file src="src/ios/AppDelegate+FirebaseMessagingPlugin.m" />
         <header-file src="src/ios/FirebaseMessagingPlugin.h" />
         <source-file src="src/ios/FirebaseMessagingPlugin.m" />
 
+        <pod id="Firebase/Core" />
         <pod id="Firebase/Messaging" />
     </platform>
 
