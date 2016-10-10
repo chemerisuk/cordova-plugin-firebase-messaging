@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.content.SharedPreferences;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.RemoteMessage;
@@ -39,7 +40,7 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
         FirebaseMessaging.getInstance().subscribeToTopic("android");
         FirebaseMessaging.getInstance().subscribeToTopic("all");
         // cleanup badge value initially
-        ShortcutBadger.applyCount(context.getApplicationContext(), 0);
+        ShortcutBadger.applyCount(context, 0);
     }
 
     @Override
@@ -161,7 +162,8 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
 
     private void setBadgeNumber(CallbackContext callbackContext, int value) {
         if (value >= 0) {
-            ShortcutBadger.applyCount(context.getApplicationContext(), badge);
+            Context context = cordova.getActivity();
+            ShortcutBadger.applyCount(context.getApplicationContext(), value);
 
             callbackContext.success();
         } else {
