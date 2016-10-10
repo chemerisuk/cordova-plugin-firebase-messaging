@@ -94,6 +94,7 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
 
                 json.put("google.message_id", remoteMessage.getMessageId());
                 json.put("google.sent_time", remoteMessage.getSentTime());
+                json.put("background", 0);
 
                 PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, json);
                 pluginResult.setKeepCallback(true);
@@ -113,6 +114,8 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
                 for (String key : keys) {
                     json.put(key, bundle.get(key));
                 }
+
+                json.put("background", 1);
 
                 PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, json);
                 pluginResult.setKeepCallback(true);

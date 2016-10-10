@@ -80,7 +80,7 @@
     // this callback will not be fired till the user taps on the notification launching the application.
     NSDictionary *mutableUserInfo = [userInfo mutableCopy];
 
-    [mutableUserInfo setValue:self.applicationInBackground forKey:@"tap"];
+    [mutableUserInfo setValue:self.applicationInBackground forKey:@"background"];
 
     // Pring full message.
     NSLog(@"%@", mutableUserInfo);
@@ -94,7 +94,7 @@
          withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler {
     NSDictionary *mutableUserInfo = [notification.request.content.userInfo mutableCopy];
 
-    [mutableUserInfo setValue:self.applicationInBackground forKey:@"tap"];
+    [mutableUserInfo setValue:self.applicationInBackground forKey:@"background"];
 
     // Pring full message.
     NSLog(@"%@", mutableUserInfo);
