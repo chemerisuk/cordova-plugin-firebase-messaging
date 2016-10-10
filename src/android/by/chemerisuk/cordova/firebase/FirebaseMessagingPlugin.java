@@ -18,6 +18,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Set;
+import me.leolin.shortcutbadger.ShortcutBadger;
 
 
 public class FirebaseMessagingPlugin extends CordovaPlugin {
@@ -37,6 +38,8 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
 
         FirebaseMessaging.getInstance().subscribeToTopic("android");
         FirebaseMessaging.getInstance().subscribeToTopic("all");
+        // cleanup badge value initially
+        ShortcutBadger.applyCount(context.getApplicationContext(), 0);
     }
 
     @Override
@@ -53,6 +56,10 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
         } else if ("registerMessageReceiver".equals(action)) {
             this.registerMessageReceiver(callbackContext);
             return true;
+        } else if ("setBadgeNumber".equals(action)) {
+            this.setBadgeNumber(callbackContext, args.getInt(0));
+        } else if ("getBadgeNumber".equals(action)) {
+            this.getBadgeNumber(callbackContext);
         }
 
         return false;
@@ -147,6 +154,20 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
 
             FirebaseMessagingPlugin.lastBundle = null;
         }
+    }
+
+    private void setBadgeNumber(CallbackContext callbackContext, int value) {
+        if (value > 0) {
+            ShortcutBadger.applyCount(context.getApplicationContext(), badge);
+
+            callbackContext.success();
+        } else {
+            callbackContext.error("Badge value can't be negative");
+        }
+    }
+
+    private void getBadgeNumber(CallbackContext callbackContext) {
+
     }
 
     public static void sendToken(String token) {
