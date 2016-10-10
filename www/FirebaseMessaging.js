@@ -8,10 +8,10 @@ module.exports = {
     unsubscribe: function(topic, success, error) {
         exec(success, error, PLUGIN_NAME, "unsubscribe", [topic]);
     },
-    getToken: function(success, error) {
-        exec(success, error, PLUGIN_NAME, "getToken", []);
+    registerTokenReceiver: function(success, error) {
+        exec(success, error, PLUGIN_NAME, "registerTokenReceiver", []);
     },
-    handleNotification: function(success, error) {
-        exec(success, error, PLUGIN_NAME, "handleNotification", []);
+    registerMessageReceiver: function(success, error) {
+        exec(success, error, PLUGIN_NAME, "registerMessageReceiver", []);
     }
 };

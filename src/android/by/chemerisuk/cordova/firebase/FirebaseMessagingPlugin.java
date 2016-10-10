@@ -47,11 +47,11 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
         } else if ("unsubscribe".equals(action)) {
             this.unsubscribe(callbackContext, args.getString(0));
             return true;
-        } else if ("getToken".equals(action)) {
-            this.readDeviceToken(callbackContext);
+        } else if ("registerTokenReceiver".equals(action)) {
+            this.registerTokenReceiver(callbackContext);
             return true;
-        } else if ("handleNotification".equals(action)) {
-            this.registerNotificationHandler(callbackContext);
+        } else if ("registerMessageReceiver".equals(action)) {
+            this.registerMessageReceiver(callbackContext);
             return true;
         }
 
@@ -82,7 +82,7 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
                     jsonNotification.put("color", notification.getColor());
                     jsonNotification.put("clickAction", notification.getClickAction());
 
-                    json.put("notification", jsonNotification);
+                    json.put("gcm", jsonNotification);
                 }
 
                 json.put("google.message_id", remoteMessage.getMessageId());
@@ -129,7 +129,7 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
         callbackContext.success();
     }
 
-    private void readDeviceToken(CallbackContext callbackContext) {
+    private void registerTokenReceiver(CallbackContext callbackContext) {
         String token = FirebaseInstanceId.getInstance().getToken();
 
         FirebaseMessagingPlugin.tokenCallback = callbackContext;
@@ -139,7 +139,7 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
         }
     }
 
-    private void registerNotificationHandler(CallbackContext callbackContext) {
+    private void registerMessageReceiver(CallbackContext callbackContext) {
         FirebaseMessagingPlugin.notificationCallback = callbackContext;
 
         if (FirebaseMessagingPlugin.lastBundle != null) {
