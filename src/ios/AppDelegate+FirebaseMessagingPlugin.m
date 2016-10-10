@@ -38,10 +38,6 @@
 - (BOOL)application:(UIApplication *)application swizzledDidFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     [self application:application swizzledDidFinishLaunchingWithOptions:launchOptions];
 
-    if(![FIRApp defaultApp]) {
-        [FIRApp configure];
-    }
-
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tokenRefreshNotification:)
                                                  name:kFIRInstanceIDTokenRefreshNotification object:nil];
     return YES;
@@ -56,10 +52,6 @@
     [[FIRMessaging messaging] disconnect];
     self.applicationInBackground = @(YES);
     NSLog(@"Disconnected from FCM");
-}
-
-- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-    [[FIRInstanceID instanceID] setAPNSToken:deviceToken type:FIRInstanceIDAPNSTokenTypeProd];
 }
 
 - (void)tokenRefreshNotification:(NSNotification *)notification {

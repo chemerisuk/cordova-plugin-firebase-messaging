@@ -26,6 +26,10 @@ static FirebaseMessagingPlugin *firebasePlugin;
 - (void)pluginInitialize {
     NSLog(@"Starting Firebase Messaging plugin");
 
+    if(![FIRApp defaultApp]) {
+        [FIRApp configure];
+    }
+
     firebasePlugin = self;
 }
 
