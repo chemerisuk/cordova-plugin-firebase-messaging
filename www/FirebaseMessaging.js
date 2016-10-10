@@ -15,9 +15,12 @@ module.exports = {
         exec(success, error, PLUGIN_NAME, "registerMessageReceiver", []);
     },
     setBadgeNumber: function(value, success, error) {
-        exec(success, error, PLUGIN_NAME, "setBadgeNumber", []);
+        exec(success, error, PLUGIN_NAME, "setBadgeNumber", [value]);
     },
     getBadgeNumber: function(success, error) {
         exec(success, error, PLUGIN_NAME, "getBadgeNumber", []);
+    },
+    grantPermission: function(success, error) {
+        exec(success, error, PLUGIN_NAME, "grantPermission", []);
     }
 };

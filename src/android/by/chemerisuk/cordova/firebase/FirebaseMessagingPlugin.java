@@ -57,7 +57,7 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
             this.registerMessageReceiver(callbackContext);
             return true;
         } else if ("setBadgeNumber".equals(action)) {
-            this.setBadgeNumber(callbackContext, args.getInt(0));
+            this.setBadgeNumber(callbackContext, args.optInt(0));
         } else if ("getBadgeNumber".equals(action)) {
             this.getBadgeNumber(callbackContext);
         }
@@ -160,7 +160,7 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
     }
 
     private void setBadgeNumber(CallbackContext callbackContext, int value) {
-        if (value > 0) {
+        if (value >= 0) {
             ShortcutBadger.applyCount(context.getApplicationContext(), badge);
 
             callbackContext.success();
@@ -170,7 +170,10 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
     }
 
     private void getBadgeNumber(CallbackContext callbackContext) {
-
+        Context context = cordova.getActivity();
+        SharedPreferences settings = context.getSharedPreferences("badge", Context.MODE_PRIVATE);
+        int number = settings.getInt("badge", 0);
+        callbackContext.success(number);
     }
 
     public static void sendToken(String token) {
