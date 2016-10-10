@@ -25,14 +25,14 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
 
     private static CallbackContext tokenCallback;
     private static CallbackContext notificationCallback;
-    private static Bundle notificationBundle;
+    private static Bundle lastBundle;
 
     @Override
     protected void pluginInitialize() {
         Context context = this.cordova.getActivity().getApplicationContext();
         Bundle bundle = this.cordova.getActivity().getIntent().getExtras();
         if (bundle != null && (bundle.containsKey("google.message_id") || bundle.containsKey("google.sent_time"))) {
-            notificationBundle = bundle;
+            lastBundle = bundle;
         }
 
         FirebaseMessaging.getInstance().subscribeToTopic("android");
@@ -47,17 +47,11 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
         } else if ("unsubscribe".equals(action)) {
             this.unsubscribe(callbackContext, args.getString(0));
             return true;
-        } else if ("getDeviceToken".equals(action)) {
+        } else if ("getToken".equals(action)) {
             this.readDeviceToken(callbackContext);
             return true;
         } else if ("handleNotification".equals(action)) {
-            FirebaseMessagingPlugin.notificationCallback = callbackContext;
-
-            if (FirebaseMessagingPlugin.notificationBundle != null) {
-                handleNotification(FirebaseMessagingPlugin.notificationBundle);
-
-                FirebaseMessagingPlugin.notificationBundle = null;
-            }
+            this.registerNotificationHandler(callbackContext);
             return true;
         }
 
@@ -68,10 +62,10 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
     public void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
-        handleNotification(intent.getExtras());
+        sendNotification(intent.getExtras());
     }
 
-    public static void handleNotification(RemoteMessage remoteMessage) {
+    public static void sendNotification(RemoteMessage remoteMessage) {
         if (remoteMessage != null && FirebaseMessagingPlugin.notificationCallback != null) {
             JSONObject json = new JSONObject(remoteMessage.getData());
             RemoteMessage.Notification notification = remoteMessage.getNotification();
@@ -103,7 +97,7 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
         }
     }
 
-    public static void handleNotification(Bundle bundle) {
+    public static void sendNotification(Bundle bundle) {
         if (bundle != null && FirebaseMessagingPlugin.notificationCallback != null) {
             JSONObject json = new JSONObject();
             Set<String> keys = bundle.keySet();
@@ -141,11 +135,21 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
         FirebaseMessagingPlugin.tokenCallback = callbackContext;
 
         if (token != null) {
-            sendDeviceToken(token);
+            FirebaseMessagingPlugin.sendToken(token);
         }
     }
 
-    public static void sendDeviceToken(String token) {
+    private void registerNotificationHandler(CallbackContext callbackContext) {
+        FirebaseMessagingPlugin.notificationCallback = callbackContext;
+
+        if (FirebaseMessagingPlugin.lastBundle != null) {
+            sendNotification(FirebaseMessagingPlugin.lastBundle);
+
+            FirebaseMessagingPlugin.lastBundle = null;
+        }
+    }
+
+    public static void sendToken(String token) {
         if (FirebaseMessagingPlugin.tokenCallback != null) {
             FirebaseMessagingPlugin.tokenCallback.success(token);
 

@@ -51,7 +51,6 @@ xmlns:android="http://schemas.android.com/apk/res/android"
                     <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
                 </intent-filter>
             </service>
-            <receiver android:name="by.chemerisuk.cordova.firebase.FirebaseNotificationReceiver"/>
         </config-file>
 
         <framework src="com.google.firebase:firebase-messaging:+" />
@@ -61,8 +60,6 @@ xmlns:android="http://schemas.android.com/apk/res/android"
         <source-file src="src/android/by/chemerisuk/cordova/firebase/FirebaseInstanceIDService.java"
             target-dir="src/by/chemerisuk/cordova/firebase" />
         <source-file src="src/android/by/chemerisuk/cordova/firebase/FirebaseMessagingPluginService.java"
-            target-dir="src/by/chemerisuk/cordova/firebase" />
-        <source-file src="src/android/by/chemerisuk/cordova/firebase/FirebaseNotificationReceiver.java"
             target-dir="src/by/chemerisuk/cordova/firebase" />
     </platform>
 

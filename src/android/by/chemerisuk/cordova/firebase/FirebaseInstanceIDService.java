@@ -19,7 +19,7 @@ public class FirebaseInstanceIDService extends FirebaseInstanceIdService {
         String token = FirebaseInstanceId.getInstance().getToken();
 
         if (token != null) {
-            FirebaseMessagingPlugin.sendDeviceToken(token);
+            FirebaseMessagingPlugin.sendToken(token);
         }
     }
 }
