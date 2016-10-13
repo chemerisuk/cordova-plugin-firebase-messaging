@@ -8,8 +8,8 @@
 - (void)getBadgeNumber:(CDVInvokedUrlCommand*)command;
 - (void)subscribe:(CDVInvokedUrlCommand*)command;
 - (void)unsubscribe:(CDVInvokedUrlCommand*)command;
-- (void)registerMessageReceiver:(CDVInvokedUrlCommand*)command;
-- (void)registerTokenReceiver:(CDVInvokedUrlCommand*)command;
+- (void)onMessage:(CDVInvokedUrlCommand*)command;
+- (void)onToken:(CDVInvokedUrlCommand*)command;
 - (void)sendNotification:(NSDictionary*)userInfo;
 - (void)tokenRefreshNotification:(NSString*)token;
 

@@ -12,18 +12,18 @@
 
 ## Methods
 
-### registerMessageReceiver(_callback_)
+### onMessage(_callback_)
 Called when a message is received.
 ```js
-window.cordova.plugins.firebase.messaging.registerMessageReceiver(function(message) {
+window.cordova.plugins.firebase.messaging.onMessage(function(message) {
     console.log("Got a new message: ", message);
 });
 ```
 
-### registerTokenReceiver(_callback_)
+### onToken(_callback_)
 Logs an instance id token received.
 ```js
-window.cordova.plugins.firebase.messaging.registerTokenReceiver(function(token) {
+window.cordova.plugins.firebase.messaging.onToken(function(token) {
     console.log("Got device token: ", token);
 });
 ```

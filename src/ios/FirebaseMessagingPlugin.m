@@ -107,7 +107,7 @@ static FirebaseMessagingPlugin *firebasePlugin;
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
-- (void)registerMessageReceiver:(CDVInvokedUrlCommand *)command {
+- (void)onMessage:(CDVInvokedUrlCommand *)command {
     self.notificationCallbackId = command.callbackId;
 
     if (self.notificationStack != nil && [self.notificationStack count]) {
@@ -118,7 +118,7 @@ static FirebaseMessagingPlugin *firebasePlugin;
     }
 }
 
-- (void)registerTokenReceiver:(CDVInvokedUrlCommand *)command {
+- (void)onToken:(CDVInvokedUrlCommand *)command {
     self.tokenRefreshCallbackId = command.callbackId;
     NSString* currentToken = [[FIRInstanceID instanceID] token];
     if (currentToken != nil) {

@@ -51,10 +51,10 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
         } else if ("unsubscribe".equals(action)) {
             this.unsubscribe(callbackContext, args.getString(0));
             return true;
-        } else if ("registerTokenReceiver".equals(action)) {
+        } else if ("onToken".equals(action)) {
             this.registerTokenReceiver(callbackContext);
             return true;
-        } else if ("registerMessageReceiver".equals(action)) {
+        } else if ("onMessage".equals(action)) {
             this.registerMessageReceiver(callbackContext);
             return true;
         } else if ("setBadgeNumber".equals(action)) {

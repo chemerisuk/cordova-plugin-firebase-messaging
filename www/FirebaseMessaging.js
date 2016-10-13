@@ -8,11 +8,11 @@ module.exports = {
     unsubscribe: function(topic, success, error) {
         exec(success, error, PLUGIN_NAME, "unsubscribe", [topic]);
     },
-    registerTokenReceiver: function(success, error) {
-        exec(success, error, PLUGIN_NAME, "registerTokenReceiver", []);
+    onToken: function(success, error) {
+        exec(success, error, PLUGIN_NAME, "onToken", []);
     },
-    registerMessageReceiver: function(success, error) {
-        exec(success, error, PLUGIN_NAME, "registerMessageReceiver", []);
+    onMessage: function(success, error) {
+        exec(success, error, PLUGIN_NAME, "onMessage", []);
     },
     setBadgeNumber: function(value, success, error) {
         exec(success, error, PLUGIN_NAME, "setBadgeNumber", [value]);
