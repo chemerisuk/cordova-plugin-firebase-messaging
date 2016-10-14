@@ -69,7 +69,7 @@ static FirebaseMessagingPlugin *firebasePlugin;
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
-- (void)setBadgeNumber:(CDVInvokedUrlCommand *)command {
+- (void)setBadge:(CDVInvokedUrlCommand *)command {
     int number = [[command.arguments objectAtIndex:0] intValue];
 
     [self.commandDelegate runInBackground:^{
@@ -80,7 +80,7 @@ static FirebaseMessagingPlugin *firebasePlugin;
     }];
 }
 
-- (void)getBadgeNumber:(CDVInvokedUrlCommand *)command {
+- (void)getBadge:(CDVInvokedUrlCommand *)command {
     [self.commandDelegate runInBackground:^{
         long badge = [[UIApplication sharedApplication] applicationIconBadgeNumber];
 

@@ -1,5 +1,5 @@
 var exec = require("cordova/exec");
-var PLUGIN_NAME = "FirebaseMessagingPlugin";
+var PLUGIN_NAME = "FirebaseMessaging";
 
 module.exports = {
     subscribe: function(topic, success, error) {
@@ -14,11 +14,11 @@ module.exports = {
     onMessage: function(success, error) {
         exec(success, error, PLUGIN_NAME, "onMessage", []);
     },
-    setBadgeNumber: function(value, success, error) {
-        exec(success, error, PLUGIN_NAME, "setBadgeNumber", [value]);
+    setBadge: function(value, success, error) {
+        exec(success, error, PLUGIN_NAME, "setBadge", [value]);
     },
-    getBadgeNumber: function(success, error) {
-        exec(success, error, PLUGIN_NAME, "getBadgeNumber", []);
+    getBadge: function(success, error) {
+        exec(success, error, PLUGIN_NAME, "getBadge", []);
     },
     grantPermission: function(success, error) {
         exec(success, error, PLUGIN_NAME, "grantPermission", []);

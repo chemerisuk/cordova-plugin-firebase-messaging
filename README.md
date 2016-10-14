@@ -15,8 +15,8 @@
 ### onMessage(_callback_)
 Called when a message is received.
 ```js
-window.cordova.plugins.firebase.messaging.onMessage(function(message) {
-    console.log("Got a new message: ", message);
+window.cordova.plugins.firebase.messaging.onMessage(function(data) {
+    console.log("Got a new message: ", data);
 });
 ```
 
@@ -40,18 +40,18 @@ Unsubscribe from topic in background.
 window.cordova.plugins.firebase.messaging.unsubscribe("New Topic");
 ```
 
-### getBadgeNumber(_callback_)
+### getBadge(_callback_)
 Reads current badge number (if supported).
 ```js
-window.cordova.plugins.firebase.messaging.getBadgeNumber(function(value) {
+window.cordova.plugins.firebase.messaging.getBadge(function(value) {
     console.log("Badge value: ", value);
 });
 ```
 
-### setBadgeNumber(_value_)
+### setBadge(_value_)
 Sets current badge number (if supported).
 ```js
-window.cordova.plugins.firebase.messaging.setBadgeNumber(value);
+window.cordova.plugins.firebase.messaging.setBadge(value);
 ```
 
 ### grantPermission (iOS only)

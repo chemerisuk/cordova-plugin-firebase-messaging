@@ -10,7 +10,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
     <repo>https://github.com/chemerisuk/cordova-plugin-firebase-messaging</repo>
     <issue>https://github.com/chemerisuk/cordova-plugin-firebase-messaging/issues</issue>
 
-    <js-module src="www/FirebaseMessaging.js" name="FirebaseMessagingPlugin">
+    <js-module src="www/FirebaseMessaging.js" name="FirebaseMessaging">
         <merges target="cordova.plugins.firebase.messaging" />
     </js-module>
 
@@ -22,8 +22,8 @@ xmlns:android="http://schemas.android.com/apk/res/android"
 
     <platform name="ios">
         <config-file target="config.xml" parent="/*">
-            <feature name="FirebaseMessagingPlugin">
-                <param name="ios-package" value="FirebaseMessagingPlugin" />
+            <feature name="FirebaseMessaging">
+                <param name="ios-package" value="FirebaseMessaging" />
                 <param name="onload" value="true" />
             </feature>
         </config-file>
@@ -45,8 +45,8 @@ xmlns:android="http://schemas.android.com/apk/res/android"
 
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">
-            <feature name="FirebaseMessagingPlugin">
-                <param name="android-package" value="by.chemerisuk.cordova.firebase.FirebaseMessagingPlugin" />
+            <feature name="FirebaseMessaging">
+                <param name="android-package" value="by.chemerisuk.cordova.firebase.FirebaseMessaging" />
                 <param name="onload" value="true" />
             </feature>
         </config-file>
