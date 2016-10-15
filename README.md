@@ -15,15 +15,15 @@
 ### onMessage(_callback_)
 Called when a message is received.
 ```js
-window.cordova.plugins.firebase.messaging.onMessage(function(data) {
-    console.log("Got a new message: ", data);
+window.cordova.plugins.firebase.messaging.onMessage(function(payload) {
+    console.log("New FCM message: ", payload);
 });
 ```
 
-### onToken(_callback_)
+### onTokenRefresh(_callback_)
 Logs an instance id token received.
 ```js
-window.cordova.plugins.firebase.messaging.onToken(function(token) {
+window.cordova.plugins.firebase.messaging.onTokenRefresh(function(token) {
     console.log("Got device token: ", token);
 });
 ```

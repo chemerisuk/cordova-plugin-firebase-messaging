@@ -8,8 +8,8 @@ module.exports = {
     unsubscribe: function(topic, success, error) {
         exec(success, error, PLUGIN_NAME, "unsubscribe", [topic]);
     },
-    onToken: function(success, error) {
-        exec(success, error, PLUGIN_NAME, "onToken", []);
+    onTokenRefresh: function(success, error) {
+        exec(success, error, PLUGIN_NAME, "onTokenRefresh", []);
     },
     onMessage: function(success, error) {
         exec(success, error, PLUGIN_NAME, "onMessage", []);

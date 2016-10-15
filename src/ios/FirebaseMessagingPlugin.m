@@ -118,7 +118,7 @@ static FirebaseMessagingPlugin *firebasePlugin;
     }
 }
 
-- (void)onToken:(CDVInvokedUrlCommand *)command {
+- (void)onTokenRefresh:(CDVInvokedUrlCommand *)command {
     self.tokenRefreshCallbackId = command.callbackId;
     NSString* currentToken = [[FIRInstanceID instanceID] token];
     if (currentToken != nil) {

@@ -9,7 +9,7 @@
 - (void)subscribe:(CDVInvokedUrlCommand*)command;
 - (void)unsubscribe:(CDVInvokedUrlCommand*)command;
 - (void)onMessage:(CDVInvokedUrlCommand*)command;
-- (void)onToken:(CDVInvokedUrlCommand*)command;
+- (void)onTokenRefresh:(CDVInvokedUrlCommand*)command;
 - (void)sendNotification:(NSDictionary*)userInfo;
 - (void)tokenRefreshNotification:(NSString*)token;
 
