@@ -21,6 +21,9 @@
   "homepage": "https://github.com/chemerisuk/cordova-plugin-firebase-messaging#readme",
   "keywords": [
     "cordova",
+    "firebase",
+    "fcm",
+    "gcm",
     "messaging",
     "ecosystem:cordova",
     "cordova-android",
