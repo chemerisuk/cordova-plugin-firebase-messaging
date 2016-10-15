@@ -3,7 +3,7 @@
 
 @interface FirebaseMessagingPlugin : CDVPlugin
 + (FirebaseMessagingPlugin *) firebasePlugin;
-- (void)grantPermission:(CDVInvokedUrlCommand*)command;
+- (void)requestPermission:(CDVInvokedUrlCommand*)command;
 - (void)setBadge:(CDVInvokedUrlCommand*)command;
 - (void)getBadge:(CDVInvokedUrlCommand*)command;
 - (void)subscribe:(CDVInvokedUrlCommand*)command;

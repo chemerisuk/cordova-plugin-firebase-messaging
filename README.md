@@ -54,8 +54,8 @@ Sets current badge number (if supported).
 window.cordova.plugins.firebase.messaging.setBadge(value);
 ```
 
-### grantPermission (iOS only)
+### requestPermission (iOS only)
 Grant permission to recieve push notifications (will trigger prompt).
 ```js
-window.cordova.plugins.firebase.messaging.grantPermission();
+window.cordova.plugins.firebase.messaging.requestPermission();
 ```

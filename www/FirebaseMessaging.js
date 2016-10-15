@@ -20,7 +20,7 @@ module.exports = {
     getBadge: function(success, error) {
         exec(success, error, PLUGIN_NAME, "getBadge", []);
     },
-    grantPermission: function(success, error) {
-        exec(success, error, PLUGIN_NAME, "grantPermission", []);
+    requestPermission: function(success, error) {
+        exec(success, error, PLUGIN_NAME, "requestPermission", []);
     }
 };

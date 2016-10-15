@@ -59,8 +59,13 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
             return true;
         } else if ("setBadge".equals(action)) {
             this.setBadge(callbackContext, args.optInt(0));
+            return true;
         } else if ("getBadge".equals(action)) {
             this.getBadge(callbackContext);
+            return true;
+        } else if ("requestPermission".equals(action)) {
+            this.requestPermission(callbackContext);
+            return true;
         }
 
         return false;
@@ -176,6 +181,10 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
         SharedPreferences settings = context.getSharedPreferences("badge", Context.MODE_PRIVATE);
         int number = settings.getInt("badge", 0);
         callbackContext.success(number);
+    }
+
+    private void requestPermission(CallbackContext callbackContext) {
+        callbackContext.success();
     }
 
     public static void sendToken(String token) {
