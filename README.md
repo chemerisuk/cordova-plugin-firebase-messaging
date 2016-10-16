@@ -1,5 +1,5 @@
 # cordova-plugin-firebase-messaging
-> Cordova plugin for [Firebase Messaging](https://firebase.google.com/docs/cloud-messaging/)
+> Cordova plugin for [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging/)
 
 ## Installation
 
