@@ -36,9 +36,6 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
         if (bundle != null && (bundle.containsKey("google.message_id") || bundle.containsKey("google.sent_time"))) {
             lastBundle = bundle;
         }
-
-        FirebaseMessaging.getInstance().subscribeToTopic("android");
-        FirebaseMessaging.getInstance().subscribeToTopic("all");
         // cleanup badge value initially
         ShortcutBadger.applyCount(context, 0);
     }
