@@ -17,9 +17,9 @@ module.exports = function (context) {
     return;
   }
 
-  contents = contents.replace(/;(\s+public class MainActivity)/, ';\r\nimport com.google.firebase.FirebaseApp;\1');
+  contents = contents.replace(/;(\s+public class MainActivity)/, ';\nimport com.google.firebase.FirebaseApp;$1');
 
-  contents = contents.replace(/(super\.onCreate\(savedInstanceState\);)/, '\1\r\n\r\n        FirebaseApp.initializeApp(this);');
+  contents = contents.replace(/(super\.onCreate\(savedInstanceState\);)/, '$1\n\n        FirebaseApp.initializeApp(this);');
 
   fs.writeFileSync(androidMainActivityFilePath, contents);
 };
