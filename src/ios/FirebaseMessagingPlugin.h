@@ -2,7 +2,6 @@
 #import "AppDelegate.h"
 
 @interface FirebaseMessagingPlugin : CDVPlugin
-+ (FirebaseMessagingPlugin *) firebasePlugin;
 - (void)requestPermission:(CDVInvokedUrlCommand*)command;
 - (void)setBadge:(CDVInvokedUrlCommand*)command;
 - (void)getBadge:(CDVInvokedUrlCommand*)command;
@@ -11,7 +10,7 @@
 - (void)onMessage:(CDVInvokedUrlCommand*)command;
 - (void)onTokenRefresh:(CDVInvokedUrlCommand*)command;
 - (void)sendNotification:(NSDictionary*)userInfo;
-- (void)tokenRefreshNotification:(NSString*)token;
+- (void)refreshToken:(NSString*)token;
 
 @property (nonatomic, copy) NSString *notificationCallbackId;
 @property (nonatomic, copy) NSString *tokenRefreshCallbackId;

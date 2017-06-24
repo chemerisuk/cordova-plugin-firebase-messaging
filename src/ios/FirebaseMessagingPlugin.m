@@ -2,64 +2,59 @@
 #import <Cordova/CDV.h>
 #import "AppDelegate.h"
 #import "Firebase.h"
+
 @import Firebase;
-@import FirebaseInstanceID;
-@import FirebaseMessaging;
 
 #if defined(__IPHONE_10_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0
 @import UserNotifications;
 #endif
 
+// Copied from Apple's header in case it is missing in some cases (e.g. pre-Xcode 8 builds).
+#ifndef NSFoundationVersionNumber_iOS_9_x_Max
+#define NSFoundationVersionNumber_iOS_9_x_Max 1299
+#endif
+
 @implementation FirebaseMessagingPlugin
 
-static FirebaseMessagingPlugin *firebasePlugin;
-
-+ (FirebaseMessagingPlugin *) firebasePlugin {
-    return firebasePlugin;
-}
-
-- (void)pluginInitialize {
-    NSLog(@"Starting Firebase Messaging plugin");
-
-    if(![FIRApp defaultApp]) {
-        [FIRApp configure];
-    }
-
-    firebasePlugin = self;
-}
-
 - (void)requestPermission:(CDVInvokedUrlCommand *)command {
-#if defined(__IPHONE_10_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0
-    // For iOS 10 display notification (sent via APNS)
-    [UNUserNotificationCenter currentNotificationCenter].delegate = self;
-    UNAuthorizationOptions authOptions =
-      UNAuthorizationOptionAlert
-      | UNAuthorizationOptionSound
-      | UNAuthorizationOptionBadge;
-    [[UNUserNotificationCenter currentNotificationCenter]
-      requestAuthorizationWithOptions:authOptions
-      completionHandler:^(BOOL granted, NSError * _Nullable error) {
-      }
-    ];
-# elif defined(__IPHONE_8_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_8_0
-    if ([[UIApplication sharedApplication]respondsToSelector:@selector(registerUserNotificationSettings:)]) {
-        UIUserNotificationType notificationTypes =
-        (UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge);
-        UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:notificationTypes categories:nil];
-        [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
-        [[UIApplication sharedApplication] registerForRemoteNotifications];
+    // Register for remote notifications. This shows a permission dialog on first run, to
+    // show the dialog at a more appropriate time move this registration accordingly.
+    if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_7_1) {
+        // iOS 7.1 or earlier. Disable the deprecation warnings.
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+        UIRemoteNotificationType allNotificationTypes =
+            (UIRemoteNotificationTypeSound |
+             UIRemoteNotificationTypeAlert |
+             UIRemoteNotificationTypeBadge);
+        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:allNotificationTypes];
+        #pragma clang diagnostic pop
     } else {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound)];
-#pragma GCC diagnostic pop
+        // iOS 8 or later
+        // [START register_for_notifications]
+        if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_9_x_Max) {
+          UIUserNotificationType allNotificationTypes =
+          (UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge);
+          UIUserNotificationSettings *settings =
+          [UIUserNotificationSettings settingsForTypes:allNotificationTypes categories:nil];
+          [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
+        } else {
+          // iOS 10 or later
+          #if defined(__IPHONE_10_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0
+          // For iOS 10 display notification (sent via APNS)
+          [UNUserNotificationCenter currentNotificationCenter].delegate = [FIRMessaging messaging].delegate;
+          UNAuthorizationOptions authOptions =
+              UNAuthorizationOptionAlert
+              | UNAuthorizationOptionSound
+              | UNAuthorizationOptionBadge;
+          [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:authOptions completionHandler:^(BOOL granted, NSError * _Nullable error) {
+              }];
+          #endif
+        }
+
+        [[UIApplication sharedApplication] registerForRemoteNotifications];
+        // [END register_for_notifications]
     }
-#else
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound)];
-#pragma GCC diagnostic pop
-#endif
 
     CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -117,7 +112,7 @@ static FirebaseMessagingPlugin *firebasePlugin;
     self.tokenRefreshCallbackId = command.callbackId;
     NSString* currentToken = [[FIRInstanceID instanceID] token];
     if (currentToken != nil) {
-        [self tokenRefreshNotification:currentToken];
+        [self refreshToken:currentToken];
     }
 }
 
@@ -131,7 +126,7 @@ static FirebaseMessagingPlugin *firebasePlugin;
     }
 }
 
-- (void)tokenRefreshNotification:(NSString *)token {
+- (void)refreshToken:(NSString *)token {
     if (self.tokenRefreshCallbackId != nil) {
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:token];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:self.tokenRefreshCallbackId];
