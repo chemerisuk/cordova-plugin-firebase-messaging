@@ -17,6 +17,7 @@
 @implementation FirebaseMessagingPlugin
 
 - (void)requestPermission:(CDVInvokedUrlCommand *)command {
+    self.registerCallbackId = command.callbackId;
     // Register for remote notifications. This shows a permission dialog on first run, to
     // show the dialog at a more appropriate time move this registration accordingly.
     if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_7_1) {
@@ -55,9 +56,6 @@
         [[UIApplication sharedApplication] registerForRemoteNotifications];
         // [END register_for_notifications]
     }
-
-    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void)setBadge:(CDVInvokedUrlCommand *)command {
@@ -113,6 +111,22 @@
     NSString* currentToken = [[FIRInstanceID instanceID] token];
     if (currentToken != nil) {
         [self refreshToken:currentToken];
+    }
+}
+
+- (void)registerNotifications:(NSError *)error {
+    if (self.registerCallbackId) {
+        CDVPluginResult *pluginResult;
+
+        if (error) {
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error.localizedDescription];
+        } else {
+            NSData* deviceToken = [FIRMessaging messaging].APNSToken;
+
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArrayBuffer:deviceToken];
+        }
+
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:self.registerCallbackId];
     }
 }
 

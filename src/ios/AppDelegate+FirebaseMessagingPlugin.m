@@ -148,6 +148,10 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
     NSLog(@"Unable to register for remote notifications: %@", error);
+
+    FirebaseMessagingPlugin* fmPlugin = [self.viewController getCommandInstance:@"FirebaseMessaging"];
+
+    [fmPlugin registerNotifications:error];
 }
 
 // This function is added here only for debugging purposes, and can be removed if swizzling is enabled.
@@ -155,6 +159,10 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 // the FCM registration token.
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     NSLog(@"APNs device token retrieved: %@", deviceToken);
+
+    FirebaseMessagingPlugin* fmPlugin = [self.viewController getCommandInstance:@"FirebaseMessaging"];
+
+    [fmPlugin registerNotifications:nil];
 
     // With swizzling disabled you must set the APNs device token here.
     // [Messaging messaging].APNSToken = deviceToken;

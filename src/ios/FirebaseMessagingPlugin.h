@@ -9,9 +9,11 @@
 - (void)unsubscribe:(CDVInvokedUrlCommand*)command;
 - (void)onMessage:(CDVInvokedUrlCommand*)command;
 - (void)onTokenRefresh:(CDVInvokedUrlCommand*)command;
+- (void)registerNotifications:(NSError *)error;
 - (void)sendNotification:(NSDictionary*)userInfo;
 - (void)refreshToken:(NSString*)token;
 
+@property (nonatomic, copy) NSString *registerCallbackId;
 @property (nonatomic, copy) NSString *notificationCallbackId;
 @property (nonatomic, copy) NSString *tokenRefreshCallbackId;
 @property (nonatomic, retain) NSDictionary* lastNotification;
