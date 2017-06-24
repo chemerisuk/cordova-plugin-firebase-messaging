@@ -65,7 +65,9 @@ window.cordova.plugins.firebase.messaging.setBadge(value);
 ### requestPermission (iOS only)
 Grant permission to recieve push notifications (will trigger prompt).
 ```js
-window.cordova.plugins.firebase.messaging.requestPermission();
+window.cordova.plugins.firebase.messaging.requestPermission(function(token) {
+    console.log("APNS device token: ", token);
+});
 ```
 
 [npm-url]: https://www.npmjs.com/package/cordova-plugin-firebase-messaging
