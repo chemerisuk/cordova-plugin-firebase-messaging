@@ -39,7 +39,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
         <header-file src="src/ios/FirebaseMessagingPlugin.h" />
         <source-file src="src/ios/FirebaseMessagingPlugin.m" />
 
-        <pod id="Firebase/Messaging" version="~> 2.0.0"/>
+        <pod id="Firebase/Messaging"/>
     </platform>
 
     <platform name="android">
