@@ -18,7 +18,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
         <engine name="cordova" version=">=3.5.0"/>
     </engines>
 
-    <dependency id="cordova-plugin-firebase-hooks"/>
+    <dependency id="cordova-plugin-firebase-analytics" version="~0.10.0"/>
 
     <platform name="ios">
         <config-file target="config.xml" parent="/*">
@@ -39,8 +39,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
         <header-file src="src/ios/FirebaseMessagingPlugin.h" />
         <source-file src="src/ios/FirebaseMessagingPlugin.m" />
 
-        <pod id="Firebase/Core" />
-        <pod id="Firebase/Messaging" />
+        <pod id="Firebase/Messaging" version="~> 4.0.0"/>
     </platform>
 
     <platform name="android">
@@ -64,7 +63,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
             </service>
         </config-file>
 
-        <framework src="com.google.firebase:firebase-messaging:+" />
+        <framework src="com.google.firebase:firebase-messaging:11.0.+" />
         <framework src="me.leolin:ShortcutBadger:1.1.4@aar"/>
 
         <source-file src="src/android/FirebaseMessagingPlugin.java"
