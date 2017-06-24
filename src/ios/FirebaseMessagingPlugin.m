@@ -30,6 +30,8 @@ static FirebaseMessagingPlugin *firebasePlugin;
 
 - (void)requestPermission:(CDVInvokedUrlCommand *)command {
 #if defined(__IPHONE_10_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0
+    // For iOS 10 display notification (sent via APNS)
+    [UNUserNotificationCenter currentNotificationCenter].delegate = self;
     UNAuthorizationOptions authOptions =
       UNAuthorizationOptionAlert
       | UNAuthorizationOptionSound
@@ -39,7 +41,6 @@ static FirebaseMessagingPlugin *firebasePlugin;
       completionHandler:^(BOOL granted, NSError * _Nullable error) {
       }
     ];
-    [[UNUserNotificationCenter currentNotificationCenter] setDelegate:self];
 # elif defined(__IPHONE_8_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_8_0
     if ([[UIApplication sharedApplication]respondsToSelector:@selector(registerUserNotificationSettings:)]) {
         UIUserNotificationType notificationTypes =
