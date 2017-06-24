@@ -16,7 +16,17 @@
 
 @implementation AppDelegate (FirebaseMessagingPlugin)
 
-NSString *const kGCMMessageIDKey = @"gcm.message_id";
+- (void)postNotification:(NSDictionary*) userInfo background:(BOOL) value {
+    // Print full message.
+    NSLog(@"%@", userInfo);
+
+    NSDictionary *mutableUserInfo = [userInfo mutableCopy];
+    [mutableUserInfo setValue:[NSNumber numberWithBool:value] forKey:@"background"];
+
+    FirebaseMessagingPlugin* fmPlugin = [self.viewController getCommandInstance:@"FirebaseMessaging"];
+
+    [fmPlugin sendNotification:mutableUserInfo];
+}
 
 + (void)load {
     Method original = class_getInstanceMethod(self, @selector(application:didFinishLaunchingWithOptions:));
@@ -29,56 +39,27 @@ NSString *const kGCMMessageIDKey = @"gcm.message_id";
     [FIRMessaging messaging].delegate = self;
     // [END set_messaging_delegate]
 
-    // [[NSNotificationCenter defaultCenter] addObserver:self
-    //                                          selector:@selector(tokenRefreshNotification:)
-    //                                              name:kFIRInstanceIDTokenRefreshNotification
-    //                                            object:nil];
-    // // handle coldstart case here
-    // if (launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey]) {
-    //     self.applicationInBackground = @(YES);
+    NSDictionary *userInfo = launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey];
 
-    //     [self application:application didReceiveRemoteNotification:launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey]];
-
-    //     self.applicationInBackground = @(NO);
-    // }
+    if (userInfo) {
+        [self postNotification:userInfo background:YES];
+    }
 
     return [self application:application swizzledDidFinishLaunchingWithOptions:launchOptions];
 }
 
 // [START receive_message]
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-    // If you are receiving a notification message while your app is in the background,
-    // this callback will not be fired till the user taps on the notification launching the application.
-    // TODO: Handle data of notification
+    BOOL value = application.applicationState != UIApplicationStateActive;
 
-    // With swizzling disabled you must let Messaging know about the message, for Analytics
-    // [[Messaging messaging] appDidReceiveMessage:userInfo];
-
-    // Print message ID.
-    if (userInfo[kGCMMessageIDKey]) {
-        NSLog(@"Message ID: %@", userInfo[kGCMMessageIDKey]);
-    }
-
-    // Print full message.
-    NSLog(@"%@", userInfo);
+    [self postNotification:userInfo background:value];
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
     fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
-    // If you are receiving a notification message while your app is in the background,
-    // this callback will not be fired till the user taps on the notification launching the application.
-    // TODO: Handle data of notification
+    BOOL value = application.applicationState != UIApplicationStateActive;
 
-    // With swizzling disabled you must let Messaging know about the message, for Analytics
-    // [[Messaging messaging] appDidReceiveMessage:userInfo];
-
-    // Print message ID.
-    if (userInfo[kGCMMessageIDKey]) {
-        NSLog(@"Message ID: %@", userInfo[kGCMMessageIDKey]);
-    }
-
-    // Print full message.
-    NSLog(@"%@", userInfo);
+    [self postNotification:userInfo background:value];
 
     completionHandler(UIBackgroundFetchResultNewData);
 }
@@ -93,17 +74,7 @@ NSString *const kGCMMessageIDKey = @"gcm.message_id";
          withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler {
     NSDictionary *userInfo = notification.request.content.userInfo;
 
-    // With swizzling disabled you must let Messaging know about the message, for Analytics
-    // [[Messaging messaging] appDidReceiveMessage:userInfo];
-
-    // Print message ID.
-    if (userInfo[kGCMMessageIDKey]) {
-        NSLog(@"Message ID: %@", userInfo[kGCMMessageIDKey]);
-    }
-
-    // Print full message.
-    NSLog(@"%@", userInfo);
-
+    [self postNotification:userInfo background:NO];
     // Change this to your preferred presentation option
     completionHandler(UNNotificationPresentationOptionNone);
 }
@@ -113,12 +84,8 @@ NSString *const kGCMMessageIDKey = @"gcm.message_id";
 didReceiveNotificationResponse:(UNNotificationResponse *)response
          withCompletionHandler:(void (^)())completionHandler {
     NSDictionary *userInfo = response.notification.request.content.userInfo;
-    if (userInfo[kGCMMessageIDKey]) {
-        NSLog(@"Message ID: %@", userInfo[kGCMMessageIDKey]);
-    }
 
-    // Print full message.
-    NSLog(@"%@", userInfo);
+    [self postNotification:userInfo background:YES];
 
     completionHandler();
 }
@@ -142,30 +109,26 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 // Receive data messages on iOS 10+ directly from FCM (bypassing APNs) when the app is in the foreground.
 // To enable direct data messages, you can set [Messaging messaging].shouldEstablishDirectChannel to YES.
 - (void)messaging:(FIRMessaging *)messaging didReceiveMessage:(FIRMessagingRemoteMessage *)remoteMessage {
-    NSLog(@"Received data message: %@", remoteMessage.appData);
+    NSDictionary *userInfo = remoteMessage.appData;
+
+    NSLog(@"Received data message: %@", userInfo);
+
+    FirebaseMessagingPlugin* fmPlugin = [self.viewController getCommandInstance:@"FirebaseMessaging"];
+
+    [fmPlugin sendNotification:userInfo];
 }
 // [END ios_10_data_message]
 
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
-    NSLog(@"Unable to register for remote notifications: %@", error);
-
     FirebaseMessagingPlugin* fmPlugin = [self.viewController getCommandInstance:@"FirebaseMessaging"];
 
     [fmPlugin registerNotifications:error];
 }
 
-// This function is added here only for debugging purposes, and can be removed if swizzling is enabled.
-// If swizzling is disabled then this function must be implemented so that the APNs device token can be paired to
-// the FCM registration token.
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-    NSLog(@"APNs device token retrieved: %@", deviceToken);
-
     FirebaseMessagingPlugin* fmPlugin = [self.viewController getCommandInstance:@"FirebaseMessaging"];
 
     [fmPlugin registerNotifications:nil];
-
-    // With swizzling disabled you must set the APNs device token here.
-    // [Messaging messaging].APNSToken = deviceToken;
 }
 
 @end

@@ -4,6 +4,6 @@
 
 @interface AppDelegate (FirebaseMessagingPlugin) <FIRMessagingDelegate>
 
-@property (nonatomic, strong) NSNumber *applicationInBackground;
+- (void)postNotification:(NSDictionary*) userInfo background:(BOOL) value;
 
 @end
