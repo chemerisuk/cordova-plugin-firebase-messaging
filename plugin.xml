@@ -72,6 +72,8 @@ xmlns:android="http://schemas.android.com/apk/res/android"
             target-dir="src/by/chemerisuk/cordova/firebase" />
         <source-file src="src/android/FirebaseMessagingPluginService.java"
             target-dir="src/by/chemerisuk/cordova/firebase" />
+
+        <hook type="after_prepare" src="hooks/android/insert-firebase-init.js" />
     </platform>
 
 </plugin>
