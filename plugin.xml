@@ -33,6 +33,12 @@ xmlns:android="http://schemas.android.com/apk/res/android"
                 <string>remote-notification</string>
             </array>
         </config-file>
+        <config-file target="*-Debug.plist" parent="aps-environment">
+            <string>development</string>
+        </config-file>
+        <config-file target="*-Release.plist" parent="aps-environment">
+            <string>production</string>
+        </config-file>
 
         <header-file src="src/ios/AppDelegate+FirebaseMessagingPlugin.h" />
         <source-file src="src/ios/AppDelegate+FirebaseMessagingPlugin.m" />
