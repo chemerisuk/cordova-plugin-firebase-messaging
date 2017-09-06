@@ -77,6 +77,8 @@ xmlns:android="http://schemas.android.com/apk/res/android"
             <meta-data android:name="com.google.firebase.messaging.default_notification_color" android:resource="$ANDROID_NOTIFICATION_COLOR" />
         </config-file>
 
+        <dependency id="cordova-support-google-services" version="~1.0.0"/>
+
         <framework src="com.google.firebase:firebase-messaging:11.0.+" />
         <framework src="me.leolin:ShortcutBadger:1.1.4@aar"/>
 

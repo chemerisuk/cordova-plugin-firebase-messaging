@@ -5,6 +5,8 @@
 
     cordova plugin add cordova-plugin-firebase-messaging --save
 
+You can also specify variables `ANDROID_NOTIFICATION_ICON` and `ANDROID_NOTIFICATION_COLOR`.
+
 ## Supported Platforms
 
 - iOS

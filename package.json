@@ -22,6 +22,7 @@
   "keywords": [
     "cordova",
     "firebase",
+    "push",
     "fcm",
     "gcm",
     "messaging",
