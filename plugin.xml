@@ -49,6 +49,9 @@ xmlns:android="http://schemas.android.com/apk/res/android"
     </platform>
 
     <platform name="android">
+        <preference name="ANDROID_NOTIFICATION_ICON" default="@mipmap/icon" />
+        <preference name="ANDROID_NOTIFICATION_COLOR" default="@android:color/white" />
+
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="FirebaseMessaging">
                 <param name="android-package" value="by.chemerisuk.cordova.firebase.FirebaseMessagingPlugin" />
@@ -67,6 +70,11 @@ xmlns:android="http://schemas.android.com/apk/res/android"
                     <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
                 </intent-filter>
             </service>
+        </config-file>
+
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+            <meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="$ANDROID_NOTIFICATION_ICON" />
+            <meta-data android:name="com.google.firebase.messaging.default_notification_color" android:resource="$ANDROID_NOTIFICATION_COLOR" />
         </config-file>
 
         <framework src="com.google.firebase:firebase-messaging:11.0.+" />

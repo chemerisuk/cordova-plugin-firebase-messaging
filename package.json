@@ -28,5 +28,9 @@
     "ecosystem:cordova",
     "cordova-android",
     "cordova-ios"
-  ]
+  ],
+  "scripts": {
+    "version": "replace -s 'version=\"(.+)(?=\">)' 'version=\"'$npm_package_version plugin.xml && git add plugin.xml",
+    "postversion": "git push && git push --tags"
+  }
 }
