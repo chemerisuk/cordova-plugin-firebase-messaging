@@ -25,7 +25,7 @@ import me.leolin.shortcutbadger.ShortcutBadger;
 public class FirebaseMessagingPlugin extends CordovaPlugin {
     private static final String TAG = "FirebaseMessagingPlugin";
 
-    private CallbackContext tokenCallback;
+    private CallbackContext instanceIdCallback;
     private CallbackContext notificationCallback;
     private Bundle lastBundle;
     private static FirebaseMessagingPlugin instance;
@@ -97,9 +97,9 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
     private void registerTokenReceiver(CallbackContext callbackContext) {
         String token = FirebaseInstanceId.getInstance().getToken();
 
-        instance.tokenCallback = callbackContext;
+        instance.instanceIdCallback = callbackContext;
 
-        sendToken(token);
+        sendInstanceId(token);
     }
 
     private void registerMessageReceiver(CallbackContext callbackContext) throws JSONException {
@@ -141,11 +141,11 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
         }
     }
 
-    public static void sendToken(String token) {
-        if (instance.tokenCallback != null && token != null) {
-            PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, token);
+    public static void sendInstanceId(String instanceId) {
+        if (instance.instanceIdCallback != null && instanceId != null) {
+            PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, instanceId);
             pluginResult.setKeepCallback(true);
-            instance.tokenCallback.success(pluginResult);
+            instance.instanceIdCallback.success(pluginResult);
         }
     }
 

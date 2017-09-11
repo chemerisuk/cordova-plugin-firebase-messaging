@@ -18,8 +18,6 @@ public class FirebaseInstanceIDService extends FirebaseInstanceIdService {
     public void onTokenRefresh() {
         String token = FirebaseInstanceId.getInstance().getToken();
 
-        if (token != null) {
-            FirebaseMessagingPlugin.sendToken(token);
-        }
+        FirebaseMessagingPlugin.sendInstanceId(token);
     }
 }
