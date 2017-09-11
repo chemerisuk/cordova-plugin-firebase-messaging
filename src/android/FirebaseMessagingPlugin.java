@@ -25,14 +25,17 @@ import me.leolin.shortcutbadger.ShortcutBadger;
 public class FirebaseMessagingPlugin extends CordovaPlugin {
     private static final String TAG = "FirebaseMessagingPlugin";
 
-    private static CallbackContext tokenCallback;
-    private static CallbackContext notificationCallback;
-    private static Bundle lastBundle;
+    private CallbackContext tokenCallback;
+    private CallbackContext notificationCallback;
+    private Bundle lastBundle;
+    private static FirebaseMessagingPlugin instance;
 
     @Override
     protected void pluginInitialize() {
-        Context context = this.cordova.getActivity().getApplicationContext();
-        Bundle bundle = this.cordova.getActivity().getIntent().getExtras();
+        FirebaseMessagingPlugin.instance = this;
+
+        Context context = cordova.getActivity().getApplicationContext();
+        Bundle bundle = cordova.getActivity().getIntent().getExtras();
         if (bundle != null && (bundle.containsKey("google.message_id") || bundle.containsKey("google.sent_time"))) {
             lastBundle = bundle;
         }
@@ -72,63 +75,12 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
     public void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
-        sendNotification(intent.getExtras());
-    }
-
-    public static void sendNotification(RemoteMessage remoteMessage) {
-        if (remoteMessage != null && FirebaseMessagingPlugin.notificationCallback != null) {
-            JSONObject json = new JSONObject(remoteMessage.getData());
-            RemoteMessage.Notification notification = remoteMessage.getNotification();
-
-            try {
-                if (notification != null) {
-                    JSONObject jsonNotification = new JSONObject();
-
-                    jsonNotification.put("body", notification.getBody());
-                    jsonNotification.put("title", notification.getTitle());
-                    jsonNotification.put("sound", notification.getSound());
-                    jsonNotification.put("icon", notification.getIcon());
-                    jsonNotification.put("tag", notification.getTag());
-                    jsonNotification.put("color", notification.getColor());
-                    jsonNotification.put("clickAction", notification.getClickAction());
-
-                    json.put("gcm", jsonNotification);
-                }
-
-                json.put("google.message_id", remoteMessage.getMessageId());
-                json.put("google.sent_time", remoteMessage.getSentTime());
-                json.put("background", 0);
-
-                PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, json);
-                pluginResult.setKeepCallback(true);
-                FirebaseMessagingPlugin.notificationCallback.sendPluginResult(pluginResult);
-            } catch (JSONException e) {
-                Log.e(TAG, "Fail to handle notification", e);
-            }
+        try {
+            sendNotification(getNotification(intent.getExtras()));
+        } catch (JSONException e) {
+            Log.e(TAG, "onNewIntent", e);
         }
     }
-
-    public static void sendNotification(Bundle bundle) {
-        if (bundle != null && FirebaseMessagingPlugin.notificationCallback != null) {
-            JSONObject json = new JSONObject();
-            Set<String> keys = bundle.keySet();
-
-            try {
-                for (String key : keys) {
-                    json.put(key, bundle.get(key));
-                }
-
-                json.put("background", 1);
-
-                PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, json);
-                pluginResult.setKeepCallback(true);
-                FirebaseMessagingPlugin.notificationCallback.sendPluginResult(pluginResult);
-            } catch (JSONException e) {
-                Log.e(TAG, "Fail to handle notification", e);
-            }
-        }
-    }
-
 
     private void subscribe(CallbackContext callbackContext, String topic) {
         FirebaseMessaging.getInstance().subscribeToTopic(topic);
@@ -145,20 +97,17 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
     private void registerTokenReceiver(CallbackContext callbackContext) {
         String token = FirebaseInstanceId.getInstance().getToken();
 
-        FirebaseMessagingPlugin.tokenCallback = callbackContext;
+        instance.tokenCallback = callbackContext;
 
-        if (token != null) {
-            FirebaseMessagingPlugin.sendToken(token);
-        }
+        sendToken(token);
     }
 
-    private void registerMessageReceiver(CallbackContext callbackContext) {
-        FirebaseMessagingPlugin.notificationCallback = callbackContext;
+    private void registerMessageReceiver(CallbackContext callbackContext) throws JSONException {
+        instance.notificationCallback = callbackContext;
 
-        if (FirebaseMessagingPlugin.lastBundle != null) {
-            sendNotification(FirebaseMessagingPlugin.lastBundle);
-
-            FirebaseMessagingPlugin.lastBundle = null;
+        if (instance.lastBundle != null) {
+            sendNotification(getNotification(instance.lastBundle));
+            instance.lastBundle = null;
         }
     }
 
@@ -184,11 +133,29 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
         callbackContext.success();
     }
 
-    public static void sendToken(String token) {
-        if (FirebaseMessagingPlugin.tokenCallback != null) {
-            FirebaseMessagingPlugin.tokenCallback.success(token);
-
-            FirebaseMessagingPlugin.tokenCallback = null;
+    public static void sendNotification(JSONObject notificationData) throws JSONException {
+        if (instance.notificationCallback != null) {
+            PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, notificationData);
+            pluginResult.setKeepCallback(true);
+            instance.notificationCallback.sendPluginResult(pluginResult);
         }
+    }
+
+    public static void sendToken(String token) {
+        if (instance.tokenCallback != null && token != null) {
+            instance.tokenCallback.success(token);
+        }
+    }
+
+    private static JSONObject getNotification(Bundle bundle) throws JSONException {
+        JSONObject notificationData = new JSONObject();
+        Set<String> keys = bundle.keySet();
+        for (String key : keys) {
+            notificationData.put(key, bundle.get(key));
+        }
+
+        notificationData.put("background", 1);
+
+        return notificationData;
     }
 }
