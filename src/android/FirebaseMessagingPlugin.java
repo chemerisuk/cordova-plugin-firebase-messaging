@@ -143,7 +143,9 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
 
     public static void sendToken(String token) {
         if (instance.tokenCallback != null && token != null) {
-            instance.tokenCallback.success(token);
+            PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, token);
+            pluginResult.setKeepCallback(true);
+            instance.tokenCallback.success(pluginResult);
         }
     }
 
