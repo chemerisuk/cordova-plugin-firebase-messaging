@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.RemoteMessage;
@@ -19,6 +20,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Set;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import me.leolin.shortcutbadger.ShortcutBadger;
 
 
@@ -130,7 +134,11 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
     }
 
     private void requestPermission(CallbackContext callbackContext) {
-        callbackContext.success();
+        if (hasPermission("OP_POST_NOTIFICATION")) {
+            callbackContext.success();
+        } else {
+            callbackContext.error("Push notifications are disabled");
+        }
     }
 
     public static void sendNotification(JSONObject notificationData) throws JSONException {
@@ -145,7 +153,7 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
         if (instance.instanceIdCallback != null && instanceId != null) {
             PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, instanceId);
             pluginResult.setKeepCallback(true);
-            instance.instanceIdCallback.success(pluginResult);
+            instance.instanceIdCallback.sendPluginResult(pluginResult);
         }
     }
 
@@ -159,5 +167,40 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
         notificationData.put("background", 1);
 
         return notificationData;
+    }
+
+    private boolean hasPermission(String appOpsServiceId) {
+        if (android.os.Build.VERSION.SDK_INT < 19) { // required by AppOpsManager
+            return true;
+        }
+
+        Context appContext = cordova.getActivity().getApplicationContext();
+        ApplicationInfo appInfo = appContext.getApplicationInfo();
+
+        String pkg = appContext.getPackageName();
+        int uid = appInfo.uid;
+
+        try {
+            Class appOpsClass = Class.forName("android.app.AppOpsManager");
+            Object appOps = appContext.getSystemService("appops");
+
+            Method checkOpNoThrowMethod = appOpsClass.getMethod(
+                "checkOpNoThrow",
+                Integer.TYPE,
+                Integer.TYPE,
+                String.class
+            );
+
+            Field opValue = appOpsClass.getDeclaredField(appOpsServiceId);
+
+            int value = (int) opValue.getInt(Integer.class);
+            Object result = checkOpNoThrowMethod.invoke(appOps, value, uid, pkg);
+
+            return Integer.parseInt(result.toString()) == 0; // AppOpsManager.MODE_ALLOWED
+        } catch (Exception e) {
+            Log.e(TAG, "hasPermission", e);
+        }
+
+        return true; // TODO: is it correct result?
     }
 }
