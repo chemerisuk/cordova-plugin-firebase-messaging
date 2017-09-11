@@ -80,7 +80,10 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
         super.onNewIntent(intent);
 
         try {
-            sendNotification(getNotification(intent.getExtras()));
+            Bundle extras = intent.getExtras();
+            if (extras != null) {
+                sendNotification(getNotification(extras));
+            }
         } catch (JSONException e) {
             Log.e(TAG, "onNewIntent", e);
         }
