@@ -31,7 +31,7 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
 
     private CallbackContext instanceIdCallback;
     private CallbackContext notificationCallback;
-    private Bundle lastBundle;
+    private static Bundle lastBundle;
     private static FirebaseMessagingPlugin instance;
 
     @Override
@@ -112,9 +112,9 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
     private void registerMessageReceiver(CallbackContext callbackContext) throws JSONException {
         instance.notificationCallback = callbackContext;
 
-        if (instance.lastBundle != null) {
-            sendNotification(getNotification(instance.lastBundle));
-            instance.lastBundle = null;
+        if (lastBundle != null) {
+            sendNotification(getNotification(lastBundle));
+            lastBundle = null;
         }
     }
 
@@ -145,7 +145,7 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
     }
 
     public static void sendNotification(JSONObject notificationData) throws JSONException {
-        if (instance.notificationCallback != null) {
+        if (instance != null && instance.notificationCallback != null) {
             PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, notificationData);
             pluginResult.setKeepCallback(true);
             instance.notificationCallback.sendPluginResult(pluginResult);
@@ -153,7 +153,7 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
     }
 
     public static void sendInstanceId(String instanceId) {
-        if (instance.instanceIdCallback != null && instanceId != null) {
+        if (instance != null && instance.instanceIdCallback != null && instanceId != null) {
             PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, instanceId);
             pluginResult.setKeepCallback(true);
             instance.instanceIdCallback.sendPluginResult(pluginResult);
