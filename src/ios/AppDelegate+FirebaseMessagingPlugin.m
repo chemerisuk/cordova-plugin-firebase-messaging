@@ -16,16 +16,19 @@
 
 @implementation AppDelegate (FirebaseMessagingPlugin)
 
-- (void)postNotification:(NSDictionary*) userInfo background:(BOOL) value {
+- (void)postNotification:(NSDictionary*)userInfo background:(BOOL)background {
     // Print full message.
     NSLog(@"%@", userInfo);
 
     NSDictionary *mutableUserInfo = [userInfo mutableCopy];
-    [mutableUserInfo setValue:[NSNumber numberWithBool:value] forKey:@"background"];
+    // [mutableUserInfo setValue:userInfo[@"aps"] forKey:@"notification"];
 
     FirebaseMessagingPlugin* fmPlugin = [self.viewController getCommandInstance:@"FirebaseMessaging"];
-
-    [fmPlugin sendNotification:mutableUserInfo];
+    if (background) {
+        [fmPlugin sendBackgroundNotification:mutableUserInfo];
+    } else {
+        [fmPlugin sendNotification:mutableUserInfo];
+    }
 }
 
 + (void)load {

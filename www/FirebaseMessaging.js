@@ -2,11 +2,15 @@ var exec = require("cordova/exec");
 var PLUGIN_NAME = "FirebaseMessaging";
 
 module.exports = {
-    subscribe: function(topic, success, error) {
-        exec(success, error, PLUGIN_NAME, "subscribe", [topic]);
+    subscribe: function(topic) {
+        return new Promise(function(resolve, reject) {
+            exec(resolve, reject, PLUGIN_NAME, "subscribe", [topic]);
+        });
     },
-    unsubscribe: function(topic, success, error) {
-        exec(success, error, PLUGIN_NAME, "unsubscribe", [topic]);
+    unsubscribe: function(topic) {
+        return new Promise(function(resolve, reject) {
+            exec(resolve, reject, PLUGIN_NAME, "unsubscribe", [topic]);
+        });
     },
     onTokenRefresh: function(success, error) {
         exec(success, error, PLUGIN_NAME, "onTokenRefresh", []);
@@ -14,13 +18,27 @@ module.exports = {
     onMessage: function(success, error) {
         exec(success, error, PLUGIN_NAME, "onMessage", []);
     },
-    setBadge: function(value, success, error) {
-        exec(success, error, PLUGIN_NAME, "setBadge", [value]);
+    onBackgroundMessage: function(success, error) {
+        exec(success, error, PLUGIN_NAME, "onBackgroundMessage", []);
     },
-    getBadge: function(success, error) {
-        exec(success, error, PLUGIN_NAME, "getBadge", []);
+    getToken: function() {
+        return new Promise(function(resolve, reject) {
+            exec(resolve, reject, PLUGIN_NAME, "getToken", []);
+        });
     },
-    requestPermission: function(success, error) {
-        exec(success, error, PLUGIN_NAME, "requestPermission", []);
+    setBadge: function(value) {
+        return new Promise(function(resolve, reject) {
+            exec(resolve, reject, PLUGIN_NAME, "setBadge", [value]);
+        });
+    },
+    getBadge: function() {
+        return new Promise(function(resolve, reject) {
+            exec(resolve, reject, PLUGIN_NAME, "getBadge", []);
+        });
+    },
+    requestPermission: function() {
+        return new Promise(function(resolve, reject) {
+            exec(resolve, reject, PLUGIN_NAME, "requestPermission", []);
+        });
     }
 };

@@ -59,6 +59,14 @@
     }
 }
 
+- (void)getToken:(CDVInvokedUrlCommand *)command {
+    [self.commandDelegate runInBackground:^{
+        NSString* currentToken = [[FIRInstanceID instanceID] token];
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:currentToken];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:self.tokenRefreshCallbackId];
+    }];
+}
+
 - (void)setBadge:(CDVInvokedUrlCommand *)command {
     int number = [[command.arguments objectAtIndex:0] intValue];
 
@@ -99,9 +107,13 @@
 
 - (void)onMessage:(CDVInvokedUrlCommand *)command {
     self.notificationCallbackId = command.callbackId;
+}
+
+- (void)onBackgroundMessage:(CDVInvokedUrlCommand *)command {
+    self.backgroundNotificationCallbackId = command.callbackId;
 
     if (self.lastNotification) {
-        [self sendNotification:self.lastNotification];
+        [self sendBackgroundNotification:self.lastNotification];
 
         self.lastNotification = nil;
     }
@@ -109,10 +121,6 @@
 
 - (void)onTokenRefresh:(CDVInvokedUrlCommand *)command {
     self.tokenRefreshCallbackId = command.callbackId;
-    NSString* currentToken = [[FIRInstanceID instanceID] token];
-    if (currentToken != nil) {
-        [self refreshToken:currentToken];
-    }
 }
 
 - (void)registerNotifications:(NSError *)error {
@@ -136,6 +144,14 @@
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:userInfo];
         [pluginResult setKeepCallbackAsBool:YES];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:self.notificationCallbackId];
+    }
+}
+
+- (void)sendBackgroundNotification:(NSDictionary *)userInfo {
+    if (self.backgroundNotificationCallbackId) {
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:userInfo];
+        [pluginResult setKeepCallbackAsBool:YES];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:self.backgroundNotificationCallbackId];
     } else {
         self.lastNotification = userInfo;
     }
@@ -143,7 +159,7 @@
 
 - (void)refreshToken:(NSString *)token {
     if (self.tokenRefreshCallbackId != nil) {
-        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:token];
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:self.tokenRefreshCallbackId];
     }
 }
