@@ -55,6 +55,9 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
         } else if ("unsubscribe".equals(action)) {
             this.unsubscribe(callbackContext, args.getString(0));
             return true;
+        } else if ("getToken".equals(action)) {
+            this.getToken(callbackContext);
+            return true;
         } else if ("onTokenRefresh".equals(action)) {
             this.registerTokenReceiver(callbackContext);
             return true;
@@ -101,12 +104,14 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
         callbackContext.success();
     }
 
-    private void registerTokenReceiver(CallbackContext callbackContext) {
+    private void getToken(CallbackContext callbackContext) {
         String token = FirebaseInstanceId.getInstance().getToken();
 
-        instance.instanceIdCallback = callbackContext;
+        callbackContext.success(token);
+    }
 
-        sendInstanceId(token);
+    private void registerTokenReceiver(CallbackContext callbackContext) {
+        instance.instanceIdCallback = callbackContext;
     }
 
     private void registerMessageReceiver(CallbackContext callbackContext) throws JSONException {
