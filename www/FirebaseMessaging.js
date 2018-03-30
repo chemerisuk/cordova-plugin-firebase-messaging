@@ -20,15 +20,7 @@ module.exports = {
         exec(callack, error, PLUGIN_NAME, "onMessage", []);
     },
     onBackgroundMessage: function(callack, error) {
-        exec(function(payload) {
-            new Promise(callack.bind(null, payload)).then(function() {
-                exec(noop, noop, PLUGIN_NAME, "completeBackgroundMessage", [0 /* UIBackgroundFetchResultNewData */]);
-            }).catch(function(err) {
-                exec(noop, noop, PLUGIN_NAME, "completeBackgroundMessage", [2 /* UIBackgroundFetchResultFailed */]);
-
-                throw err;
-            });
-        }, error, PLUGIN_NAME, "onBackgroundMessage", []);
+        exec(callack, error, PLUGIN_NAME, "onBackgroundMessage", []);
     },
     getToken: function() {
         return new Promise(function(resolve, reject) {

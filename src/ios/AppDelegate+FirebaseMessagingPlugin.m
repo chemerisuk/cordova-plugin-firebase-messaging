@@ -16,7 +16,7 @@
 
 @implementation AppDelegate (FirebaseMessagingPlugin)
 
-- (void)postNotification:(NSDictionary*)userInfo background:(BOOL)background fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+- (void)postNotification:(NSDictionary*)userInfo background:(BOOL)background {
     // Print full message.
     NSLog(@"%@", userInfo);
 
@@ -25,7 +25,7 @@
 
     FirebaseMessagingPlugin* fmPlugin = [self.viewController getCommandInstance:@"FirebaseMessaging"];
     if (background) {
-        [fmPlugin sendBackgroundNotification:mutableUserInfo fetchCompletionHandler:completionHandler];
+        [fmPlugin sendBackgroundNotification:mutableUserInfo];
     } else {
         [fmPlugin sendNotification:mutableUserInfo];
     }
@@ -45,7 +45,7 @@
     NSDictionary *userInfo = launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey];
 
     if (userInfo) {
-        [self postNotification:userInfo background:YES fetchCompletionHandler:nil];
+        [self postNotification:userInfo background:YES];
     }
 
     return [self application:application swizzledDidFinishLaunchingWithOptions:launchOptions];
@@ -55,14 +55,16 @@
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
     BOOL value = application.applicationState != UIApplicationStateActive;
 
-    [self postNotification:userInfo background:value fetchCompletionHandler:nil];
+    [self postNotification:userInfo background:value];
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
     fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
     BOOL value = application.applicationState != UIApplicationStateActive;
 
-    [self postNotification:userInfo background:value fetchCompletionHandler:completionHandler];
+    [self postNotification:userInfo background:value];
+
+    completionHandler(UIBackgroundFetchResultNewData);
 }
 // [END receive_message]
 
@@ -87,7 +89,7 @@
         options += UNNotificationPresentationOptionAlert;
     }
 
-    [self postNotification:userInfo background:NO fetchCompletionHandler:nil];
+    [self postNotification:userInfo background:NO];
     // Change this to your preferred presentation option
     completionHandler(options);
 }
@@ -98,7 +100,7 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
          withCompletionHandler:(void (^)())completionHandler {
     NSDictionary *userInfo = response.notification.request.content.userInfo;
 
-    [self postNotification:userInfo background:YES fetchCompletionHandler:nil];
+    [self postNotification:userInfo background:YES];
 
     completionHandler();
 }

@@ -157,17 +157,11 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
 
     public static void sendNotification(JSONObject notificationData, boolean background) throws JSONException {
         if (instance != null) {
-            PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, notificationData);
-            pluginResult.setKeepCallback(true);
-
-            if (background) {
-                if (instance.backgroundCallback != null) {
-                    instance.backgroundCallback.sendPluginResult(pluginResult);
-                }
-            } else {
-                if (instance.foregroundCallback != null) {
-                    instance.foregroundCallback.sendPluginResult(pluginResult);
-                }
+            CallbackContext callback = background ? instance.backgroundCallback : instance.foregroundCallback;
+            if (callback != null) {
+                PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, notificationData);
+                pluginResult.setKeepCallback(true);
+                callback.sendPluginResult(pluginResult);
             }
         }
     }

@@ -97,18 +97,9 @@
     self.backgroundNotificationCallbackId = command.callbackId;
 
     if (self.lastNotification) {
-        [self sendBackgroundNotification:self.lastNotification fetchCompletionHandler:nil];
+        [self sendBackgroundNotification:self.lastNotification];
 
         self.lastNotification = nil;
-    }
-}
-
-- (void)completeBackgroundMessage:(CDVInvokedUrlCommand *)command {
-    UIBackgroundFetchResult result = [[command argumentAtIndex:0] intValue];
-
-    if (self.lastCompletionHandler) {
-        self.lastCompletionHandler(result);
-        self.lastCompletionHandler = nil;
     }
 }
 
@@ -140,9 +131,7 @@
     }
 }
 
-- (void)sendBackgroundNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
-    self.lastCompletionHandler = completionHandler;
-
+- (void)sendBackgroundNotification:(NSDictionary *)userInfo {
     if (self.backgroundNotificationCallbackId) {
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:userInfo];
         [pluginResult setKeepCallbackAsBool:YES];

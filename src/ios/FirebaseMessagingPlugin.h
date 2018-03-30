@@ -14,7 +14,7 @@
 - (void)onTokenRefresh:(CDVInvokedUrlCommand*)command;
 - (void)registerNotifications:(NSError *)error;
 - (void)sendNotification:(NSDictionary*)userInfo;
-- (void)sendBackgroundNotification:(NSDictionary*)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler;
+- (void)sendBackgroundNotification:(NSDictionary*)userInfo;
 - (void)refreshToken:(NSString*)token;
 
 @property (nonatomic, copy) NSString *registerCallbackId;
@@ -24,6 +24,5 @@
 @property (nonatomic, retain) NSDictionary* notificationOptions;
 @property (nonatomic, retain) NSDictionary* lastNotification;
 @property (nonatomic, retain) UIAlertController *lastAlert;
-@property (nonatomic, retain) void (^lastCompletionHandler)(UIBackgroundFetchResult);
 
 @end
