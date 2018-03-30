@@ -39,9 +39,8 @@ public class FirebaseMessagingPluginService extends FirebaseMessagingService {
 
             json.put("google.message_id", remoteMessage.getMessageId());
             json.put("google.sent_time", remoteMessage.getSentTime());
-            json.put("background", 0);
 
-            FirebaseMessagingPlugin.sendNotification(json);
+            FirebaseMessagingPlugin.sendNotification(json, false);
         } catch (JSONException e) {
             Log.e(TAG, "onMessageReceived", e);
         }

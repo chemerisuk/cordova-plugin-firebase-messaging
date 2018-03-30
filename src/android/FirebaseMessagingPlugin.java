@@ -27,7 +27,8 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
     private static final String TAG = "FirebaseMessagingPlugin";
 
     private CallbackContext instanceIdCallback;
-    private CallbackContext notificationCallback;
+    private CallbackContext foregroundCallback;
+    private CallbackContext backgroundCallback;
     private static Bundle lastBundle;
     private static FirebaseMessagingPlugin instance;
 
@@ -59,7 +60,10 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
             this.registerTokenReceiver(callbackContext);
             return true;
         } else if ("onMessage".equals(action)) {
-            this.registerMessageReceiver(callbackContext);
+            this.registerForegroundCallback(callbackContext);
+            return true;
+        } else if ("onBackgroundMessage".equals(action)) {
+            this.registerBackgroundCallback(callbackContext);
             return true;
         } else if ("setBadge".equals(action)) {
             this.setBadge(callbackContext, args.optInt(0));
@@ -82,7 +86,7 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
         try {
             Bundle extras = intent.getExtras();
             if (extras != null) {
-                sendNotification(getNotification(extras));
+                sendNotification(getNotification(extras), true);
             }
         } catch (JSONException e) {
             Log.e(TAG, "onNewIntent", e);
@@ -111,11 +115,15 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
         instance.instanceIdCallback = callbackContext;
     }
 
-    private void registerMessageReceiver(CallbackContext callbackContext) throws JSONException {
-        instance.notificationCallback = callbackContext;
+    private void registerForegroundCallback(CallbackContext callbackContext) throws JSONException {
+        instance.foregroundCallback = callbackContext;
+    }
+
+    private void registerBackgroundCallback(CallbackContext callbackContext) throws JSONException {
+        instance.backgroundCallback = callbackContext;
 
         if (lastBundle != null) {
-            sendNotification(getNotification(lastBundle));
+            sendNotification(getNotification(lastBundle), true);
             lastBundle = null;
         }
     }
@@ -147,11 +155,20 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
         }
     }
 
-    public static void sendNotification(JSONObject notificationData) throws JSONException {
-        if (instance != null && instance.notificationCallback != null) {
+    public static void sendNotification(JSONObject notificationData, boolean background) throws JSONException {
+        if (instance != null) {
             PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, notificationData);
             pluginResult.setKeepCallback(true);
-            instance.notificationCallback.sendPluginResult(pluginResult);
+
+            if (background) {
+                if (instance.backgroundCallback != null) {
+                    instance.backgroundCallback.sendPluginResult(pluginResult);
+                }
+            } else {
+                if (instance.foregroundCallback != null) {
+                    instance.foregroundCallback.sendPluginResult(pluginResult);
+                }
+            }
         }
     }
 
@@ -169,9 +186,6 @@ public class FirebaseMessagingPlugin extends CordovaPlugin {
         for (String key : keys) {
             notificationData.put(key, bundle.get(key));
         }
-
-        notificationData.put("background", 1);
-
         return notificationData;
     }
 }
