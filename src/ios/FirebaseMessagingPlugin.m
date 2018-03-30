@@ -23,23 +23,23 @@
     // show the dialog at a more appropriate time move this registration accordingly.
     // [START register_for_notifications]
     if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_9_x_Max) {
-      UIUserNotificationType allNotificationTypes =
-      (UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge);
-      UIUserNotificationSettings *settings =
-      [UIUserNotificationSettings settingsForTypes:allNotificationTypes categories:nil];
-      [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
+        UIUserNotificationType allNotificationTypes =
+        (UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge);
+        UIUserNotificationSettings *settings =
+        [UIUserNotificationSettings settingsForTypes:allNotificationTypes categories:nil];
+        [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
     } else {
-      // iOS 10 or later
-      #if defined(__IPHONE_10_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0
-      // For iOS 10 display notification (sent via APNS)
-      [UNUserNotificationCenter currentNotificationCenter].delegate = [FIRMessaging messaging].delegate;
-      UNAuthorizationOptions authOptions =
-          UNAuthorizationOptionAlert
-          | UNAuthorizationOptionSound
-          | UNAuthorizationOptionBadge;
-      [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:authOptions completionHandler:^(BOOL granted, NSError * _Nullable error) {
-          }];
-      #endif
+        // iOS 10 or later
+        #if defined(__IPHONE_10_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0
+        // For iOS 10 display notification (sent via APNS)
+        [UNUserNotificationCenter currentNotificationCenter].delegate = [FIRMessaging messaging].delegate;
+        UNAuthorizationOptions authOptions =
+            UNAuthorizationOptionAlert
+            | UNAuthorizationOptionSound
+            | UNAuthorizationOptionBadge;
+        [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:authOptions completionHandler:^(BOOL granted, NSError * _Nullable error) {
+            }];
+        #endif
     }
 
     [[UIApplication sharedApplication] registerForRemoteNotifications];
@@ -100,9 +100,18 @@
     self.backgroundNotificationCallbackId = command.callbackId;
 
     if (self.lastNotification) {
-        [self sendBackgroundNotification:self.lastNotification];
+        [self sendBackgroundNotification:self.lastNotification fetchCompletionHandler:nil];
 
         self.lastNotification = nil;
+    }
+}
+
+- (void)completeBackgroundMessage:(CDVInvokedUrlCommand *)command {
+    UIBackgroundFetchResult result = [[command argumentAtIndex:0] intValue];
+
+    if (self.lastCompletionHandler) {
+        self.lastCompletionHandler(result);
+        self.lastCompletionHandler = nil;
     }
 }
 
@@ -134,7 +143,9 @@
     }
 }
 
-- (void)sendBackgroundNotification:(NSDictionary *)userInfo {
+- (void)sendBackgroundNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+    self.lastCompletionHandler = completionHandler;
+
     if (self.backgroundNotificationCallbackId) {
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:userInfo];
         [pluginResult setKeepCallbackAsBool:YES];
