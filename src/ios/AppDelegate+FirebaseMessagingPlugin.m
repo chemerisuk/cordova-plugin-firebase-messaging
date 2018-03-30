@@ -24,7 +24,7 @@
     // [mutableUserInfo setValue:userInfo[@"aps"] forKey:@"notification"];
 
     FirebaseMessagingPlugin* fmPlugin = [self.viewController getCommandInstance:@"FirebaseMessaging"];
-    if (completionHandler) {
+    if (background) {
         [fmPlugin sendBackgroundNotification:mutableUserInfo fetchCompletionHandler:completionHandler];
     } else {
         [fmPlugin sendNotification:mutableUserInfo];
