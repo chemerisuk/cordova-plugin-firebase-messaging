@@ -23,9 +23,9 @@
     // [START register_for_notifications]
     if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_9_x_Max) {
         UIUserNotificationType allNotificationTypes =
-        (UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge);
+            (UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationActivationModeBackground);
         UIUserNotificationSettings *settings =
-        [UIUserNotificationSettings settingsForTypes:allNotificationTypes categories:nil];
+            [UIUserNotificationSettings settingsForTypes:allNotificationTypes categories:nil];
         [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
     } else {
         // iOS 10 or later
@@ -33,11 +33,9 @@
         // For iOS 10 display notification (sent via APNS)
         [UNUserNotificationCenter currentNotificationCenter].delegate = [FIRMessaging messaging].delegate;
         UNAuthorizationOptions authOptions =
-            UNAuthorizationOptionAlert
-            | UNAuthorizationOptionSound
-            | UNAuthorizationOptionBadge;
-        [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:authOptions completionHandler:^(BOOL granted, NSError * _Nullable error) {
-            }];
+            (UNAuthorizationOptionAlert | UNAuthorizationOptionSound | UNAuthorizationOptionBadge);
+        [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:authOptions
+                                                                            completionHandler:^(BOOL granted, NSError * _Nullable error) {}];
         #endif
     }
 
