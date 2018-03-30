@@ -45,9 +45,9 @@ module.exports = {
             exec(resolve, reject, PLUGIN_NAME, "getBadge", []);
         });
     },
-    requestPermission: function() {
+    requestPermission: function(options) {
         return new Promise(function(resolve, reject) {
-            exec(resolve, reject, PLUGIN_NAME, "requestPermission", []);
+            exec(resolve, reject, PLUGIN_NAME, "requestPermission", [options]);
         });
     }
 };

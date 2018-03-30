@@ -16,7 +16,7 @@
 
 @implementation AppDelegate (FirebaseMessagingPlugin)
 
-- (void)postNotification:(NSDictionary*)userInfo background:(BOOL)value fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+- (void)postNotification:(NSDictionary*)userInfo background:(BOOL)background fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
     // Print full message.
     NSLog(@"%@", userInfo);
 
@@ -74,10 +74,22 @@
        willPresentNotification:(UNNotification *)notification
          withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler {
     NSDictionary *userInfo = notification.request.content.userInfo;
+    FirebaseMessagingPlugin* fmPlugin = [self.viewController getCommandInstance:@"FirebaseMessaging"];
+    UNNotificationPresentationOptions options = UNNotificationPresentationOptionNone;
+
+    if (fmPlugin.notificationOptions[@"alwaysUpdateBadge"]) {
+        options += UNNotificationPresentationOptionBadge;
+    }
+    if (fmPlugin.notificationOptions[@"alwaysPlaySound"]) {
+        options += UNNotificationPresentationOptionSound;
+    }
+    if (fmPlugin.notificationOptions[@"alwaysShowAlert"]) {
+        options += UNNotificationPresentationOptionAlert;
+    }
 
     [self postNotification:userInfo background:NO fetchCompletionHandler:nil];
     // Change this to your preferred presentation option
-    completionHandler(UNNotificationPresentationOptionNone);
+    completionHandler(options);
 }
 
 // Handle notification messages after display notification is tapped by the user.

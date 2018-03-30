@@ -2,9 +2,7 @@
 #import <Cordova/CDV.h>
 #import "AppDelegate.h"
 
-@import FirebaseInstanceID;
-@import FirebaseMessaging;
-@import FirebaseAnalytics;
+@import Firebase;
 
 #if defined(__IPHONE_10_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0
 @import UserNotifications;
@@ -18,6 +16,7 @@
 @implementation FirebaseMessagingPlugin
 
 - (void)requestPermission:(CDVInvokedUrlCommand *)command {
+    self.notificationOptions = [command argumentAtIndex:0];
     self.registerCallbackId = command.callbackId;
     // Register for remote notifications. This shows a permission dialog on first run, to
     // show the dialog at a more appropriate time move this registration accordingly.
