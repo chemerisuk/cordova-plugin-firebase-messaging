@@ -22,7 +22,7 @@ For iOS APNS payload is stored in `aps` object. It's available when a message ar
 For Android GCM payload is stored in `gcm`. It's available ONLY when a message arrives in foreground. For a some reason Google applied this limitation into their APIs. Anyway I've created [an issue](https://github.com/chemerisuk/cordova-plugin-firebase-messaging/issues/2) for a future improvement.
 
 ### onMessage(_callback_)
-Called when a push message received in FOREGROUND.
+Called when a push message received while app is in foreground.
 ```js
 cordova.plugins.firebase.messaging.onMessage(function(payload) {
     console.log("New foreground FCM message: ", payload);
@@ -30,7 +30,7 @@ cordova.plugins.firebase.messaging.onMessage(function(payload) {
 ```
 
 ### onBackgroundMessage(_callback_)
-Called when a push message received in FOREGROUND.
+Called when a push message received while app is in background.
 ```js
 cordova.plugins.firebase.messaging.onBackgroundMessage(function(payload) {
     console.log("New background FCM message: ", payload);
