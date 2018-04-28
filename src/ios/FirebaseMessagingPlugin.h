@@ -23,6 +23,5 @@
 @property (nonatomic, copy) NSString *tokenRefreshCallbackId;
 @property (nonatomic, retain) NSDictionary* notificationOptions;
 @property (nonatomic, retain) NSDictionary* lastNotification;
-@property (nonatomic, retain) UIAlertController *lastAlert;
 
 @end
