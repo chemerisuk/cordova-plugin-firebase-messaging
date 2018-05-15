@@ -10,7 +10,6 @@
 - (void)unsubscribe:(CDVInvokedUrlCommand*)command;
 - (void)onMessage:(CDVInvokedUrlCommand*)command;
 - (void)onBackgroundMessage:(CDVInvokedUrlCommand*)command;
-- (void)completeBackgroundMessage:(CDVInvokedUrlCommand*)command;
 - (void)onTokenRefresh:(CDVInvokedUrlCommand*)command;
 - (void)registerNotifications:(NSError *)error;
 - (void)sendNotification:(NSDictionary*)userInfo;
