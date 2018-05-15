@@ -1,6 +1,6 @@
 #import "AppDelegate.h"
 
-@import FirebaseMessaging;
+@import Firebase;
 
 @interface AppDelegate (FirebaseMessagingPlugin) <FIRMessagingDelegate>
 
