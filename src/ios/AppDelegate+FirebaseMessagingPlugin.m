@@ -107,32 +107,21 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 #endif
 // [END ios_10_message_handling]
 
-// [START refresh_token]
-- (void)messaging:(nonnull FIRMessaging *)messaging didRefreshRegistrationToken:(nonnull NSString *)fcmToken {
-    // Note that this callback will be fired everytime a new token is generated, including the first
-    // time. So if you need to retrieve the token as soon as it is available this is where that
-    // should be done.
-    NSLog(@"FCM registration token: %@", fcmToken);
-
+- (void)messaging:(FIRMessaging *)messaging didReceiveRegistrationToken:(NSString *)fcmToken {
     FirebaseMessagingPlugin* fmPlugin = [self.viewController getCommandInstance:@"FirebaseMessaging"];
 
     [fmPlugin refreshToken:fcmToken];
 }
-// [END refresh_token]
 
-// [START ios_10_data_message]
 // Receive data messages on iOS 10+ directly from FCM (bypassing APNs) when the app is in the foreground.
 // To enable direct data messages, you can set [Messaging messaging].shouldEstablishDirectChannel to YES.
 - (void)messaging:(FIRMessaging *)messaging didReceiveMessage:(FIRMessagingRemoteMessage *)remoteMessage {
     NSDictionary *userInfo = remoteMessage.appData;
 
-    NSLog(@"Received data message: %@", userInfo);
-
     FirebaseMessagingPlugin* fmPlugin = [self.viewController getCommandInstance:@"FirebaseMessaging"];
 
     [fmPlugin sendNotification:userInfo];
 }
-// [END ios_10_data_message]
 
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
     FirebaseMessagingPlugin* fmPlugin = [self.viewController getCommandInstance:@"FirebaseMessaging"];
