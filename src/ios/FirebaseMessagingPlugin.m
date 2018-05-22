@@ -16,7 +16,6 @@
 @implementation FirebaseMessagingPlugin
 
 - (void)requestPermission:(CDVInvokedUrlCommand *)command {
-    self.notificationOptions = [command argumentAtIndex:0];
     self.registerCallbackId = command.callbackId;
     // Register for remote notifications. This shows a permission dialog on first run, to
     // show the dialog at a more appropriate time move this registration accordingly.

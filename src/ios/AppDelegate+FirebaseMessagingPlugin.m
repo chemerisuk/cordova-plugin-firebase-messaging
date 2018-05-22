@@ -79,16 +79,6 @@
     FirebaseMessagingPlugin* fmPlugin = [self.viewController getCommandInstance:@"FirebaseMessaging"];
     UNNotificationPresentationOptions options = UNNotificationPresentationOptionNone;
 
-    if (fmPlugin.notificationOptions[@"alwaysUpdateBadge"]) {
-        options += UNNotificationPresentationOptionBadge;
-    }
-    if (fmPlugin.notificationOptions[@"alwaysPlaySound"]) {
-        options += UNNotificationPresentationOptionSound;
-    }
-    if (fmPlugin.notificationOptions[@"alwaysShowAlert"]) {
-        options += UNNotificationPresentationOptionAlert;
-    }
-
     [self postNotification:userInfo background:NO];
     // Change this to your preferred presentation option
     completionHandler(options);

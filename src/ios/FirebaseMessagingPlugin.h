@@ -20,7 +20,6 @@
 @property (nonatomic, copy) NSString *notificationCallbackId;
 @property (nonatomic, copy) NSString *backgroundNotificationCallbackId;
 @property (nonatomic, copy) NSString *tokenRefreshCallbackId;
-@property (nonatomic, retain) NSDictionary* notificationOptions;
 @property (nonatomic, retain) NSDictionary* lastNotification;
 
 @end
