@@ -32,7 +32,7 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
     private CallbackContext instanceIdCallback;
     private CallbackContext foregroundCallback;
     private CallbackContext backgroundCallback;
-    private static Bundle lastBundle;
+    private static JSONObject lastBundle;
     private static FirebaseMessagingPlugin instance;
 
     @Override
@@ -41,8 +41,10 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
 
         Context context = cordova.getActivity().getApplicationContext();
         Bundle bundle = cordova.getActivity().getIntent().getExtras();
-        if (bundle != null && (bundle.containsKey("google.message_id") || bundle.containsKey("google.sent_time"))) {
-            lastBundle = bundle;
+        try {
+            lastBundle = getNotificationData(bundle);
+        } catch (JSONException e) {
+            Log.e(TAG, "pluginInitialize", e);
         }
         // cleanup badge value initially
         ShortcutBadger.applyCount(context, 0);
@@ -53,9 +55,9 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
         super.onNewIntent(intent);
 
         try {
-            Bundle extras = intent.getExtras();
-            if (extras != null) {
-                sendNotification(getNotification(extras), true);
+            JSONObject notificationData = getNotificationData(intent.getExtras());
+            if (notificationData != null) {
+                sendNotification(notificationData, true);
             }
         } catch (JSONException e) {
             Log.e(TAG, "onNewIntent", e);
@@ -94,11 +96,11 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
     }
 
     @CordovaMethod
-    private void onBackgroundMessage(CallbackContext callbackContext) throws JSONException {
+    private void onBackgroundMessage(CallbackContext callbackContext) {
         instance.backgroundCallback = callbackContext;
 
         if (lastBundle != null) {
-            sendNotification(getNotification(lastBundle), true);
+            sendNotification(lastBundle, true);
             lastBundle = null;
         }
     }
@@ -133,7 +135,7 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
         }
     }
 
-    public static void sendNotification(JSONObject notificationData, boolean background) throws JSONException {
+    public static void sendNotification(JSONObject notificationData, boolean background) {
         if (instance != null) {
             CallbackContext callback = background ? instance.backgroundCallback : instance.foregroundCallback;
             if (callback != null) {
@@ -152,7 +154,15 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
         }
     }
 
-    private static JSONObject getNotification(Bundle bundle) throws JSONException {
+    private static JSONObject getNotificationData(Bundle bundle) throws JSONException {
+        if (bundle == null) {
+            return null;
+        }
+
+        if (!bundle.containsKey("google.message_id") && !bundle.containsKey("google.sent_time")) {
+            return null;
+        }
+
         JSONObject notificationData = new JSONObject();
         Set<String> keys = bundle.keySet();
         for (String key : keys) {
