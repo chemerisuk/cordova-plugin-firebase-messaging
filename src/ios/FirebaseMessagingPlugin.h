@@ -1,7 +1,8 @@
 #import <Cordova/CDV.h>
 #import "AppDelegate.h"
+@import Firebase;
 
-@interface FirebaseMessagingPlugin : CDVPlugin
+@interface FirebaseMessagingPlugin : CDVPlugin<FIRMessagingDelegate>
 - (void)requestPermission:(CDVInvokedUrlCommand*)command;
 - (void)getToken:(CDVInvokedUrlCommand*)command;
 - (void)setBadge:(CDVInvokedUrlCommand*)command;

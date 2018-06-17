@@ -31,26 +31,6 @@
     }
 }
 
-+ (void)load {
-    Method original = class_getInstanceMethod(self, @selector(application:didFinishLaunchingWithOptions:));
-    Method swizzled = class_getInstanceMethod(self, @selector(application:swizzledDidFinishLaunchingWithOptions:));
-    method_exchangeImplementations(original, swizzled);
-}
-
-- (BOOL)application:(UIApplication *)application swizzledDidFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // [START set_messaging_delegate]
-    [FIRMessaging messaging].delegate = self;
-    // [END set_messaging_delegate]
-
-    NSDictionary *userInfo = launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey];
-
-    if (userInfo) {
-        [self postNotification:userInfo background:YES];
-    }
-
-    return [self application:application swizzledDidFinishLaunchingWithOptions:launchOptions];
-}
-
 // [START receive_message]
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
     BOOL value = application.applicationState != UIApplicationStateActive;
@@ -96,22 +76,6 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 }
 #endif
 // [END ios_10_message_handling]
-
-- (void)messaging:(FIRMessaging *)messaging didReceiveRegistrationToken:(NSString *)fcmToken {
-    FirebaseMessagingPlugin* fmPlugin = [self.viewController getCommandInstance:@"FirebaseMessaging"];
-
-    [fmPlugin refreshToken:fcmToken];
-}
-
-// Receive data messages on iOS 10+ directly from FCM (bypassing APNs) when the app is in the foreground.
-// To enable direct data messages, you can set [Messaging messaging].shouldEstablishDirectChannel to YES.
-- (void)messaging:(FIRMessaging *)messaging didReceiveMessage:(FIRMessagingRemoteMessage *)remoteMessage {
-    NSDictionary *userInfo = remoteMessage.appData;
-
-    FirebaseMessagingPlugin* fmPlugin = [self.viewController getCommandInstance:@"FirebaseMessaging"];
-
-    [fmPlugin sendNotification:userInfo];
-}
 
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
     FirebaseMessagingPlugin* fmPlugin = [self.viewController getCommandInstance:@"FirebaseMessaging"];

@@ -2,8 +2,6 @@
 #import <Cordova/CDV.h>
 #import "AppDelegate.h"
 
-@import Firebase;
-
 #if defined(__IPHONE_10_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0
 @import UserNotifications;
 #endif
@@ -14,6 +12,25 @@
 #endif
 
 @implementation FirebaseMessagingPlugin
+
+- (void)pluginInitialize {
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(finishLaunching:) name:UIApplicationDidFinishLaunchingNotification object:nil];
+}
+
+- (void)finishLaunching:(NSNotification *)notification {
+    [FIRMessaging messaging].delegate = self;
+
+    if (notification) {
+        NSDictionary *launchOptions = [notification userInfo];
+        if (launchOptions) {
+            NSDictionary *userInfo = launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey];
+            if (userInfo) {
+                NSDictionary *mutableUserInfo = [userInfo mutableCopy];
+                [self sendBackgroundNotification:mutableUserInfo];
+            }
+        }
+    }
+}
 
 - (void)requestPermission:(CDVInvokedUrlCommand *)command {
     self.registerCallbackId = command.callbackId;
@@ -145,6 +162,12 @@
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:self.tokenRefreshCallbackId];
     }
+}
+
+# pragma mark - FIRMessagingDelegate
+
+- (void)messaging:(FIRMessaging *)messaging didReceiveRegistrationToken:(NSString *)fcmToken {
+    [self refreshToken:fcmToken];
 }
 
 @end

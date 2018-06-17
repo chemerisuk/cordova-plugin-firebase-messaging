@@ -1,8 +1,6 @@
 #import "AppDelegate.h"
 
-@import Firebase;
-
-@interface AppDelegate (FirebaseMessagingPlugin) <FIRMessagingDelegate>
+@interface AppDelegate (FirebaseMessagingPlugin)
 
 - (void)postNotification:(NSDictionary*)userInfo background:(BOOL)value;
 
