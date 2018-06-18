@@ -15,7 +15,6 @@
 - (void)registerNotifications:(NSError *)error;
 - (void)sendNotification:(NSDictionary*)userInfo;
 - (void)sendBackgroundNotification:(NSDictionary*)userInfo;
-- (void)refreshToken:(NSString*)token;
 
 @property (nonatomic, copy) NSString *registerCallbackId;
 @property (nonatomic, copy) NSString *notificationCallbackId;
