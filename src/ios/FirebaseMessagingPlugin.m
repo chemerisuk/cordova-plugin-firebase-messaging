@@ -73,16 +73,22 @@
 }
 
 - (void)getToken:(CDVInvokedUrlCommand *)command {
-    [[FIRInstanceID instanceID] instanceIDWithHandler:^(FIRInstanceIDResult * _Nullable result,
-                                                        NSError * _Nullable error) {
-        CDVPluginResult *pluginResult;
-        if (error != nil) {
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error.localizedDescription];
-        } else {
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:result.token];
-        }
+    NSString *fcmToken = [FIRMessaging messaging].FCMToken;
+    if (fcmToken) {
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:fcmToken];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    }];
+    } else {
+        [[FIRInstanceID instanceID] instanceIDWithHandler:^(FIRInstanceIDResult * _Nullable result,
+                                                            NSError * _Nullable error) {
+            CDVPluginResult *pluginResult;
+            if (error) {
+                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error.localizedDescription];
+            } else {
+                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:result.token];
+            }
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        }];
+    }
 }
 
 - (void)setBadge:(CDVInvokedUrlCommand *)command {
