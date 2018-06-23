@@ -89,6 +89,38 @@ Sets current badge number (if supported).
 cordova.plugins.firebase.messaging.setBadge(value);
 ```
 
+## Set custom default notification channel (Android only)
+If incoming FCM messages do not specify an Android notification channel, you can indicate to FCM what channel should be used as the default by adding a metadata element to your application manifest. In the metadata element specify the ID of the channel that should be used by default by FCM.
+```
+<config-file parent="/manifest/application" target="app/src/main/AndroidManifest.xml">
+    <meta-data
+        android:name="com.google.firebase.messaging.default_notification_channel_id"
+        android:value="default_channel_id"/>
+</config-file>
+```
+
+Note: You are still required to create a notification channel in code with an ID that matches the one defined in the manifest. See the [Android docs](https://developer.android.com/guide/topics/ui/notifiers/notifications#ManageChannels) for more.
+
+## Set custom default notification icon (Android only)
+Setting a custom default icon allows you to specify what icon is used for notification messages if no icon is set in the notification payload. Also use the custom default icon to set the icon used by notification messages sent from the Firebase console. If no custom default icon is set and no icon is set in the notification payload, the application icon (rendered in white) is used.
+```
+<config-file parent="/manifest/application" target="app/src/main/AndroidManifest.xml">
+    <meta-data
+        android:name="com.google.firebase.messaging.default_notification_icon"
+        android:resource="@drawable/my_custom_icon_id"/>
+</config-file>
+```
+
+## Set custom default notification color (Android only)
+You can also define what color is used with your notification. Different android versions use this settings in different ways: Android < N use this as background color for the icon. Android >= N use this to color the icon and the app name.
+```
+<config-file parent="/manifest/application" target="app/src/main/AndroidManifest.xml">
+    <meta-data
+        android:name="com.google.firebase.messaging.default_notification_color"
+        android:resource="@drawable/my_custom_color"/>
+</config-file>
+```
+
 [npm-url]: https://www.npmjs.com/package/cordova-plugin-firebase-messaging
 [npm-version]: https://img.shields.io/npm/v/cordova-plugin-firebase-messaging.svg
 [npm-downloads]: https://img.shields.io/npm/dm/cordova-plugin-firebase-messaging.svg
