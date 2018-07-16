@@ -49,7 +49,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
     </platform>
 
     <platform name="android">
-        <preference name="FIREBASE_MESSAGING_VERSION" default="17.0.+"/>
+        <preference name="FIREBASE_MESSAGING_VERSION" default="17.1.+"/>
         <preference name="ANDROID_SUPPORT_VERSION" default="27.+"/>
 
         <config-file target="res/xml/config.xml" parent="/*">
@@ -65,11 +65,6 @@ xmlns:android="http://schemas.android.com/apk/res/android"
                     <action android:name="com.google.firebase.MESSAGING_EVENT"/>
                 </intent-filter>
             </service>
-            <service android:name="by.chemerisuk.cordova.firebase.FirebaseInstanceIDService">
-                <intent-filter>
-                    <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
-                </intent-filter>
-            </service>
         </config-file>
 
         <dependency id="cordova-support-android-plugin" version="~1.0.0"/>
@@ -81,8 +76,6 @@ xmlns:android="http://schemas.android.com/apk/res/android"
 
         <source-file src="src/android/FirebaseMessagingPlugin.java"
             target-dir="src/by/chemerisuk/cordova/firebase/" />
-        <source-file src="src/android/FirebaseInstanceIDService.java"
-            target-dir="src/by/chemerisuk/cordova/firebase" />
         <source-file src="src/android/FirebaseMessagingPluginService.java"
             target-dir="src/by/chemerisuk/cordova/firebase" />
     </platform>
