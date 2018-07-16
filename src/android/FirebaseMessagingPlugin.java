@@ -10,9 +10,12 @@ import android.support.v4.app.NotificationManagerCompat;
 import by.chemerisuk.cordova.support.CordovaMethod;
 import by.chemerisuk.cordova.support.ReflectiveCordovaPlugin;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CallbackContext;
@@ -79,10 +82,18 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
     }
 
     @CordovaMethod
-    private void getToken(CallbackContext callbackContext) {
-        String token = FirebaseInstanceId.getInstance().getToken();
-
-        callbackContext.success(token);
+    private void getToken(final CallbackContext callbackContext) {
+        FirebaseInstanceId.getInstance().getInstanceId()
+            .addOnCompleteListener(cordova.getActivity(), new OnCompleteListener<InstanceIdResult>() {
+                @Override
+                public void onComplete(Task<InstanceIdResult> task) {
+                    if (task.isSuccessful()) {
+                        callbackContext.success(task.getResult().getToken());
+                    } else {
+                        callbackContext.error(task.getException().getMessage());
+                    }
+                }
+            });
     }
 
     @CordovaMethod
@@ -147,10 +158,12 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
     }
 
     public static void sendInstanceId(String instanceId) {
-        if (instance != null && instance.instanceIdCallback != null && instanceId != null) {
-            PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, instanceId);
-            pluginResult.setKeepCallback(true);
-            instance.instanceIdCallback.sendPluginResult(pluginResult);
+        if (instance != null) {
+            if (instance.instanceIdCallback != null && instanceId != null) {
+                PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, instanceId);
+                pluginResult.setKeepCallback(true);
+                instance.instanceIdCallback.sendPluginResult(pluginResult);
+            }
         }
     }
 
