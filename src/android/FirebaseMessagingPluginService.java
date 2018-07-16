@@ -18,12 +18,12 @@ public class FirebaseMessagingPluginService extends FirebaseMessagingService {
     // public static final String ACTION_FCM_DATA = "by.chemerisuk.cordova.firebase.FCM_DATA_EVENT";
     // public static final String KEY_FCM_DATA = "RemoteMessageData";
 
-    private LocalBroadcastManager broadcastManager;
+    // private LocalBroadcastManager broadcastManager;
 
-    @Override
-    public void onCreate() {
-        this.broadcastManager = LocalBroadcastManager.getInstance(this);
-    }
+    // @Override
+    // public void onCreate() {
+    //     this.broadcastManager = LocalBroadcastManager.getInstance(this);
+    // }
 
     @Override
     public void onNewToken(String token) {
