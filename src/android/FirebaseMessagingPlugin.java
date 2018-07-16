@@ -68,17 +68,33 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
     }
 
     @CordovaMethod
-    private void subscribe(String topic, CallbackContext callbackContext) {
-        FirebaseMessaging.getInstance().subscribeToTopic(topic);
-
-        callbackContext.success();
+    private void subscribe(String topic, final CallbackContext callbackContext) {
+        FirebaseMessaging.getInstance().subscribeToTopic(topic)
+            .addOnCompleteListener(cordova.getActivity(), new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        callbackContext.success();
+                    } else {
+                        callbackContext.error(task.getException().getMessage());
+                    }
+                }
+            });
     }
 
     @CordovaMethod
-    private void unsubscribe(String topic, CallbackContext callbackContext) {
-        FirebaseMessaging.getInstance().unsubscribeFromTopic(topic);
-
-        callbackContext.success();
+    private void unsubscribe(String topic, final CallbackContext callbackContext) {
+        FirebaseMessaging.getInstance().unsubscribeFromTopic(topic)
+            .addOnCompleteListener(cordova.getActivity(), new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        callbackContext.success();
+                    } else {
+                        callbackContext.error(task.getException().getMessage());
+                    }
+                }
+            });
     }
 
     @CordovaMethod
