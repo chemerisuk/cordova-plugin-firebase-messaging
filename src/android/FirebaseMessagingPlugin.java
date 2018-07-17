@@ -32,7 +32,8 @@ import me.leolin.shortcutbadger.ShortcutBadger;
 public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
     private static final String TAG = "FirebaseMessagingPlugin";
 
-    private CallbackContext instanceIdCallback;
+    private boolean isBackground = false;
+    private CallbackContext tokenRefreshCallback;
     private CallbackContext foregroundCallback;
     private CallbackContext backgroundCallback;
     private static JSONObject lastBundle;
@@ -55,12 +56,10 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
 
     @Override
     public void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-
         try {
             JSONObject notificationData = getNotificationData(intent.getExtras());
             if (notificationData != null) {
-                sendNotification(notificationData, true);
+                sendNotification(notificationData, instance.backgroundCallback);
             }
         } catch (JSONException e) {
             Log.e(TAG, "onNewIntent", e);
@@ -114,7 +113,7 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
 
     @CordovaMethod
     private void onTokenRefresh(CallbackContext callbackContext) {
-        instance.instanceIdCallback = callbackContext;
+        instance.tokenRefreshCallback = callbackContext;
     }
 
     @CordovaMethod
@@ -127,7 +126,7 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
         instance.backgroundCallback = callbackContext;
 
         if (lastBundle != null) {
-            sendNotification(lastBundle, true);
+            sendNotification(lastBundle, callbackContext);
             lastBundle = null;
         }
     }
@@ -162,28 +161,64 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
         }
     }
 
-    public static void sendNotification(JSONObject notificationData, boolean background) {
-        if (instance != null) {
-            CallbackContext callback = background ? instance.backgroundCallback : instance.foregroundCallback;
-            if (callback != null) {
-                PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, notificationData);
-                pluginResult.setKeepCallback(true);
-                callback.sendPluginResult(pluginResult);
+    @Override
+    public void onPause(boolean multitasking) {
+        this.isBackground = true;
+    }
+
+    @Override
+    public void onResume(boolean multitasking) {
+        this.isBackground = false;
+    }
+
+    static void sendNotification(RemoteMessage remoteMessage) {
+        JSONObject notificationData = new JSONObject(remoteMessage.getData());
+        RemoteMessage.Notification notification = remoteMessage.getNotification();
+        try {
+            if (notification != null) {
+                JSONObject jsonNotification = new JSONObject();
+                jsonNotification.put("body", notification.getBody());
+                jsonNotification.put("title", notification.getTitle());
+                jsonNotification.put("sound", notification.getSound());
+                jsonNotification.put("icon", notification.getIcon());
+                jsonNotification.put("tag", notification.getTag());
+                jsonNotification.put("color", notification.getColor());
+                jsonNotification.put("clickAction", notification.getClickAction());
+
+                notificationData.put("gcm", jsonNotification);
             }
+            notificationData.put("google.message_id", remoteMessage.getMessageId());
+            notificationData.put("google.sent_time", remoteMessage.getSentTime());
+
+            if (instance != null) {
+                CallbackContext callbackContext = instance.isBackground ?
+                    instance.backgroundCallback : instance.foregroundCallback;
+                instance.sendNotification(notificationData, callbackContext);
+            }
+        } catch (JSONException e) {
+            Log.e(TAG, "sendNotification", e);
         }
     }
 
-    public static void sendInstanceId(String instanceId) {
+    static void sendInstanceId(String instanceId) {
         if (instance != null) {
-            if (instance.instanceIdCallback != null && instanceId != null) {
+            if (instance.tokenRefreshCallback != null && instanceId != null) {
                 PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, instanceId);
                 pluginResult.setKeepCallback(true);
-                instance.instanceIdCallback.sendPluginResult(pluginResult);
+                instance.tokenRefreshCallback.sendPluginResult(pluginResult);
             }
         }
     }
 
-    private static JSONObject getNotificationData(Bundle bundle) throws JSONException {
+    private void sendNotification(JSONObject notificationData, CallbackContext callbackContext) {
+        if (callbackContext != null) {
+            PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, notificationData);
+            pluginResult.setKeepCallback(true);
+            callbackContext.sendPluginResult(pluginResult);
+        }
+    }
+
+    private JSONObject getNotificationData(Bundle bundle) throws JSONException {
         if (bundle == null) {
             return null;
         }
