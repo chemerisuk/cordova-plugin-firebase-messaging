@@ -32,38 +32,22 @@ import me.leolin.shortcutbadger.ShortcutBadger;
 public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
     private static final String TAG = "FirebaseMessagingPlugin";
 
+    private JSONObject lastBundle;
     private boolean isBackground = false;
     private CallbackContext tokenRefreshCallback;
     private CallbackContext foregroundCallback;
     private CallbackContext backgroundCallback;
-    private static JSONObject lastBundle;
     private static FirebaseMessagingPlugin instance;
 
     @Override
     protected void pluginInitialize() {
         FirebaseMessagingPlugin.instance = this;
 
+        lastBundle = getNotificationData(cordova.getActivity().getIntent());
+
         Context context = cordova.getActivity().getApplicationContext();
-        Bundle bundle = cordova.getActivity().getIntent().getExtras();
-        try {
-            lastBundle = getNotificationData(bundle);
-        } catch (JSONException e) {
-            Log.e(TAG, "pluginInitialize", e);
-        }
         // cleanup badge value initially
         ShortcutBadger.applyCount(context, 0);
-    }
-
-    @Override
-    public void onNewIntent(Intent intent) {
-        try {
-            JSONObject notificationData = getNotificationData(intent.getExtras());
-            if (notificationData != null) {
-                sendNotification(notificationData, instance.backgroundCallback);
-            }
-        } catch (JSONException e) {
-            Log.e(TAG, "onNewIntent", e);
-        }
     }
 
     @CordovaMethod
@@ -147,8 +131,7 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
     private void getBadge(CallbackContext callbackContext) {
         Context context = cordova.getActivity();
         SharedPreferences settings = context.getSharedPreferences("badge", Context.MODE_PRIVATE);
-        int number = settings.getInt("badge", 0);
-        callbackContext.success(number);
+        callbackContext.success(settings.getInt("badge", 0));
     }
 
     @CordovaMethod
@@ -158,6 +141,14 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
             callbackContext.success();
         } else {
             callbackContext.error("Push notifications are disabled");
+        }
+    }
+
+    @Override
+    public void onNewIntent(Intent intent) {
+        JSONObject notificationData = getNotificationData(intent);
+        if (instance != null && notificationData != null) {
+            sendNotification(notificationData, instance.backgroundCallback);
         }
     }
 
@@ -218,7 +209,9 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
         }
     }
 
-    private JSONObject getNotificationData(Bundle bundle) throws JSONException {
+    private JSONObject getNotificationData(Intent intent) {
+        Bundle bundle = intent.getExtras();
+
         if (bundle == null) {
             return null;
         }
@@ -227,11 +220,16 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
             return null;
         }
 
-        JSONObject notificationData = new JSONObject();
-        Set<String> keys = bundle.keySet();
-        for (String key : keys) {
-            notificationData.put(key, bundle.get(key));
+        try {
+            JSONObject notificationData = new JSONObject();
+            Set<String> keys = bundle.keySet();
+            for (String key : keys) {
+                notificationData.put(key, bundle.get(key));
+            }
+            return notificationData;
+        } catch (JSONException e) {
+            Log.e(TAG, "getNotificationData", e);
+            return null;
         }
-        return notificationData;
     }
 }
