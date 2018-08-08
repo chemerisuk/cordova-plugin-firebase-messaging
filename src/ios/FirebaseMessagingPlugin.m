@@ -20,7 +20,13 @@
 @implementation FirebaseMessagingPlugin
 
 - (void)pluginInitialize {
+    NSLog(@"Starting Firebase Messaging plugin");
+
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(finishLaunching:) name:UIApplicationDidFinishLaunchingNotification object:nil];
+
+    if(![FIRApp defaultApp]) {
+        [FIRApp configure];
+    }
 }
 
 - (void)finishLaunching:(NSNotification *)notification {
