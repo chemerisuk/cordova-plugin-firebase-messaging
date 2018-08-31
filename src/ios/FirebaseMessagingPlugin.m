@@ -114,7 +114,7 @@
 }
 
 - (void)subscribe:(CDVInvokedUrlCommand *)command {
-    NSString* topic = [NSString stringWithFormat:@"/topics/%@", [command.arguments objectAtIndex:0]];
+    NSString* topic = [NSString stringWithFormat:@"%@", [command.arguments objectAtIndex:0]];
 
     [[FIRMessaging messaging] subscribeToTopic:topic
                                     completion:^(NSError * _Nullable error) {
@@ -129,7 +129,7 @@
 }
 
 - (void)unsubscribe:(CDVInvokedUrlCommand *)command {
-    NSString* topic = [NSString stringWithFormat:@"/topics/%@", [command.arguments objectAtIndex:0]];
+    NSString* topic = [NSString stringWithFormat:@"%@", [command.arguments objectAtIndex:0]];
 
     [[FIRMessaging messaging] unsubscribeFromTopic:topic
                                         completion:^(NSError * _Nullable error) {
