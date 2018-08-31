@@ -78,6 +78,18 @@
     [[UIApplication sharedApplication] registerForRemoteNotifications];
 }
 
+- (void)revokeToken:(CDVInvokedUrlCommand *)command {
+    [[FIRInstanceID instanceID] deleteIDWithHandler:^(NSError *  _Nullable error) {
+        CDVPluginResult *pluginResult;
+        if (error) {
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error.localizedDescription];
+        } else {
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        }
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }];
+}
+
 - (void)getToken:(CDVInvokedUrlCommand *)command {
     NSString *fcmToken = [FIRMessaging messaging].FCMToken;
     if (fcmToken) {
