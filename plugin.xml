@@ -50,7 +50,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
     </platform>
 
     <platform name="android">
-        <preference name="FIREBASE_MESSAGING_VERSION" default="17.1.+"/>
+        <preference name="FIREBASE_MESSAGING_VERSION" default="17.3.+"/>
         <preference name="ANDROID_SUPPORT_VERSION" default="27.+"/>
 
         <config-file target="res/xml/config.xml" parent="/*">
