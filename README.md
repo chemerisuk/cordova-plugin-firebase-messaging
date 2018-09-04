@@ -53,6 +53,15 @@ cordova.plugins.firebase.messaging.getToken().then(function(token) {
 });
 ```
 
+### revokeToken
+Delete the Instance ID (Token) and the data associated with it.
+Call getToken to generate a new one.
+```js
+cordova.plugins.firebase.messaging.revokeToken().then(function() {
+    console.log("Token revoked successfully");
+});
+```
+
 ### onTokenRefresh(_callback_)
 Triggers every time when FCM token updated. You should usually call `getToken` to get an updated token and send it to server.
 ```js

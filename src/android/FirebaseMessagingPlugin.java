@@ -81,6 +81,21 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
     }
 
     @CordovaMethod
+    private void revokeToken(final CallbackContext callbackContext) {
+        FirebaseInstanceId.getInstance().deleteInstanceId()
+            .addOnCompleteListener(cordova.getActivity(), new OnCompleteListener<InstanceIdResult>() {
+                @Override
+                public void onComplete(Task<InstanceIdResult> task) {
+                    if (task.isSuccessful()) {
+                        callbackContext.success();
+                    } else {
+                        callbackContext.error(task.getException().getMessage());
+                    }
+                }
+            });
+    }
+
+    @CordovaMethod
     private void getToken(final CallbackContext callbackContext) {
         FirebaseInstanceId.getInstance().getInstanceId()
             .addOnCompleteListener(cordova.getActivity(), new OnCompleteListener<InstanceIdResult>() {
