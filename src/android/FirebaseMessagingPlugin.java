@@ -25,6 +25,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.Set;
 import me.leolin.shortcutbadger.ShortcutBadger;
 
@@ -81,18 +82,10 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
     }
 
     @CordovaMethod
-    private void revokeToken(final CallbackContext callbackContext) {
-        FirebaseInstanceId.getInstance().deleteInstanceId()
-            .addOnCompleteListener(cordova.getActivity(), new OnCompleteListener<InstanceIdResult>() {
-                @Override
-                public void onComplete(Task<InstanceIdResult> task) {
-                    if (task.isSuccessful()) {
-                        callbackContext.success();
-                    } else {
-                        callbackContext.error(task.getException().getMessage());
-                    }
-                }
-            });
+    private void revokeToken(CallbackContext callbackContext) throws IOException {
+        FirebaseInstanceId.getInstance().deleteInstanceId();
+
+        callbackContext.success();
     }
 
     @CordovaMethod
