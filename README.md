@@ -5,7 +5,7 @@
 
     cordova plugin add cordova-plugin-firebase-messaging --save
 
-Use variables `FIREBASE_MESSAGING_VERSION` and `ANDROID_SUPPORT_VERSION` to override dependency versions on Android.
+Use variables `FIREBASE_CORE_VERSION`, `FIREBASE_MESSAGING_VERSION` and `ANDROID_SUPPORT_VERSION` to override dependency versions on Android.
 
 Plugin depends on [cordova-support-google-services](https://github.com/chemerisuk/cordova-support-google-services) for setting up google services properly. Please read the [README](https://github.com/chemerisuk/cordova-support-google-services/blob/master/README.md) carefully in order to avoid common issues with a project configuration.
 
@@ -46,7 +46,7 @@ cordova.plugins.firebase.messaging.requestPermission().then(function(token) {
 ```
 
 ### getToken
-Returns a promise that fulfills with the current FCM token
+Returns a promise that fulfills with the current FCM token.
 ```js
 cordova.plugins.firebase.messaging.getToken().then(function(token) {
     console.log("Got device token: ", token);
@@ -73,13 +73,13 @@ cordova.plugins.firebase.messaging.onTokenRefresh(function() {
 Use this callback to get initial token and to refresh stored value in future.
 
 ### subscribe(_topic_)
-Subscribe to topic in background.
+Subscribe to a topic in background.
 ```js
 cordova.plugins.firebase.messaging.subscribe("New Topic");
 ```
 
 ### unsubscribe(_topic_)
-Unsubscribe from topic in background.
+Unsubscribe from a topic in background.
 ```js
 cordova.plugins.firebase.messaging.unsubscribe("New Topic");
 ```
