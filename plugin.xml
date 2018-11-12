@@ -50,6 +50,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
     </platform>
 
     <platform name="android">
+        <preference name="FIREBASE_CORE_VERSION" default="16.0.+"/>
         <preference name="FIREBASE_MESSAGING_VERSION" default="17.3.+"/>
         <preference name="ANDROID_SUPPORT_VERSION" default="27.+"/>
 
@@ -71,6 +72,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
         <dependency id="cordova-support-android-plugin" version="~1.0.0"/>
         <dependency id="cordova-support-google-services" version="~1.2.0"/>
 
+        <framework src="com.google.firebase:firebase-core:$FIREBASE_CORE_VERSION" />
         <framework src="com.google.firebase:firebase-messaging:$FIREBASE_MESSAGING_VERSION" />
         <framework src="com.android.support:support-compat:$ANDROID_SUPPORT_VERSION" />
         <framework src="me.leolin:ShortcutBadger:1.1.17@aar"/>
