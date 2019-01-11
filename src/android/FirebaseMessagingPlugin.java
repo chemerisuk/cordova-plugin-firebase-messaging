@@ -24,8 +24,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import me.leolin.shortcutbadger.ShortcutBadger;
+import org.json.JSONArray;
 
 
 public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
@@ -150,6 +154,34 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
         }
     }
 
+    @CordovaMethod
+    private void send(String senderId, String id, JSONObject data, CallbackContext callbackContext) {
+        FirebaseMessaging fm = FirebaseMessaging.getInstance();
+        RemoteMessage.Builder messageBuilder = new RemoteMessage.Builder(senderId + "@gcm.googleapis.com")
+            .setMessageId(id);
+        try {
+            for (Map.Entry<String, String> entry : toMap(data).entrySet()) {
+                messageBuilder.addData(entry.getKey(), entry.getValue());
+            }
+            fm.send(messageBuilder.build());
+        } catch (JSONException e) {
+             Log.e(TAG, "sendNotification", e);
+             callbackContext.error("Message is not sent");
+        }
+            
+    }
+    
+    public static Map<String, String> toMap(JSONObject jsonobj)  throws JSONException {
+        Map<String, String> map = new HashMap<String, String>();
+        Iterator<String> keys = jsonobj.keys();
+        while(keys.hasNext()) {
+            String key = keys.next();
+            String value = jsonobj.get(key).toString();
+            map.put(key, value);
+        }   return map;
+    }
+    
+    
     @Override
     public void onNewIntent(Intent intent) {
         JSONObject notificationData = getNotificationData(intent);
