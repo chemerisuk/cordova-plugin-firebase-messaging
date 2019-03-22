@@ -182,7 +182,7 @@
             NSData* deviceToken = [FIRMessaging messaging].APNSToken;
 
             if (deviceToken == nil) {
-                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Could not retrieve APNS token"];
+                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: NULL];
             } else {
                 pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArrayBuffer:deviceToken];
             }
