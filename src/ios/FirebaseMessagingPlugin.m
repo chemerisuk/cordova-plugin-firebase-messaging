@@ -179,12 +179,11 @@
         if (error) {
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error.localizedDescription];
         } else {
-            NSData* deviceToken = [FIRMessaging messaging].APNSToken;
-
-            if (deviceToken == nil) {
-                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: NULL];
+            NSData* apnsToken = [FIRMessaging messaging].APNSToken;
+            if (apnsToken) {
+                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArrayBuffer:apnsToken];
             } else {
-                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArrayBuffer:deviceToken];
+                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:nil];
             }
         }
         [self.commandDelegate sendPluginResult:pluginResult callbackId:self.registerCallbackId];
