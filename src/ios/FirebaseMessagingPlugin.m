@@ -2,21 +2,6 @@
 #import <Cordova/CDV.h>
 #import "AppDelegate.h"
 
-#if defined(__IPHONE_10_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0
-@import UserNotifications;
-
-// Implement UNUserNotificationCenterDelegate to receive display notification via APNS for devices
-// running iOS 10 and above. Implement FIRMessagingDelegate to receive data message via FCM for
-// devices running iOS 10 and above.
-@interface FirebaseMessagingPlugin () <FIRMessagingDelegate, UNUserNotificationCenterDelegate>
-@end
-#endif
-
-// Copied from Apple's header in case it is missing in some cases (e.g. pre-Xcode 8 builds).
-#ifndef NSFoundationVersionNumber_iOS_9_x_Max
-#define NSFoundationVersionNumber_iOS_9_x_Max 1299
-#endif
-
 @implementation FirebaseMessagingPlugin
 
 - (void)pluginInitialize {
@@ -31,10 +16,7 @@
 
 - (void)finishLaunching:(NSNotification *)notification {
     [FIRMessaging messaging].delegate = self;
-    // iOS 10 or later
-#if defined(__IPHONE_10_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0
     [UNUserNotificationCenter currentNotificationCenter].delegate = self;
-#endif
 
     if (notification) {
         NSDictionary *launchOptions = [notification userInfo];
@@ -50,30 +32,17 @@
 - (void)requestPermission:(CDVInvokedUrlCommand *)command {
     self.registerCallbackId = command.callbackId;
 
-    if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_9_x_Max) {
-        UIUserNotificationType allNotificationTypes =
-        (UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationActivationModeBackground);
-        UIUserNotificationSettings *settings =
-        [UIUserNotificationSettings settingsForTypes:allNotificationTypes categories:nil];
-        [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
-    } else {
-        // iOS 10 or later
-#if defined(__IPHONE_10_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0
-        UNAuthorizationOptions authOptions =
-        (UNAuthorizationOptionAlert | UNAuthorizationOptionSound | UNAuthorizationOptionBadge);
-        [[UNUserNotificationCenter currentNotificationCenter]
-         requestAuthorizationWithOptions:authOptions
-         completionHandler:^(BOOL granted, NSError * _Nullable error) {
-             // if (error) {
-             //     [self registerNotifications:error];
-             // } else if (granted) {
-             //     [[UIApplication sharedApplication] registerForRemoteNotifications];
-             // } else {
-             //     // TODO?
-             // }
-         }];
-#endif
-    }
+    UNAuthorizationOptions authOptions = (UNAuthorizationOptionAlert | UNAuthorizationOptionSound | UNAuthorizationOptionBadge);
+    [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:authOptions
+        completionHandler:^(BOOL granted, NSError * _Nullable error) {
+         // if (error) {
+         //     [self registerNotifications:error];
+         // } else if (granted) {
+         //     [[UIApplication sharedApplication] registerForRemoteNotifications];
+         // } else {
+         //     // TODO?
+         // }
+     }];
 
     [[UIApplication sharedApplication] registerForRemoteNotifications];
 }
@@ -209,18 +178,15 @@
 }
 
 # pragma mark - UNUserNotificationCenterDelegate
-// Receive displayed notifications for iOS 10 devices.
-#if defined(__IPHONE_10_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0
 // Handle incoming notification messages while app is in the foreground.
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
        willPresentNotification:(UNNotification *)notification
          withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler {
     NSDictionary *userInfo = notification.request.content.userInfo;
-    UNNotificationPresentationOptions options = UNNotificationPresentationOptionNone;
 
     [self sendNotification:userInfo];
     // Change this to your preferred presentation option
-    completionHandler(options);
+    completionHandler(UNNotificationPresentationOptionNone);
 }
 
 // Handle notification messages after display notification is tapped by the user.
@@ -232,7 +198,6 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 
     completionHandler();
 }
-#endif
 
 # pragma mark - FIRMessagingDelegate
 

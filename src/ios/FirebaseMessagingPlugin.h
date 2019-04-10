@@ -1,8 +1,10 @@
 #import <Cordova/CDV.h>
 #import "AppDelegate.h"
+
+@import UserNotifications;
 @import Firebase;
 
-@interface FirebaseMessagingPlugin : CDVPlugin<FIRMessagingDelegate>
+@interface FirebaseMessagingPlugin : CDVPlugin<FIRMessagingDelegate, UNUserNotificationCenterDelegate>
 - (void)requestPermission:(CDVInvokedUrlCommand*)command;
 - (void)revokeToken:(CDVInvokedUrlCommand*)command;
 - (void)getToken:(CDVInvokedUrlCommand*)command;
