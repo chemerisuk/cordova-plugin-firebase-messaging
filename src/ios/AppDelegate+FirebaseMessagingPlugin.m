@@ -4,6 +4,25 @@
 
 @implementation AppDelegate (FirebaseMessagingPlugin)
 
+- (FirebaseMessagingPlugin*) getPluginInstance {
+    return [self.viewController getCommandInstance:@"FirebaseMessaging"];
+}
+
+- (void)postNotification:(NSDictionary*)userInfo background:(BOOL)background {
+    // Print full message.
+    NSLog(@"%@", userInfo);
+
+    NSDictionary *mutableUserInfo = [userInfo mutableCopy];
+    // [mutableUserInfo setValue:userInfo[@"aps"] forKey:@"notification"];
+
+    FirebaseMessagingPlugin* fmPlugin = [self getPluginInstance];
+    if (background) {
+        [fmPlugin sendBackgroundNotification:mutableUserInfo];
+    } else {
+        [fmPlugin sendNotification:mutableUserInfo];
+    }
+}
+
 // Borrowed from http://nshipster.com/method-swizzling/
 + (void)load {
     static dispatch_once_t onceToken;
@@ -47,21 +66,6 @@
     return [self identity_application:application didFinishLaunchingWithOptions:launchOptions];
 }
 
-- (void)postNotification:(NSDictionary*)userInfo background:(BOOL)background {
-    // Print full message.
-    NSLog(@"%@", userInfo);
-
-    NSDictionary *mutableUserInfo = [userInfo mutableCopy];
-    // [mutableUserInfo setValue:userInfo[@"aps"] forKey:@"notification"];
-
-    FirebaseMessagingPlugin* fmPlugin = [self.viewController getCommandInstance:@"FirebaseMessaging"];
-    if (background) {
-        [fmPlugin sendBackgroundNotification:mutableUserInfo];
-    } else {
-        [fmPlugin sendNotification:mutableUserInfo];
-    }
-}
-
 // [START receive_message]
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
     BOOL value = application.applicationState != UIApplicationStateActive;
@@ -70,7 +74,7 @@
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
-    fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
     BOOL value = application.applicationState != UIApplicationStateActive;
 
     [self postNotification:userInfo background:value];
@@ -80,15 +84,11 @@
 // [END receive_message]
 
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
-    FirebaseMessagingPlugin* fmPlugin = [self.viewController getCommandInstance:@"FirebaseMessaging"];
-
-    [fmPlugin registerNotifications:error];
+    [[self getPluginInstance] registerNotifications:error];
 }
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-    FirebaseMessagingPlugin* fmPlugin = [self.viewController getCommandInstance:@"FirebaseMessaging"];
-
-    [fmPlugin registerNotifications:nil];
+    [[self getPluginInstance] registerNotifications:nil];
 }
 
 # pragma mark - UNUserNotificationCenterDelegate
@@ -117,9 +117,7 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 # pragma mark - FIRMessagingDelegate
 
 - (void)messaging:(FIRMessaging *)messaging didReceiveRegistrationToken:(NSString *)fcmToken {
-    FirebaseMessagingPlugin* fmPlugin = [self.viewController getCommandInstance:@"FirebaseMessaging"];
-
-    [fmPlugin sendToken:fcmToken];
+    [[self getPluginInstance] sendToken:fcmToken];
 }
 
 @end
