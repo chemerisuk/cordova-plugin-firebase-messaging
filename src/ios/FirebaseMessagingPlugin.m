@@ -2,30 +2,15 @@
 #import <Cordova/CDV.h>
 #import "AppDelegate.h"
 
+@import Firebase;
+
 @implementation FirebaseMessagingPlugin
 
 - (void)pluginInitialize {
     NSLog(@"Starting Firebase Messaging plugin");
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(finishLaunching:) name:UIApplicationDidFinishLaunchingNotification object:nil];
-
     if(![FIRApp defaultApp]) {
         [FIRApp configure];
-    }
-}
-
-- (void)finishLaunching:(NSNotification *)notification {
-    [FIRMessaging messaging].delegate = self;
-    [UNUserNotificationCenter currentNotificationCenter].delegate = self;
-
-    if (notification) {
-        NSDictionary *launchOptions = [notification userInfo];
-        if (launchOptions) {
-            NSDictionary *userInfo = launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey];
-            if (userInfo) {
-                [self sendBackgroundNotification:userInfo];
-            }
-        }
     }
 }
 
@@ -177,31 +162,7 @@
     }
 }
 
-# pragma mark - UNUserNotificationCenterDelegate
-// Handle incoming notification messages while app is in the foreground.
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center
-       willPresentNotification:(UNNotification *)notification
-         withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler {
-    NSDictionary *userInfo = notification.request.content.userInfo;
-
-    [self sendNotification:userInfo];
-    // Change this to your preferred presentation option
-    completionHandler(UNNotificationPresentationOptionNone);
-}
-
-// Handle notification messages after display notification is tapped by the user.
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center
-didReceiveNotificationResponse:(UNNotificationResponse *)response
-         withCompletionHandler:(void (^)(void))completionHandler {
-    NSDictionary *userInfo = response.notification.request.content.userInfo;
-    [self sendBackgroundNotification:userInfo];
-
-    completionHandler();
-}
-
-# pragma mark - FIRMessagingDelegate
-
-- (void)messaging:(FIRMessaging *)messaging didReceiveRegistrationToken:(NSString *)fcmToken {
+- (void)sendToken:(NSString *)fcmToken {
     if (self.tokenRefreshCallbackId != nil) {
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:self.tokenRefreshCallbackId];
