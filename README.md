@@ -13,7 +13,7 @@ Android tips:
 
     cordova plugin add cordova-plugin-firebase-messaging --save
 
-Use variables `FIREBASE_CORE_VERSION`, `FIREBASE_MESSAGING_VERSION` and `ANDROID_SUPPORT_VERSION` to override dependency versions on Android.
+Use variables `FIREBASE_CORE_VERSION`, `FIREBASE_MESSAGING_VERSION` and `ANDROIDX_CORE_VERSION` to override dependency versions on Android.
 
 Plugin depends on [cordova-support-google-services](https://github.com/chemerisuk/cordova-support-google-services) for setting up google services properly. Please read the [README](https://github.com/chemerisuk/cordova-support-google-services/blob/master/README.md) carefully in order to avoid common issues with a project configuration.
 
@@ -48,16 +48,22 @@ cordova.plugins.firebase.messaging.onBackgroundMessage(function(payload) {
 ### requestPermission
 Grant permission to recieve push notifications (will trigger prompt on iOS).
 ```js
-cordova.plugins.firebase.messaging.requestPermission().then(function(token) {
-    console.log("APNS device token: ", token);
+cordova.plugins.firebase.messaging.requestPermission().then(function() {
+    console.log("Push messaging is allowed");
 });
 ```
 
-### getToken
+### getToken(_type_)
 Returns a promise that fulfills with the current FCM token.
 ```js
 cordova.plugins.firebase.messaging.getToken().then(function(token) {
     console.log("Got device token: ", token);
+});
+```
+This method also accepts optional argument `type`. Currently iOS implementation supports values `"apns-buffer"` and `"apns-string"` that defines presentation of resolved APNS token:
+```js
+cordova.plugins.firebase.messaging.getToken("apns-string").then(function(token) {
+    console.log("APNS hex device token: ", token);
 });
 ```
 
