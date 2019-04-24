@@ -27,9 +27,9 @@ module.exports = {
             exec(resolve, reject, PLUGIN_NAME, "revokeToken", []);
         });
     },
-    getToken: function() {
+    getToken: function(type) {
         return new Promise(function(resolve, reject) {
-            exec(resolve, reject, PLUGIN_NAME, "getToken", []);
+            exec(resolve, reject, PLUGIN_NAME, "getToken", [type]);
         });
     },
     setBadge: function(value) {
