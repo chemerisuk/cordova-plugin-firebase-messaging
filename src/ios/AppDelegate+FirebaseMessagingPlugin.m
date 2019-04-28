@@ -4,25 +4,6 @@
 
 @implementation AppDelegate (FirebaseMessagingPlugin)
 
-- (FirebaseMessagingPlugin*) getPluginInstance {
-    return [self.viewController getCommandInstance:@"FirebaseMessaging"];
-}
-
-- (void)postNotification:(NSDictionary*)userInfo background:(BOOL)background {
-    // Print full message.
-    NSLog(@"%@", userInfo);
-
-    NSDictionary *mutableUserInfo = [userInfo mutableCopy];
-    // [mutableUserInfo setValue:userInfo[@"aps"] forKey:@"notification"];
-
-    FirebaseMessagingPlugin* fmPlugin = [self getPluginInstance];
-    if (background) {
-        [fmPlugin sendBackgroundNotification:mutableUserInfo];
-    } else {
-        [fmPlugin sendNotification:mutableUserInfo];
-    }
-}
-
 // Borrowed from http://nshipster.com/method-swizzling/
 + (void)load {
     static dispatch_once_t onceToken;
@@ -53,7 +34,6 @@
 }
 
 - (BOOL)identity_application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-
     if(![FIRApp defaultApp]) {
         [FIRApp configure];
     }
@@ -71,13 +51,26 @@
     return [self identity_application:application didFinishLaunchingWithOptions:launchOptions];
 }
 
-// [START receive_message]
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-    BOOL value = application.applicationState != UIApplicationStateActive;
-
-    [self postNotification:userInfo background:value];
+- (FirebaseMessagingPlugin*) getPluginInstance {
+    return [self.viewController getCommandInstance:@"FirebaseMessaging"];
 }
 
+- (void)postNotification:(NSDictionary*)userInfo background:(BOOL)background {
+    // Print full message.
+    NSLog(@"%@", userInfo);
+
+    NSDictionary *mutableUserInfo = [userInfo mutableCopy];
+    // [mutableUserInfo setValue:userInfo[@"aps"] forKey:@"notification"];
+
+    FirebaseMessagingPlugin* fmPlugin = [self getPluginInstance];
+    if (background) {
+        [fmPlugin sendBackgroundNotification:mutableUserInfo];
+    } else {
+        [fmPlugin sendNotification:mutableUserInfo];
+    }
+}
+
+// handle incoming notification messages while app is in the background
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
 fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
     BOOL value = application.applicationState != UIApplicationStateActive;
@@ -86,18 +79,9 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
 
     completionHandler(UIBackgroundFetchResultNewData);
 }
-// [END receive_message]
-
-- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
-    [[self getPluginInstance] registerNotifications:error];
-}
-
-- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-    [[self getPluginInstance] registerNotifications:nil];
-}
 
 # pragma mark - UNUserNotificationCenterDelegate
-// Handle incoming notification messages while app is in the foreground.
+// handle incoming notification messages while app is in the foreground
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
        willPresentNotification:(UNNotification *)notification
          withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler {
@@ -108,7 +92,7 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
     completionHandler([self getPluginInstance].forceShow);
 }
 
-// Handle notification messages after display notification is tapped by the user.
+// handle notification messages after display notification is tapped by the user
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
 didReceiveNotificationResponse:(UNNotificationResponse *)response
          withCompletionHandler:(void (^)(void))completionHandler {
@@ -117,6 +101,14 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
     [self postNotification:userInfo background:TRUE];
 
     completionHandler();
+}
+
+- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
+    [[self getPluginInstance] registerNotifications:error];
+}
+
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+    [[self getPluginInstance] registerNotifications:nil];
 }
 
 # pragma mark - FIRMessagingDelegate
