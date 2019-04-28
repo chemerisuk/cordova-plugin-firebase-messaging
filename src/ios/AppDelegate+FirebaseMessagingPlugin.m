@@ -53,6 +53,11 @@
 }
 
 - (BOOL)identity_application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+
+    if(![FIRApp defaultApp]) {
+        [FIRApp configure];
+    }
+
     [FIRMessaging messaging].delegate = self;
     [UNUserNotificationCenter currentNotificationCenter].delegate = self;
 
