@@ -13,12 +13,10 @@
 - (void)onMessage:(CDVInvokedUrlCommand*)command;
 - (void)onBackgroundMessage:(CDVInvokedUrlCommand*)command;
 - (void)onTokenRefresh:(CDVInvokedUrlCommand*)command;
-- (void)registerNotifications:(NSError *)error;
 - (void)sendToken:(NSString*)fcmToken;
 - (void)sendNotification:(NSDictionary*)userInfo;
 - (void)sendBackgroundNotification:(NSDictionary*)userInfo;
 
-@property (nonatomic, copy) NSString* registerCallbackId;
 @property (nonatomic, copy) NSString* notificationCallbackId;
 @property (nonatomic, copy) NSString* backgroundNotificationCallbackId;
 @property (nonatomic, copy) NSString* tokenRefreshCallbackId;

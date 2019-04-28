@@ -13,7 +13,6 @@
 - (void)requestPermission:(CDVInvokedUrlCommand *)command {
     NSDictionary* options = [command.arguments objectAtIndex:0];
 
-    self.registerCallbackId = command.callbackId;
     self.forceShow = UNNotificationPresentationOptionNone;
 
     NSArray* forceShowSettings = options[@"forceShow"];
@@ -30,17 +29,21 @@
         }
     }
 
+    UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
     UNAuthorizationOptions authOptions = (UNAuthorizationOptionAlert | UNAuthorizationOptionSound | UNAuthorizationOptionBadge);
-    [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:authOptions
-        completionHandler:^(BOOL granted, NSError * _Nullable error) {
-         // if (error) {
-         //     [self registerNotifications:error];
-         // } else if (granted) {
-         //     [[UIApplication sharedApplication] registerForRemoteNotifications];
-         // } else {
-         //     // TODO?
-         // }
-     }];
+    [center requestAuthorizationWithOptions:authOptions
+                          completionHandler:^(BOOL granted, NSError * _Nullable error) {
+                              CDVPluginResult *pluginResult;
+                              if (error) {
+                                  pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error.localizedDescription];
+                              } else if (!granted) {
+                                  pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Notifications permission is not granted"];
+                              } else {
+                                  pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+                              }
+
+                              [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+                          }];
 
     [[UIApplication sharedApplication] registerForRemoteNotifications];
 }
@@ -162,18 +165,6 @@
 
 - (void)onTokenRefresh:(CDVInvokedUrlCommand *)command {
     self.tokenRefreshCallbackId = command.callbackId;
-}
-
-- (void)registerNotifications:(NSError *)error {
-    if (self.registerCallbackId) {
-        CDVPluginResult *pluginResult;
-        if (error) {
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error.localizedDescription];
-        } else {
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-        }
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:self.registerCallbackId];
-    }
 }
 
 - (void)sendNotification:(NSDictionary *)userInfo {

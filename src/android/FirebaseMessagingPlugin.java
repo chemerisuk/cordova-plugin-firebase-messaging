@@ -151,7 +151,7 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
         if (NotificationManagerCompat.from(context).areNotificationsEnabled()) {
             callbackContext.success();
         } else {
-            callbackContext.error("Push notifications are disabled");
+            callbackContext.error("Notifications permission is not granted");
         }
     }
 
