@@ -100,7 +100,7 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
 
     [self postNotification:userInfo background:FALSE];
     // Change this to your preferred presentation option
-    completionHandler(UNNotificationPresentationOptionNone);
+    completionHandler([self getPluginInstance].forceShow);
 }
 
 // Handle notification messages after display notification is tapped by the user.

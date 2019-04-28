@@ -1,5 +1,6 @@
 #import <Cordova/CDV.h>
 #import "AppDelegate.h"
+@import UserNotifications;
 
 @interface FirebaseMessagingPlugin : CDVPlugin
 - (void)requestPermission:(CDVInvokedUrlCommand*)command;
@@ -17,10 +18,11 @@
 - (void)sendNotification:(NSDictionary*)userInfo;
 - (void)sendBackgroundNotification:(NSDictionary*)userInfo;
 
-@property (nonatomic, copy) NSString *registerCallbackId;
-@property (nonatomic, copy) NSString *notificationCallbackId;
-@property (nonatomic, copy) NSString *backgroundNotificationCallbackId;
-@property (nonatomic, copy) NSString *tokenRefreshCallbackId;
+@property (nonatomic, copy) NSString* registerCallbackId;
+@property (nonatomic, copy) NSString* notificationCallbackId;
+@property (nonatomic, copy) NSString* backgroundNotificationCallbackId;
+@property (nonatomic, copy) NSString* tokenRefreshCallbackId;
 @property (nonatomic, retain) NSDictionary* lastNotification;
+@property (nonatomic, readwrite) UNNotificationPresentationOptions forceShow;
 
 @end
