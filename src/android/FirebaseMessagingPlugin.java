@@ -146,7 +146,7 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
     }
 
     @CordovaMethod
-    private void requestPermission(CallbackContext callbackContext) {
+    private void requestPermission(JSONObject options, CallbackContext callbackContext) {
         Context context = cordova.getActivity().getApplicationContext();
         if (NotificationManagerCompat.from(context).areNotificationsEnabled()) {
             callbackContext.success();
