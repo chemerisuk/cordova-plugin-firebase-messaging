@@ -13,7 +13,7 @@ Android tips:
 
     cordova plugin add cordova-plugin-firebase-messaging --save
 
-Use variables `FIREBASE_CORE_VERSION`, `FIREBASE_MESSAGING_VERSION` and `ANDROIDX_CORE_VERSION` to override dependency versions on Android.
+Use variables `FIREBASE_CORE_VERSION`, `FIREBASE_MESSAGING_VERSION` and `ANDROID_SUPPORT_VERSION` to override dependency versions on Android.
 
 Plugin depends on [cordova-support-google-services](https://github.com/chemerisuk/cordova-support-google-services) for setting up google services properly. Please read the [README](https://github.com/chemerisuk/cordova-support-google-services/blob/master/README.md) carefully in order to avoid common issues with a project configuration.
 

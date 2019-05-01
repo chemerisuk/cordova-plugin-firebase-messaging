@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.content.SharedPreferences;
-import androidx.core.app.NotificationManagerCompat;
+import android.support.v4.app.NotificationManagerCompat;
 
 import by.chemerisuk.cordova.support.CordovaMethod;
 import by.chemerisuk.cordova.support.ReflectiveCordovaPlugin;
