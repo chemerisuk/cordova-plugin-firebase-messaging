@@ -20,6 +20,7 @@ import com.google.firebase.iid.InstanceIdResult;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.PluginResult;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -33,6 +34,8 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
 
     private JSONObject lastBundle;
     private boolean isBackground = false;
+    private boolean forceShowAlert = false;
+    private boolean forcePlaySound = false;
     private CallbackContext tokenRefreshCallback;
     private CallbackContext foregroundCallback;
     private CallbackContext backgroundCallback;
@@ -146,8 +149,19 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
     }
 
     @CordovaMethod
-    private void requestPermission(JSONObject options, CallbackContext callbackContext) {
+    private void requestPermission(JSONObject options, CallbackContext callbackContext) throws JSONException {
         Context context = cordova.getActivity().getApplicationContext();
+
+        JSONArray forceShow = options.optJSONArray("forceShow");
+        for (int i = 0, n = forceShow.length(); i < n; ++i) {
+            String value = forceShow.get(i).toString();
+            if (value.equals("alert")) {
+                this.forceShowAlert = true;
+            } else if (value.equals("sound")) {
+                this.forcePlaySound = true;
+            }
+        }
+
         if (NotificationManagerCompat.from(context).areNotificationsEnabled()) {
             callbackContext.success();
         } else {
@@ -210,6 +224,14 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
                 instance.tokenRefreshCallback.sendPluginResult(pluginResult);
             }
         }
+    }
+
+    static boolean isForceShowAlert() {
+        return instance != null && instance.forceShowAlert;
+    }
+
+    static boolean isForcePlaySound() {
+        return instance != null && instance.forcePlaySound;
     }
 
     private void sendNotification(JSONObject notificationData, CallbackContext callbackContext) {
