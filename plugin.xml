@@ -58,7 +58,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
 
     <platform name="android">
         <preference name="FIREBASE_CORE_VERSION" default="16.0.+"/>
-        <preference name="FIREBASE_MESSAGING_VERSION" default="17.6.+"/>
+        <preference name="FIREBASE_MESSAGING_VERSION" default="18.0.+"/>
         <preference name="ANDROID_SUPPORT_VERSION" default="28.+"/>
 
         <config-file target="res/xml/config.xml" parent="/*">
