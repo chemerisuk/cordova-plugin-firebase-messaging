@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
@@ -48,10 +49,12 @@ public class FirebaseMessagingPluginService extends FirebaseMessagingService {
 
         try {
             ApplicationInfo ai = getPackageManager().getApplicationInfo(getApplicationContext().getPackageName(), PackageManager.GET_META_DATA);
-            this.defaultNotificationColor = ContextCompat.getColor(this, ai.metaData.getInt(NOTIFICATION_COLOR_KEY));
             this.defaultNotificationIcon = ai.metaData.getInt(NOTIFICATION_ICON_KEY, ai.icon);
+            this.defaultNotificationColor = ContextCompat.getColor(this, ai.metaData.getInt(NOTIFICATION_COLOR_KEY));
         } catch (PackageManager.NameNotFoundException e) {
             Log.e(TAG, "Failed to load meta-data", e);
+        } catch(Resources.NotFoundException e) {
+            Log.e(TAG, "Failed to load notification color", e);
         }
     }
 
