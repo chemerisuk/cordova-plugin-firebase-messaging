@@ -45,11 +45,17 @@ cordova.plugins.firebase.messaging.onBackgroundMessage(function(payload) {
 });
 ```
 
-### requestPermission
+### requestPermission(_options_)
 Grant permission to recieve push notifications (will trigger prompt on iOS).
 ```js
 cordova.plugins.firebase.messaging.requestPermission().then(function() {
     console.log("Push messaging is allowed");
+});
+```
+In `options` object you can specify array `forceShow` to customize foreground notification presentation. Acceptable values are `"alert"`, `"sound"` and `"badge"` is supported only on iOS:
+```js
+cordova.plugins.firebase.messaging.requestPermission({forceShow: ["alert", "sound", "badge"]}).then(function() {
+    console.log("You'll get foreground notifications when a push message arrives");
 });
 ```
 
