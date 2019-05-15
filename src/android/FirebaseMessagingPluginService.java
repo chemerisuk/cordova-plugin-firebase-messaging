@@ -11,6 +11,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -38,23 +39,17 @@ public class FirebaseMessagingPluginService extends FirebaseMessagingService {
     private NotificationManager notificationManager;
     private int defaultNotificationIcon;
     private int defaultNotificationColor;
-    private Uri defaultSoundUri;
 
     @Override
     public void onCreate() {
         this.broadcastManager = LocalBroadcastManager.getInstance(this);
         this.audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         this.notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        this.defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
         try {
             ApplicationInfo ai = getPackageManager().getApplicationInfo(getApplicationContext().getPackageName(), PackageManager.GET_META_DATA);
-            this.defaultNotificationColor = 0xFF000000 | getResources()
-                    .getColor(ai.metaData.getInt(NOTIFICATION_COLOR_KEY));
-            this.defaultNotificationIcon = ai.metaData.getInt(NOTIFICATION_ICON_KEY);
-            if (this.defaultNotificationIcon == 0) {
-                this.defaultNotificationIcon = ai.icon;
-            }
+            this.defaultNotificationColor = ContextCompat.getColor(this, ai.metaData.getInt(NOTIFICATION_COLOR_KEY));
+            this.defaultNotificationIcon = ai.metaData.getInt(NOTIFICATION_ICON_KEY, ai.icon);
         } catch (PackageManager.NameNotFoundException e) {
             Log.e(TAG, "Failed to load meta-data", e);
         }
@@ -79,7 +74,7 @@ public class FirebaseMessagingPluginService extends FirebaseMessagingService {
 
         RemoteMessage.Notification notification = remoteMessage.getNotification();
         if (notification != null) {
-            Uri soundUri = this.defaultSoundUri;
+            Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             String sound = notification.getSound();
             if (sound != null && FirebaseMessagingPlugin.isForcePlaySound()) {
                 if (!sound.equals("default") && !sound.equals("enabled")) {
