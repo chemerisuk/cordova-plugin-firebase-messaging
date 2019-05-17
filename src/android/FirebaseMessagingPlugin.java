@@ -34,8 +34,7 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
 
     private JSONObject lastBundle;
     private boolean isBackground = false;
-    private boolean forceShowAlert = false;
-    private boolean forcePlaySound = false;
+    private boolean forceShow = false;
     private CallbackContext tokenRefreshCallback;
     private CallbackContext foregroundCallback;
     private CallbackContext backgroundCallback;
@@ -152,15 +151,7 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
     private void requestPermission(JSONObject options, CallbackContext callbackContext) throws JSONException {
         Context context = cordova.getActivity().getApplicationContext();
 
-        JSONArray forceShow = options.optJSONArray("forceShow");
-        for (int i = 0, n = forceShow.length(); i < n; ++i) {
-            String value = forceShow.get(i).toString();
-            if (value.equals("alert")) {
-                this.forceShowAlert = true;
-            } else if (value.equals("sound")) {
-                this.forcePlaySound = true;
-            }
-        }
+        this.forceShow = options.optBoolean("forceShow");
 
         if (NotificationManagerCompat.from(context).areNotificationsEnabled()) {
             callbackContext.success();
@@ -226,12 +217,8 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
         }
     }
 
-    static boolean isForceShowAlert() {
-        return instance != null && instance.forceShowAlert;
-    }
-
-    static boolean isForcePlaySound() {
-        return instance != null && instance.forcePlaySound;
+    static boolean isForceShow() {
+        return instance != null && instance.forceShow;
     }
 
     private void sendNotification(JSONObject notificationData, CallbackContext callbackContext) {

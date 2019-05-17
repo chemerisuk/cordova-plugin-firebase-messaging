@@ -56,17 +56,11 @@
 }
 
 - (void)postNotification:(NSDictionary*)userInfo background:(BOOL)background {
-    // Print full message.
-    NSLog(@"%@", userInfo);
-
-    NSDictionary *mutableUserInfo = [userInfo mutableCopy];
-    // [mutableUserInfo setValue:userInfo[@"aps"] forKey:@"notification"];
-
     FirebaseMessagingPlugin* fmPlugin = [self getPluginInstance];
     if (background) {
-        [fmPlugin sendBackgroundNotification:mutableUserInfo];
+        [fmPlugin sendBackgroundNotification:userInfo];
     } else {
-        [fmPlugin sendNotification:mutableUserInfo];
+        [fmPlugin sendNotification:userInfo];
     }
 }
 

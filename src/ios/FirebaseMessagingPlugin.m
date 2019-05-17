@@ -13,20 +13,12 @@
 - (void)requestPermission:(CDVInvokedUrlCommand *)command {
     NSDictionary* options = [command.arguments objectAtIndex:0];
 
-    self.forceShow = UNNotificationPresentationOptionNone;
-
-    NSArray* forceShowSettings = options[@"forceShow"];
-    if (forceShowSettings) {
-        for (int i = 0, n = (int)[forceShowSettings count]; i < n; ++i) {
-            NSString* forceShowSetting = [forceShowSettings objectAtIndex:i];
-            if ([forceShowSetting isEqualToString:@"badge"]) {
-                self.forceShow |= UNNotificationPresentationOptionBadge;
-            } else if ([forceShowSetting isEqualToString:@"sound"]) {
-                self.forceShow |= UNNotificationPresentationOptionSound;
-            } else if ([forceShowSetting isEqualToString:@"alert"]) {
-                self.forceShow |= UNNotificationPresentationOptionAlert;
-            }
-        }
+    NSNumber* forceShowSetting = options[@"forceShow"];
+    if (forceShowSetting && [forceShowSetting boolValue]) {
+        self.forceShow = UNNotificationPresentationOptionBadge |
+            UNNotificationPresentationOptionSound | UNNotificationPresentationOptionAlert;
+    } else {
+        self.forceShow = UNNotificationPresentationOptionNone;
     }
 
     UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];

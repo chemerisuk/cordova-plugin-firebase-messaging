@@ -44,6 +44,12 @@ module.exports = {
     },
     requestPermission: function(options) {
         return new Promise(function(resolve, reject) {
+            if (options) {
+                if (typeof options.forceShow !== "boolean" && typeof options.forceShow !== "undefined") {
+                    throw new TypeError("forceShow must be a boolean");
+                }
+            }
+
             exec(resolve, reject, PLUGIN_NAME, "requestPermission", [options || {}]);
         });
     }

@@ -52,9 +52,9 @@ cordova.plugins.firebase.messaging.requestPermission().then(function() {
     console.log("Push messaging is allowed");
 });
 ```
-In `options` object you can specify array `forceShow` to customize foreground notification presentation. Acceptable values are `"alert"`, `"sound"` and `"badge"` is supported only on iOS:
+In `options` object you can specify a boolean setting `forceShow`. When `true` this setting forces notification to display even when app is in foreground:
 ```js
-cordova.plugins.firebase.messaging.requestPermission({forceShow: ["alert", "sound", "badge"]}).then(function() {
+cordova.plugins.firebase.messaging.requestPermission({forceShow: true}).then(function() {
     console.log("You'll get foreground notifications when a push message arrives");
 });
 ```
