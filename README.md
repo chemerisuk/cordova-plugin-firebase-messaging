@@ -1,26 +1,36 @@
-# cordova-plugin-firebase-messaging<br>[![NPM version][npm-version]][npm-url] [![NPM downloads][npm-downloads]][npm-url] [![Twitter][twitter-follow]][twitter-url]
-> Cordova plugin for [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging/)
+# Cordova plugin for [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging/)
+[![NPM version][npm-version]][npm-url] [![NPM downloads][npm-downloads]][npm-url] [![Twitter][twitter-follow]][twitter-url]
 
-* [Installation](https://github.com/chemerisuk/cordova-plugin-firebase-messaging#installation)
-* [Methods](https://github.com/chemerisuk/cordova-plugin-firebase-messaging#methods)
+| [![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)][donate-url] | Your support is appreciated. Create a PR, submit a bug or just grab me :beer: |
+|-|-|
 
-Android tips:
-* [Set custom default notification channel](https://github.com/chemerisuk/cordova-plugin-firebase-messaging#set-custom-default-notification-channel)
-* [Set custom default notification icon](https://github.com/chemerisuk/cordova-plugin-firebase-messaging#set-custom-default-notification-icon)
-* [Set custom default notification color](https://github.com/chemerisuk/cordova-plugin-firebase-messaging#set-custom-default-notification-color)
+## Index
 
-## Installation
+<!-- MarkdownTOC levels="2" autolink="true" -->
 
-    cordova plugin add cordova-plugin-firebase-messaging --save
+- [Supported platforms](#supported-platforms)
+- [Installation](#installation)
+- [Methods](#methods)
+- [Android tips](#android-tips)
 
-Use variables `FIREBASE_CORE_VERSION`, `FIREBASE_MESSAGING_VERSION` and `ANDROID_SUPPORT_VERSION` to override dependency versions on Android.
+<!-- /MarkdownTOC -->
 
-Plugin depends on [cordova-support-google-services](https://github.com/chemerisuk/cordova-support-google-services) for setting up google services properly. Please read the [README](https://github.com/chemerisuk/cordova-support-google-services/blob/master/README.md) carefully in order to avoid common issues with a project configuration.
-
-## Supported Platforms
+## Supported platforms
 
 - iOS
 - Android
+
+## Installation
+
+    $ cordova plugin add cordova-plugin-firebase-messaging
+
+If you get an error about CocoaPods being unable to find compatible versions, run
+    
+    $ pod repo update
+
+Plugin depends on [cordova-support-google-services](https://github.com/chemerisuk/cordova-support-google-services) for setting up google services properly. Please read the [README](https://github.com/chemerisuk/cordova-support-google-services/blob/master/README.md) carefully in order to avoid common issues with a project configuration.
+
+Use variables `FIREBASE_CORE_VERSION`, `FIREBASE_MESSAGING_VERSION` and `ANDROID_SUPPORT_VERSION` to override dependency versions on Android.
 
 ## Methods
 In general (for both platforms) you can only rely on custom data fields from a FCM payload.
@@ -155,3 +165,4 @@ You can also define what color is used with your notification. Different android
 [npm-downloads]: https://img.shields.io/npm/dm/cordova-plugin-firebase-messaging.svg
 [twitter-url]: https://twitter.com/chemerisuk
 [twitter-follow]: https://img.shields.io/twitter/follow/chemerisuk.svg?style=social&label=Follow%20me
+[donate-url]: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6HLVTJDGQQ6EY&source=url
