@@ -1,4 +1,4 @@
-# cordova-plugin-firebase-messaging<br>[![NPM version][npm-version]][npm-url] [![NPM downloads][npm-downloads]][npm-url]
+# cordova-plugin-firebase-messaging<br>[![NPM version][npm-version]][npm-url] [![NPM downloads][npm-downloads]][npm-url] [![Twitter][twitter-follow]][twitter-url]
 > Cordova plugin for [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging/)
 
 * [Installation](https://github.com/chemerisuk/cordova-plugin-firebase-messaging#installation)
@@ -153,3 +153,5 @@ You can also define what color is used with your notification. Different android
 [npm-url]: https://www.npmjs.com/package/cordova-plugin-firebase-messaging
 [npm-version]: https://img.shields.io/npm/v/cordova-plugin-firebase-messaging.svg
 [npm-downloads]: https://img.shields.io/npm/dm/cordova-plugin-firebase-messaging.svg
+[twitter-url]: https://twitter.com/chemerisuk
+[twitter-follow]: https://img.shields.io/twitter/follow/chemerisuk.svg?style=social&label=Follow%20me
