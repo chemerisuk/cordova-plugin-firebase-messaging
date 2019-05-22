@@ -1,7 +1,7 @@
 # Cordova plugin for [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging/)
 [![NPM version][npm-version]][npm-url] [![NPM downloads][npm-downloads]][npm-url] [![Twitter][twitter-follow]][twitter-url]
 
-| [![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)][donate-url] | Your support is appreciated. Create a PR, submit a bug or just grab me :beer: |
+| [![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)][donate-url] | Your help is appreciated. Create a PR, submit a bug or just grab me :beer: |
 |-|-|
 
 ## Index
@@ -130,7 +130,7 @@ cordova.plugins.firebase.messaging.setBadge(value);
 ## Android tips
 ### Set custom default notification channel
 If incoming FCM messages do not specify an Android notification channel, you can indicate to FCM what channel should be used as the default by adding a metadata element to your application manifest. In the metadata element specify the ID of the channel that should be used by default by FCM.
-```
+```xml
 <config-file parent="/manifest/application" target="app/src/main/AndroidManifest.xml">
     <meta-data
         android:name="com.google.firebase.messaging.default_notification_channel_id"
@@ -142,7 +142,7 @@ Note: You are still required to create a notification channel in code with an ID
 
 ### Set custom default notification icon
 Setting a custom default icon allows you to specify what icon is used for notification messages if no icon is set in the notification payload. Also use the custom default icon to set the icon used by notification messages sent from the Firebase console. If no custom default icon is set and no icon is set in the notification payload, the application icon (rendered in white) is used.
-```
+```xml
 <config-file parent="/manifest/application" target="app/src/main/AndroidManifest.xml">
     <meta-data
         android:name="com.google.firebase.messaging.default_notification_icon"
@@ -152,7 +152,7 @@ Setting a custom default icon allows you to specify what icon is used for notifi
 
 ### Set custom default notification color
 You can also define what color is used with your notification. Different android versions use this settings in different ways: Android < N use this as background color for the icon. Android >= N use this to color the icon and the app name.
-```
+```xml
 <config-file parent="/manifest/application" target="app/src/main/AndroidManifest.xml">
     <meta-data
         android:name="com.google.firebase.messaging.default_notification_color"
