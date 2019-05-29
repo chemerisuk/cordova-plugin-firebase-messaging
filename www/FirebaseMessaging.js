@@ -46,7 +46,7 @@ module.exports = {
         return new Promise(function(resolve, reject) {
             if (options) {
                 if (typeof options.forceShow !== "boolean" && typeof options.forceShow !== "undefined") {
-                    throw new TypeError("forceShow must be a boolean");
+                    return reject(new TypeError("forceShow must be a boolean"));
                 }
             }
 
