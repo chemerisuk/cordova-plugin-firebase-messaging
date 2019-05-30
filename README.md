@@ -32,8 +32,6 @@ Plugin depends on [cordova-support-google-services](https://github.com/chemerisu
 
 Use variables `FIREBASE_CORE_VERSION`, `FIREBASE_MESSAGING_VERSION` and `ANDROID_SUPPORT_VERSION` to override dependency versions on Android.
 
-Use variable `POD_FIREBASE_VERSION` to override dependency version on iOS.
-
 ## Methods
 In general (for both platforms) you can only rely on custom data fields from a FCM payload.
 
