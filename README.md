@@ -114,7 +114,7 @@ Unsubscribe from a topic in background.
 cordova.plugins.firebase.messaging.unsubscribe("New Topic");
 ```
 
-### getBadge(_callback_)
+### getBadge
 Reads current badge number (if supported).
 ```js
 cordova.plugins.firebase.messaging.getBadge().then(function(value) {
