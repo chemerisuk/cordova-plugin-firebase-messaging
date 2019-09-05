@@ -35,6 +35,7 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
     private JSONObject lastBundle;
     private boolean isBackground = false;
     private boolean forceShow = false;
+    private boolean autoHide = true;
     private CallbackContext tokenRefreshCallback;
     private CallbackContext foregroundCallback;
     private CallbackContext backgroundCallback;
@@ -152,6 +153,7 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
         Context context = cordova.getActivity().getApplicationContext();
 
         this.forceShow = options.optBoolean("forceShow");
+        this.autoHide = options.optBoolean("autoHide", this.autoHide);
 
         if (NotificationManagerCompat.from(context).areNotificationsEnabled()) {
             callbackContext.success();
@@ -219,6 +221,10 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
 
     static boolean isForceShow() {
         return instance != null && instance.forceShow;
+    }
+
+    static boolean isAutoHide() {
+        return instance != null && instance.autoHide;
     }
 
     private void sendNotification(JSONObject notificationData, CallbackContext callbackContext) {
