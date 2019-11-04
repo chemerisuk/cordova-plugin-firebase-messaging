@@ -78,17 +78,13 @@
             if ([type isEqualToString:@"apns-buffer"]) {
                 pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArrayBuffer:apnsToken];
             } else if ([type isEqualToString:@"apns-string"]) {
-                NSUInteger length = apnsToken.length;
-                if (length == 0) {
-                    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"APNS token not found"];
-                } else {
-                    const unsigned char *buffer = apnsToken.bytes;
-                    NSMutableString *hexString  = [NSMutableString stringWithCapacity:(length * 2)];
-                    for (int i = 0; i < length; ++i) {
-                        [hexString appendFormat:@"%02x", buffer[i]];
-                    }
-                    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:[hexString copy]];
+                NSUInteger len = apnsToken.length;
+                const unsigned char *buffer = apnsToken.bytes;
+                NSMutableString *hexToken  = [NSMutableString stringWithCapacity:(len * 2)];
+                for (int i = 0; i < len; ++i) {
+                    [hexToken appendFormat:@"%02x", buffer[i]];
                 }
+                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:hexToken];
             } else {
                 pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Invalid APNS token type argument"];
             }
