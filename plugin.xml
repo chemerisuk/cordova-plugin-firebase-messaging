@@ -50,15 +50,15 @@ xmlns:android="http://schemas.android.com/apk/res/android"
                 <source url="https://github.com/CocoaPods/Specs.git"/>
             </config>
             <pods>
-                <pod name="Firebase/Core" spec="~> 6.3.0" />
+                <pod name="Firebase/Analytics" spec="~> 6.3.0" />
                 <pod name="Firebase/Messaging" spec="~> 6.3.0" />
             </pods>
         </podspec>
     </platform>
 
     <platform name="android">
-        <preference name="FIREBASE_CORE_VERSION" default="17.0.+"/>
-        <preference name="FIREBASE_MESSAGING_VERSION" default="19.0.+"/>
+        <preference name="FIREBASE_ANALYTICS_VERSION" default="17.2.+"/>
+        <preference name="FIREBASE_MESSAGING_VERSION" default="20.0.+"/>
         <preference name="ANDROIDX_CORE_VERSION" default="1.0.+"/>
 
         <config-file target="res/xml/config.xml" parent="/*">
@@ -79,7 +79,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
         <dependency id="cordova-support-android-plugin" version="~1.0.0"/>
         <dependency id="cordova-support-google-services" version="^1.3.0"/>
 
-        <framework src="com.google.firebase:firebase-core:$FIREBASE_CORE_VERSION" />
+        <framework src="com.google.firebase:firebase-analytics:$FIREBASE_ANALYTICS_VERSION" />
         <framework src="com.google.firebase:firebase-messaging:$FIREBASE_MESSAGING_VERSION" />
         <framework src="androidx.core:core:$ANDROIDX_CORE_VERSION" />
         <framework src="me.leolin:ShortcutBadger:1.1.22@aar"/>

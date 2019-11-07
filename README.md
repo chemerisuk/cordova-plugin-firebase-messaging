@@ -30,7 +30,7 @@ If you get an error about CocoaPods being unable to find compatible versions, ru
 
 Plugin depends on [cordova-support-google-services](https://github.com/chemerisuk/cordova-support-google-services) for setting up google services properly. Please read the [README](https://github.com/chemerisuk/cordova-support-google-services/blob/master/README.md) carefully in order to avoid common issues with a project configuration.
 
-Use variables `FIREBASE_CORE_VERSION`, `FIREBASE_MESSAGING_VERSION` and `ANDROIDX_CORE_VERSION` to override dependency versions on Android.
+Use variables `FIREBASE_ANALYTICS_VERSION`, `FIREBASE_MESSAGING_VERSION` and `ANDROIDX_CORE_VERSION` to override dependency versions on Android.
 
 ## Methods
 In general (for both platforms) you can only rely on custom data fields from a FCM payload.
