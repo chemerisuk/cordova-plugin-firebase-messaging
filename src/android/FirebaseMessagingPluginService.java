@@ -55,9 +55,9 @@ public class FirebaseMessagingPluginService extends FirebaseMessagingService {
             Log.e(TAG, "Failed to load notification color", e);
         }
         // On Android O or greater we need to create a new notification channel
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             this.notificationManager.createNotificationChannel(
-                new NotificationChannel(defaultNotificationChannel, "Miscellaneous", NotificationManager.IMPORTANCE_DEFAULT));
+                new NotificationChannel(this.defaultNotificationChannel, "Miscellaneous", NotificationManager.IMPORTANCE_DEFAULT));
         }
     }
 
@@ -87,7 +87,7 @@ public class FirebaseMessagingPluginService extends FirebaseMessagingService {
     }
 
     private void showAlert(RemoteMessage.Notification notification) {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, defaultNotificationChannel);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, this.defaultNotificationChannel);
         builder.setContentTitle(notification.getTitle());
         builder.setContentText(notification.getBody());
         builder.setGroup(notification.getTag());
