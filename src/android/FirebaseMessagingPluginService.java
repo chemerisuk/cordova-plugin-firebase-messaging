@@ -47,8 +47,8 @@ public class FirebaseMessagingPluginService extends FirebaseMessagingService {
         try {
             ApplicationInfo ai = getPackageManager().getApplicationInfo(getApplicationContext().getPackageName(), PackageManager.GET_META_DATA);
             this.defaultNotificationIcon = ai.metaData.getInt(NOTIFICATION_ICON_KEY, ai.icon);
-            this.defaultNotificationColor = ContextCompat.getColor(this, ai.metaData.getInt(NOTIFICATION_COLOR_KEY));
             this.defaultNotificationChannel = ai.metaData.getString(NOTIFICATION_CHANNEL_KEY, "default_channel_id");
+            this.defaultNotificationColor = ContextCompat.getColor(this, ai.metaData.getInt(NOTIFICATION_COLOR_KEY));
         } catch (PackageManager.NameNotFoundException e) {
             Log.e(TAG, "Failed to load meta-data", e);
         } catch(Resources.NotFoundException e) {
