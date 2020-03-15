@@ -50,8 +50,8 @@ xmlns:android="http://schemas.android.com/apk/res/android"
                 <source url="https://cdn.cocoapods.org/"/>
             </config>
             <pods>
-                <pod name="Firebase/Analytics" spec="~> 6.3.0" />
-                <pod name="Firebase/Messaging" spec="~> 6.3.0" />
+                <pod name="Firebase/Analytics" spec="~> 6.19.0" />
+                <pod name="Firebase/Messaging" spec="~> 6.19.0" />
             </pods>
         </podspec>
     </platform>
