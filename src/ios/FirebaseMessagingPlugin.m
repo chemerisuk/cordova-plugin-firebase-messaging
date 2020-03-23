@@ -48,6 +48,18 @@
     }];
 }
 
+- (void)getInstanceId:(CDVInvokedUrlCommand *)command {
+    [[FIRInstanceID instanceID] instanceIDWithHandler:^(FIRInstanceIDResult* result, NSError* err) {
+        CDVPluginResult *pluginResult;
+        if (err) {
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:err.localizedDescription];
+        } else {
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:result.instanceID];
+        }
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }];
+}
+
 - (void)getToken:(CDVInvokedUrlCommand *)command {
     CDVPluginResult *pluginResult;
     NSString* type = [command.arguments objectAtIndex:0];

@@ -69,6 +69,14 @@ cordova.plugins.firebase.messaging.requestPermission({forceShow: true}).then(fun
 });
 ```
 
+### getInstanceId()
+Retrieves the app instance id from the service.
+```js
+cordova.plugins.firebase.messaging.getInstanceId().then(function(instanceId) {
+    console.log("Got instanceId: ", instanceId);
+});
+```
+
 ### getToken(_type_)
 Returns a promise that fulfills with the current FCM token.
 ```js

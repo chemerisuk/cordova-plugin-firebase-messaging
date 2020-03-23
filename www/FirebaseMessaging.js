@@ -27,6 +27,11 @@ module.exports = {
             exec(resolve, reject, PLUGIN_NAME, "revokeToken", []);
         });
     },
+    getInstanceId: function() {
+        return new Promise(function(resolve, reject) {
+            exec(resolve, reject, PLUGIN_NAME, "getInstanceId", []);
+        });
+    },
     getToken: function(type) {
         return new Promise(function(resolve, reject) {
             exec(resolve, reject, PLUGIN_NAME, "getToken", [type]);
