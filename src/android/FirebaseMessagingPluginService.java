@@ -63,7 +63,7 @@ public class FirebaseMessagingPluginService extends FirebaseMessagingService {
 
     @Override
     public void onNewToken(String token) {
-        FirebaseMessagingPlugin.sendInstanceId(token);
+        FirebaseMessagingPlugin.sendToken(token);
 
         Intent intent = new Intent(ACTION_FCM_TOKEN);
         intent.putExtra(EXTRA_FCM_TOKEN, token);

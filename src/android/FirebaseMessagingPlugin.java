@@ -2,30 +2,29 @@ package by.chemerisuk.cordova.firebase;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.content.SharedPreferences;
-import androidx.core.app.NotificationManagerCompat;
 
-import by.chemerisuk.cordova.support.CordovaMethod;
-import by.chemerisuk.cordova.support.ReflectiveCordovaPlugin;
+import androidx.core.app.NotificationManagerCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.RemoteMessage;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.RemoteMessage;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.PluginResult;
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.Set;
+
+import by.chemerisuk.cordova.support.CordovaMethod;
+import by.chemerisuk.cordova.support.ReflectiveCordovaPlugin;
 import me.leolin.shortcutbadger.ShortcutBadger;
 
 
@@ -207,7 +206,7 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
         }
     }
 
-    static void sendInstanceId(String instanceId) {
+    static void sendToken(String instanceId) {
         if (instance != null) {
             if (instance.tokenRefreshCallback != null && instanceId != null) {
                 PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, instanceId);
