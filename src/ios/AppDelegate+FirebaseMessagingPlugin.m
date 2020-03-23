@@ -34,6 +34,11 @@
 }
 
 - (BOOL)identity_application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    // always call original method implementation first
+    BOOL handled = [self identity_application:application didFinishLaunchingWithOptions:launchOptions];
+
+    NSLog(@"Starting Firebase Messaging plugin");
+
     if(![FIRApp defaultApp]) {
         [FIRApp configure];
     }
@@ -48,7 +53,7 @@
         }
     }
 
-    return [self identity_application:application didFinishLaunchingWithOptions:launchOptions];
+    return handled;
 }
 
 - (FirebaseMessagingPlugin*) getPluginInstance {
