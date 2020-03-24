@@ -37,6 +37,11 @@ module.exports = {
             exec(resolve, reject, PLUGIN_NAME, "getToken", [type]);
         });
     },
+    send: function(senderId, id, data)  {
+        return new Promise(function(resolve, reject) {
+            exec(resolve, reject, PLUGIN_NAME, "send", [senderId, id, data]);
+        });
+    },
     setBadge: function(value) {
         return new Promise(function(resolve, reject) {
             exec(resolve, reject, PLUGIN_NAME, "setBadge", [value]);
