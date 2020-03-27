@@ -98,13 +98,16 @@ public class FirebaseMessagingPluginService extends FirebaseMessagingService {
         builder.setPriority(1);
 
         this.notificationManager.notify(0, builder.build());
-        // dismiss notification to hide icon from status bar automatically
-        new Handler(getMainLooper()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                notificationManager.cancel(0);
-            }
-        }, 3000);
+
+        if (FirebaseMessagingPlugin.isAutoHide()) {
+            // dismiss notification to hide icon from status bar automatically
+            new Handler(getMainLooper()).postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    notificationManager.cancel(0);
+                }
+            }, 3000);
+        }
     }
 
     private Uri getNotificationSound(String soundName) {
