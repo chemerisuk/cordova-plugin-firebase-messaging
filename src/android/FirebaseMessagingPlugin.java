@@ -293,16 +293,7 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
         RemoteMessage.Notification notification = remoteMessage.getNotification();
         try {
             if (notification != null) {
-                JSONObject jsonNotification = new JSONObject();
-                jsonNotification.put("body", notification.getBody());
-                jsonNotification.put("title", notification.getTitle());
-                jsonNotification.put("sound", notification.getSound());
-                jsonNotification.put("icon", notification.getIcon());
-                jsonNotification.put("tag", notification.getTag());
-                jsonNotification.put("color", notification.getColor());
-                jsonNotification.put("clickAction", notification.getClickAction());
-
-                notificationData.put("gcm", jsonNotification);
+                notificationData.put("gcm", toJSON(notification));
             }
             notificationData.put("google.message_id", remoteMessage.getMessageId());
             notificationData.put("google.sent_time", remoteMessage.getSentTime());
@@ -368,5 +359,16 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
                 .put("id", channel.getId())
                 .put("name", channel.getName())
                 .put("description", channel.getDescription());
+    }
+
+    private static JSONObject toJSON(RemoteMessage.Notification notification) throws JSONException {
+        return new JSONObject()
+            .put("body", notification.getBody())
+            .put("title", notification.getTitle())
+            .put("sound", notification.getSound())
+            .put("icon", notification.getIcon())
+            .put("tag", notification.getTag())
+            .put("color", notification.getColor())
+            .put("clickAction", notification.getClickAction());
     }
 }
