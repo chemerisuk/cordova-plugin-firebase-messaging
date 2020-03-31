@@ -135,18 +135,8 @@ Sets current badge number (if supported).
 ```js
 cordova.plugins.firebase.messaging.setBadge(value);
 ```
-## Android tips
-### Set custom default notification channel
-If incoming FCM messages do not specify an Android notification channel, you can indicate to FCM what channel should be used as the default by adding a metadata element to your application manifest. In the metadata element specify the ID of the channel that should be used by default by FCM.
-```xml
-<config-file parent="/manifest/application" target="app/src/main/AndroidManifest.xml">
-    <meta-data
-        android:name="com.google.firebase.messaging.default_notification_channel_id"
-        android:value="default_channel_id"/>
-</config-file>
-```
 
-Note: You are still required to create a notification channel in code with an ID that matches the one defined in the manifest. See the [Android docs](https://developer.android.com/guide/topics/ui/notifiers/notifications#ManageChannels) for more.
+## Android tips
 
 ### Set custom default notification icon
 Setting a custom default icon allows you to specify what icon is used for notification messages if no icon is set in the notification payload. Also use the custom default icon to set the icon used by notification messages sent from the Firebase console. If no custom default icon is set and no icon is set in the notification payload, the application icon (rendered in white) is used.

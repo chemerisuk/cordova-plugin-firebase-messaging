@@ -2,7 +2,6 @@ package by.chemerisuk.cordova.firebase;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -11,10 +10,11 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
+import android.util.Log;
+
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -41,14 +41,14 @@ public class FirebaseMessagingPluginService extends FirebaseMessagingService {
 
     @Override
     public void onCreate() {
-        this.broadcastManager = LocalBroadcastManager.getInstance(this);
-        this.notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        broadcastManager = LocalBroadcastManager.getInstance(this);
+        notificationManager = ContextCompat.getSystemService(this, NotificationManager.class);
 
         try {
             ApplicationInfo ai = getPackageManager().getApplicationInfo(getApplicationContext().getPackageName(), PackageManager.GET_META_DATA);
-            this.defaultNotificationIcon = ai.metaData.getInt(NOTIFICATION_ICON_KEY, ai.icon);
-            this.defaultNotificationChannel = ai.metaData.getString(NOTIFICATION_CHANNEL_KEY, "default");
-            this.defaultNotificationColor = ContextCompat.getColor(this, ai.metaData.getInt(NOTIFICATION_COLOR_KEY));
+            defaultNotificationIcon = ai.metaData.getInt(NOTIFICATION_ICON_KEY, ai.icon);
+            defaultNotificationChannel = ai.metaData.getString(NOTIFICATION_CHANNEL_KEY, "default");
+            defaultNotificationColor = ContextCompat.getColor(this, ai.metaData.getInt(NOTIFICATION_COLOR_KEY));
         } catch (PackageManager.NameNotFoundException e) {
             Log.e(TAG, "Failed to load meta-data", e);
         } catch(Resources.NotFoundException e) {
@@ -56,8 +56,11 @@ public class FirebaseMessagingPluginService extends FirebaseMessagingService {
         }
         // On Android O or greater we need to create a new notification channel
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            this.notificationManager.createNotificationChannel(
-                new NotificationChannel(this.defaultNotificationChannel, "Firebase", NotificationManager.IMPORTANCE_DEFAULT));
+            NotificationChannel defaultChannel = notificationManager.getNotificationChannel(defaultNotificationChannel);
+            if (defaultChannel == null) {
+                notificationManager.createNotificationChannel(
+                        new NotificationChannel(defaultNotificationChannel, "Firebase", NotificationManager.IMPORTANCE_HIGH));
+            }
         }
     }
 
@@ -67,7 +70,7 @@ public class FirebaseMessagingPluginService extends FirebaseMessagingService {
 
         Intent intent = new Intent(ACTION_FCM_TOKEN);
         intent.putExtra(EXTRA_FCM_TOKEN, token);
-        this.broadcastManager.sendBroadcast(intent);
+        broadcastManager.sendBroadcast(intent);
     }
 
     @Override
@@ -76,7 +79,7 @@ public class FirebaseMessagingPluginService extends FirebaseMessagingService {
 
         Intent intent = new Intent(ACTION_FCM_MESSAGE);
         intent.putExtra(EXTRA_FCM_MESSAGE, remoteMessage);
-        this.broadcastManager.sendBroadcast(intent);
+        broadcastManager.sendBroadcast(intent);
 
         if (FirebaseMessagingPlugin.isForceShow()) {
             RemoteMessage.Notification notification = remoteMessage.getNotification();
@@ -87,17 +90,17 @@ public class FirebaseMessagingPluginService extends FirebaseMessagingService {
     }
 
     private void showAlert(RemoteMessage.Notification notification) {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, this.defaultNotificationChannel);
-        builder.setContentTitle(notification.getTitle());
-        builder.setContentText(notification.getBody());
-        builder.setGroup(notification.getTag());
-        builder.setSmallIcon(this.defaultNotificationIcon);
-        builder.setColor(this.defaultNotificationColor);
-        // must set sound and priority in order to display alert
-        builder.setSound(getNotificationSound(notification.getSound()));
-        builder.setPriority(1);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, getNotificationChannel(notification))
+                .setSound(getNotificationSound(notification.getSound()))
+                .setContentTitle(notification.getTitle())
+                .setContentText(notification.getBody())
+                .setGroup(notification.getTag())
+                .setSmallIcon(defaultNotificationIcon)
+                .setColor(defaultNotificationColor)
+                // must set priority to make sure forceShow works properly
+                .setPriority(1);
 
-        this.notificationManager.notify(0, builder.build());
+        notificationManager.notify(0, builder.build());
         // dismiss notification to hide icon from status bar automatically
         new Handler(getMainLooper()).postDelayed(new Runnable() {
             @Override
@@ -107,11 +110,22 @@ public class FirebaseMessagingPluginService extends FirebaseMessagingService {
         }, 3000);
     }
 
-    private Uri getNotificationSound(String soundName) {
-        if (soundName != null && !soundName.equals("default") && !soundName.equals("enabled")) {
-            return Uri.parse(SCHEME_ANDROID_RESOURCE + "://" + getApplicationContext().getPackageName() + "/raw/" + soundName);
+    private String getNotificationChannel(RemoteMessage.Notification notification) {
+        String channel = notification.getChannelId();
+        if (channel == null) {
+            return defaultNotificationChannel;
         } else {
+            return channel;
+        }
+    }
+
+    private Uri getNotificationSound(String soundName) {
+        if (soundName == null || soundName.isEmpty()) {
+            return null;
+        } else if (soundName.equals("default")) {
             return RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        } else {
+            return Uri.parse(SCHEME_ANDROID_RESOURCE + "://" + getApplicationContext().getPackageName() + "/raw/" + soundName);
         }
     }
 }
