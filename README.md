@@ -152,8 +152,9 @@ cordova.plugins.firebase.messaging.createChannel({
 });
 ```
 
-#### Channel properties
+#### Channel options
 | Property | Type | Description |
+| -------- | ---- | ----------- |
 | `id` | `String` | The id of the channel. Must be unique per package. |
 | `name` | `String` | User visible name of the channel. |
 | `description` | `String` | User visible description of this channel. |
@@ -162,7 +163,7 @@ cordova.plugins.firebase.messaging.createChannel({
 | `badge` | `Boolean` | Sets whether notifications posted to this channel can appear as application icon badges in a Launcher. |
 | `light` | `Boolean` | Sets whether notifications posted to this channel should display notification lights, on devices that support that feature. |
 | `lightColor` | `Integer` | Sets the notification light color #RGBA for notifications posted to this channel. |
-| `vibration` | `Boolean|Array` | Sets whether notification posted to this channel should vibrate. Pass array value instead of a boolean to set a vibration pattern. |
+| `vibration` | `Boolean` or `Array` | Sets whether notification posted to this channel should vibrate. Pass array value instead of a boolean to set a vibration pattern. |
  
 ### findChannel(_channelId_)
 Returns the notification channel settings for a given channel id.
