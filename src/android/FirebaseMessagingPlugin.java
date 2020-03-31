@@ -231,19 +231,29 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
     }
 
     @CordovaMethod
+    private void findChannel(String channelId, CallbackContext callbackContext) throws JSONException {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            throw new UnsupportedOperationException("Notification channels are not supported");
+        }
+
+        NotificationChannel channel = notificationManager.getNotificationChannel(channelId);
+        if (channel == null) {
+            callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, (String)null));
+        } else {
+            callbackContext.success(toJSON(channel));
+        }
+    }
+
+    @CordovaMethod
     private void listChannels(CallbackContext callbackContext) throws JSONException {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             throw new UnsupportedOperationException("Notification channels are not supported");
         }
 
         List<NotificationChannel> channels = notificationManager.getNotificationChannels();
-        JSONArray result = new JSONArray(channels.size());
+        JSONArray result = new JSONArray();
         for (NotificationChannel channel : channels) {
-            result.put(new JSONObject()
-                    .put("id", channel.getId())
-                    .put("name", channel.getName())
-                    .put("description", channel.getDescription())
-            );
+            result.put(toJSON(channel));
         }
 
         callbackContext.success(result);
@@ -351,5 +361,12 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
             Log.e(TAG, "getNotificationData", e);
             return null;
         }
+    }
+
+    private static JSONObject toJSON(NotificationChannel channel) throws JSONException {
+        return new JSONObject()
+                .put("id", channel.getId())
+                .put("name", channel.getName())
+                .put("description", channel.getDescription());
     }
 }
