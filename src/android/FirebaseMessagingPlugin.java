@@ -56,10 +56,6 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
 
         notificationManager = getSystemService(cordova.getActivity(), NotificationManager.class);
         lastBundle = getNotificationData(cordova.getActivity().getIntent());
-
-        Context context = cordova.getActivity().getApplicationContext();
-        // cleanup badge value initially
-        ShortcutBadger.applyCount(context, 0);
     }
 
     @CordovaMethod
