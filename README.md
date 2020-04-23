@@ -47,6 +47,7 @@ cordova.plugins.firebase.messaging.onMessage(function(payload) {
     console.log("New foreground FCM message: ", payload);
 });
 ```
+NOTE: on iOS make sure notification payload contains key `content-available` with value `1`. Otherwise this callback is never fired.
 
 ### onBackgroundMessage(_callback_)
 Called when a push message received while app is in background.
@@ -55,6 +56,7 @@ cordova.plugins.firebase.messaging.onBackgroundMessage(function(payload) {
     console.log("New background FCM message: ", payload);
 });
 ```
+NOTE: on iOS make sure notification payload contains key `content-available` with value `1`. Otherwise this callback is never fired.
 
 ### requestPermission(_options_)
 Grant permission to recieve push notifications (will trigger prompt on iOS).
