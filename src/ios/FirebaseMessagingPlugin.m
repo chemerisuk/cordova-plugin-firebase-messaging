@@ -11,8 +11,10 @@
 
     NSNumber* forceShowSetting = options[@"forceShow"];
     if (forceShowSetting && [forceShowSetting boolValue]) {
-        self.forceShow = UNNotificationPresentationOptionBadge |
-            UNNotificationPresentationOptionSound | UNNotificationPresentationOptionAlert;
+        // fix the issue the notification disappears instantly when pulling to the notification center
+        // self.forceShow = UNNotificationPresentationOptionBadge |
+        //     UNNotificationPresentationOptionSound | UNNotificationPresentationOptionAlert;
+        self.forceShow = UNNotificationPresentationOptionSound | UNNotificationPresentationOptionAlert;
     } else {
         self.forceShow = UNNotificationPresentationOptionNone;
     }
