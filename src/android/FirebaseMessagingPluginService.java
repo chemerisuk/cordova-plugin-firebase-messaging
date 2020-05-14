@@ -1,7 +1,9 @@
 package by.chemerisuk.cordova.firebase;
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -90,6 +92,10 @@ public class FirebaseMessagingPluginService extends FirebaseMessagingService {
     }
 
     private void showAlert(RemoteMessage.Notification notification) {
+        NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle();
+        style.setBigContentTitle(notification.getTitle());
+        style.bigText(notification.getBody());
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, getNotificationChannel(notification))
                 .setSound(getNotificationSound(notification.getSound()))
                 .setContentTitle(notification.getTitle())
@@ -98,16 +104,21 @@ public class FirebaseMessagingPluginService extends FirebaseMessagingService {
                 .setSmallIcon(defaultNotificationIcon)
                 .setColor(defaultNotificationColor)
                 // must set priority to make sure forceShow works properly
-                .setPriority(1);
+                .setPriority(1)
+                // set an expanded notification
+                .setStyle(style)
+                // Setting this flag will make it so the notification is automatically canceled when the user clicks it in the panel.
+                .setAutoCancel(true)
+                .setContentIntent(PendingIntent.getActivity(this, 0, new Intent(), 0));;
 
         notificationManager.notify(0, builder.build());
         // dismiss notification to hide icon from status bar automatically
-        new Handler(getMainLooper()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                notificationManager.cancel(0);
-            }
-        }, 3000);
+        // new Handler(getMainLooper()).postDelayed(new Runnable() {
+        //     @Override
+        //     public void run() {
+        //         notificationManager.cancel(0);
+        //     }
+        // }, 3000);
     }
 
     private String getNotificationChannel(RemoteMessage.Notification notification) {
