@@ -236,7 +236,10 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
         if (channel == null) {
             callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, (String)null));
         } else {
-            callbackContext.success(toJSON(channel));
+            callbackContext.success(new JSONObject()
+                .put("id", channel.getId())
+                .put("name", channel.getName())
+                .put("description", channel.getDescription()));
         }
     }
 
@@ -249,7 +252,10 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
         List<NotificationChannel> channels = notificationManager.getNotificationChannels();
         JSONArray result = new JSONArray();
         for (NotificationChannel channel : channels) {
-            result.put(toJSON(channel));
+            result.put(new JSONObject()
+                .put("id", channel.getId())
+                .put("name", channel.getName())
+                .put("description", channel.getDescription()));
         }
 
         callbackContext.success(result);
@@ -348,13 +354,6 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
             Log.e(TAG, "getNotificationData", e);
             return null;
         }
-    }
-
-    private static JSONObject toJSON(NotificationChannel channel) throws JSONException {
-        return new JSONObject()
-                .put("id", channel.getId())
-                .put("name", channel.getName())
-                .put("description", channel.getDescription());
     }
 
     private static JSONObject toJSON(RemoteMessage.Notification notification) throws JSONException {
