@@ -94,6 +94,14 @@ cordova.plugins.firebase.messaging.getToken("apns-string").then(function(token) 
 });
 ```
 
+### clearMessages
+Clear all notification messages from system notification bar.
+```js
+cordova.plugins.firebase.messaging.clearMessages(function() {
+    console.log("Notification messages cleared successfully");
+});
+```
+
 ### revokeToken
 Delete the Instance ID (Token) and the data associated with it.
 Call getToken to generate a new one.
