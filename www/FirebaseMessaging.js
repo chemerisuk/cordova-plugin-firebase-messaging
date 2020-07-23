@@ -22,6 +22,9 @@ module.exports = {
     onBackgroundMessage: function(callack, error) {
         exec(callack, error, PLUGIN_NAME, "onBackgroundMessage", []);
     },
+    clearMessages: function(callack, error) {
+        exec(callack, error, PLUGIN_NAME, "clearMessages", []);
+    },
     revokeToken: function() {
         return new Promise(function(resolve, reject) {
             exec(resolve, reject, PLUGIN_NAME, "revokeToken", []);

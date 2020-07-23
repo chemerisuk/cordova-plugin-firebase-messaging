@@ -89,6 +89,15 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
     }
 
     @CordovaMethod
+    private void clearMessages(CallbackContext callbackContext) throws IOException {
+        // NotificationManager nMgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager = getSystemService(cordova.getActivity(), NotificationManager.class);
+        notificationManager.cancelAll();
+
+        callbackContext.success();
+    }
+
+    @CordovaMethod
     private void revokeToken(CallbackContext callbackContext) throws IOException {
         FirebaseInstanceId.getInstance().deleteInstanceId();
 
