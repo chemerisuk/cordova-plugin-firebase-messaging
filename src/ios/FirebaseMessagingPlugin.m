@@ -36,6 +36,13 @@
     [[UIApplication sharedApplication] registerForRemoteNotifications];
 }
 
+- (void)clearNotifications:(CDVInvokedUrlCommand *)command {
+    UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+    [center removeAllDeliveredNotifications];
+    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
 - (void)revokeToken:(CDVInvokedUrlCommand *)command {
     [[FIRInstanceID instanceID] deleteIDWithHandler:^(NSError* err) {
         CDVPluginResult *pluginResult;

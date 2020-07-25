@@ -4,6 +4,7 @@
 
 @interface FirebaseMessagingPlugin : CDVPlugin
 - (void)requestPermission:(CDVInvokedUrlCommand*)command;
+- (void)clearNotifications:(CDVInvokedUrlCommand*)command;
 - (void)revokeToken:(CDVInvokedUrlCommand*)command;
 - (void)getInstanceId:(CDVInvokedUrlCommand*)command;
 - (void)getToken:(CDVInvokedUrlCommand*)command;
