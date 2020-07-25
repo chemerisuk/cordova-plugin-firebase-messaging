@@ -94,10 +94,10 @@ cordova.plugins.firebase.messaging.getToken("apns-string").then(function(token) 
 });
 ```
 
-### clearMessages
-Clear all notification messages from system notification bar.
+### clearNotifications
+Clear all notifications from system notification bar.
 ```js
-cordova.plugins.firebase.messaging.clearMessages(function() {
+cordova.plugins.firebase.messaging.clearNotifications(function() {
     console.log("Notification messages cleared successfully");
 });
 ```
