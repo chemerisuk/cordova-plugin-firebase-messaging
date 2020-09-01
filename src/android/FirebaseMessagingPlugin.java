@@ -364,7 +364,7 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
     }
 
     private static JSONObject toJSON(RemoteMessage.Notification notification) throws JSONException {
-        return new JSONObject()
+        JSONObject result = new JSONObject()
             .put("body", notification.getBody())
             .put("title", notification.getTitle())
             .put("sound", notification.getSound())
@@ -372,5 +372,12 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
             .put("tag", notification.getTag())
             .put("color", notification.getColor())
             .put("clickAction", notification.getClickAction());
+
+        Uri imageUri = notification.getImageUrl();
+        if (imageUri != null) {
+            result.put("imageUrl", imageUri.toString());
+        }
+
+        return result;
     }
 }
