@@ -70,6 +70,10 @@ xmlns:android="http://schemas.android.com/apk/res/android"
             </feature>
         </config-file>
 
+        <config-file target="config.xml" parent="/*">
+            <preference name="AndroidXEnabled" value="true" />
+        </config-file>
+
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
             <service android:name="by.chemerisuk.cordova.firebase.FirebaseMessagingPluginService">
                 <intent-filter>
