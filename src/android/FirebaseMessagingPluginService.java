@@ -23,7 +23,7 @@ import static android.content.ContentResolver.SCHEME_ANDROID_RESOURCE;
 
 
 public class FirebaseMessagingPluginService extends FirebaseMessagingService {
-    private static final String TAG = "FirebaseMessagingPluginService";
+    private static final String TAG = "FCMPluginService";
 
     public static final String ACTION_FCM_MESSAGE = "by.chemerisuk.cordova.firebase.ACTION_FCM_MESSAGE";
     public static final String EXTRA_FCM_MESSAGE = "by.chemerisuk.cordova.firebase.EXTRA_FCM_MESSAGE";

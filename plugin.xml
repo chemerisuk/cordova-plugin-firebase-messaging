@@ -60,7 +60,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
     </platform>
 
     <platform name="android">
-        <preference name="ANDROID_FIREBASE_MESSAGING_VERSION" default="20.2.+"/>
+        <preference name="ANDROID_FIREBASE_MESSAGING_VERSION" default="21.0.+"/>
         <preference name="ANDROIDX_CORE_VERSION" default="1.3.+"/>
 
         <config-file target="res/xml/config.xml" parent="/*">
