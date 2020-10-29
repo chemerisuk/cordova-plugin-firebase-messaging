@@ -6,6 +6,14 @@
 
 @implementation FirebaseMessagingPlugin
 
+- (void)pluginInitialize {
+    NSLog(@"Starting Firebase Messaging plugin");
+
+    if(![FIRApp defaultApp]) {
+        [FIRApp configure];
+    }
+}
+
 - (void)requestPermission:(CDVInvokedUrlCommand *)command {
     NSDictionary* options = [command.arguments objectAtIndex:0];
 
