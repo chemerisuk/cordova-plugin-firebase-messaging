@@ -44,7 +44,7 @@
 }
 
 - (void)revokeToken:(CDVInvokedUrlCommand *)command {
-    [[FIRInstanceID instanceID] deleteIDWithHandler:^(NSError* err) {
+    [[FIRMessaging messaging] deleteTokenWithCompletion:^(NSError * err) {
         CDVPluginResult *pluginResult;
         if (err) {
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:err.localizedDescription];
@@ -56,12 +56,12 @@
 }
 
 - (void)getInstanceId:(CDVInvokedUrlCommand *)command {
-    [[FIRInstanceID instanceID] instanceIDWithHandler:^(FIRInstanceIDResult* result, NSError* err) {
+    [[FIRMessaging messaging] tokenWithCompletion:^(NSString * token, NSError * err) {
         CDVPluginResult *pluginResult;
         if (err) {
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:err.localizedDescription];
         } else {
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:result.instanceID];
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:token];
         }
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }];
@@ -76,15 +76,7 @@
         if (fcmToken) {
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:fcmToken];
         } else {
-            [[FIRInstanceID instanceID] instanceIDWithHandler:^(FIRInstanceIDResult* result, NSError* err) {
-                CDVPluginResult *pluginResult;
-                if (err) {
-                    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:err.localizedDescription];
-                } else {
-                    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:result.token];
-                }
-                [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-            }];
+            [self getInstanceId:command];
         }
     } else if ([type hasPrefix:@"apns-"]) {
         NSData* apnsToken = [FIRMessaging messaging].APNSToken;
