@@ -51,7 +51,7 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
-- (void)revokeToken:(CDVInvokedUrlCommand *)command {
+- (void)deleteToken:(CDVInvokedUrlCommand *)command {
     [[FIRMessaging messaging] deleteTokenWithCompletion:^(NSError * err) {
         CDVPluginResult *pluginResult;
         if (err) {
@@ -63,28 +63,26 @@
     }];
 }
 
-- (void)getInstanceId:(CDVInvokedUrlCommand *)command {
-    [[FIRMessaging messaging] tokenWithCompletion:^(NSString * token, NSError * err) {
-        CDVPluginResult *pluginResult;
-        if (err) {
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:err.localizedDescription];
-        } else {
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:token];
-        }
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    }];
-}
-
 - (void)getToken:(CDVInvokedUrlCommand *)command {
     CDVPluginResult *pluginResult;
     NSString* type = [command.arguments objectAtIndex:0];
 
     if (![type isKindOfClass:[NSString class]]) {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Invalid token type argument"];
+    } else if ([type length] == 0) {
         NSString *fcmToken = [FIRMessaging messaging].FCMToken;
         if (fcmToken) {
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:fcmToken];
         } else {
-            [self getInstanceId:command];
+            [[FIRMessaging messaging] tokenWithCompletion:^(NSString * token, NSError * err) {
+                CDVPluginResult *pluginResult;
+                if (err) {
+                    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:err.localizedDescription];
+                } else {
+                    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:token];
+                }
+                [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+            }];
         }
     } else if ([type hasPrefix:@"apns-"]) {
         NSData* apnsToken = [FIRMessaging messaging].APNSToken;
@@ -100,7 +98,7 @@
                 }
                 pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:hexToken];
             } else {
-                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Invalid APNS token type argument"];
+                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Invalid token type argument"];
             }
         } else {
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:nil];

@@ -25,19 +25,14 @@ module.exports = {
     clearNotifications: function(callack, error) {
         exec(callack, error, PLUGIN_NAME, "clearNotifications", []);
     },
-    revokeToken: function() {
+    deleteToken: function() {
         return new Promise(function(resolve, reject) {
-            exec(resolve, reject, PLUGIN_NAME, "revokeToken", []);
-        });
-    },
-    getInstanceId: function() {
-        return new Promise(function(resolve, reject) {
-            exec(resolve, reject, PLUGIN_NAME, "getInstanceId", []);
+            exec(resolve, reject, PLUGIN_NAME, "deleteToken", []);
         });
     },
     getToken: function(type) {
         return new Promise(function(resolve, reject) {
-            exec(resolve, reject, PLUGIN_NAME, "getToken", [type]);
+            exec(resolve, reject, PLUGIN_NAME, "getToken", [type || ""]);
         });
     },
     setBadge: function(value) {

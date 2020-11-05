@@ -85,7 +85,7 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
     }
 
     @CordovaMethod
-    private void revokeToken(CallbackContext callbackContext) {
+    private void deleteToken(CallbackContext callbackContext) {
         firebaseMessaging.deleteToken().addOnCompleteListener(cordova.getActivity(), task -> {
             if (task.isSuccessful()) {
                 callbackContext.success();
@@ -96,23 +96,18 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
     }
 
     @CordovaMethod
-    private void getInstanceId(final CallbackContext callbackContext) {
-        firebaseMessaging.getToken().addOnCompleteListener(cordova.getActivity(), task -> {
-            if (task.isSuccessful()) {
-                callbackContext.success(task.getResult());
-            } else {
-                callbackContext.error(task.getException().getMessage());
-            }
-        });
-    }
-
-    @CordovaMethod
     private void getToken(String type, final CallbackContext callbackContext) {
-        if (type != null) {
+        if (type.isEmpty()) {
+            firebaseMessaging.getToken().addOnCompleteListener(cordova.getActivity(), task -> {
+                if (task.isSuccessful()) {
+                    callbackContext.success(task.getResult());
+                } else {
+                    callbackContext.error(task.getException().getMessage());
+                }
+            });
+        } else {
             callbackContext.sendPluginResult(
                 new PluginResult(PluginResult.Status.OK, (String)null));
-        } else {
-            getInstanceId(callbackContext);
         }
     }
 
