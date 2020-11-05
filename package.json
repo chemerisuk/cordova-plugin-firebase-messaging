@@ -19,6 +19,7 @@
     "url": "https://github.com/chemerisuk/cordova-plugin-firebase-messaging/issues"
   },
   "homepage": "https://github.com/chemerisuk/cordova-plugin-firebase-messaging#readme",
+  "funding": "https://github.com/chemerisuk/cordova-plugin-firebase-messaging?sponsor=1",
   "keywords": [
     "cordova",
     "firebase",
