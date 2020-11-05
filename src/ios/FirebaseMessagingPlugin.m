@@ -67,9 +67,7 @@
     CDVPluginResult *pluginResult;
     NSString* type = [command.arguments objectAtIndex:0];
 
-    if (![type isKindOfClass:[NSString class]]) {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Invalid token type argument"];
-    } else if ([type length] == 0) {
+    if ([type length] == 0) {
         NSString *fcmToken = [FIRMessaging messaging].FCMToken;
         if (fcmToken) {
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:fcmToken];
