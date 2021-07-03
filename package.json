@@ -32,7 +32,7 @@
     "cordova-ios"
   ],
   "scripts": {
-    "version": "replace -s 'version=\"(.+)(?=\">)' 'version=\"'$npm_package_version plugin.xml && git add plugin.xml",
+    "version": "perl -p -i -e 's/(version=)\"\\d+\\.\\d+\\.\\d+\"/$1\"'$npm_package_version'\"$2/' plugin.xml && git add plugin.xml",
     "postversion": "git push && git push --tags"
   }
 }
