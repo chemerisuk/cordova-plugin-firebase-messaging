@@ -15,15 +15,15 @@ xmlns:android="http://schemas.android.com/apk/res/android"
     </js-module>
 
     <engines>
-        <engine name="cordova" version=">=9.0.0"/>
-        <engine name="cordova-android" version=">=8.0.0"/>
+        <engine name="cordova" version=">=10.0.0"/>
+        <engine name="cordova-android" version=">=9.0.0"/>
         <engine name="cordova-ios" version=">=6.0.0"/>
     </engines>
 
-    <dependency id="cordova-plugin-firebase-analytics" version="~5.0.0"/>
+    <dependency id="cordova-plugin-firebase-analytics" version="~6.0.0"/>
 
     <platform name="ios">
-        <preference name="IOS_FIREBASE_MESSAGING_VERSION" default="~> 7.0.0"/>
+        <preference name="IOS_FIREBASE_MESSAGING_VERSION" default="~> 8.2.0"/>
 
         <config-file target="config.xml" parent="/*">
             <feature name="FirebaseMessaging">
@@ -60,18 +60,14 @@ xmlns:android="http://schemas.android.com/apk/res/android"
     </platform>
 
     <platform name="android">
-        <preference name="ANDROID_FIREBASE_MESSAGING_VERSION" default="21.0.+"/>
-        <preference name="ANDROIDX_CORE_VERSION" default="1.3.+"/>
+        <preference name="ANDROID_FIREBASE_MESSAGING_VERSION" default="22.0.+"/>
+        <preference name="ANDROIDX_CORE_VERSION" default="1.6.+"/>
 
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="FirebaseMessaging">
                 <param name="android-package" value="by.chemerisuk.cordova.firebase.FirebaseMessagingPlugin" />
                 <param name="onload" value="true" />
             </feature>
-        </config-file>
-
-        <config-file target="config.xml" parent="/*">
-            <preference name="AndroidXEnabled" value="true" />
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
@@ -84,8 +80,6 @@ xmlns:android="http://schemas.android.com/apk/res/android"
         </config-file>
 
         <dependency id="cordova-support-android-plugin" version="~1.0.0"/>
-        <dependency id="cordova-support-google-services" version="^1.3.2"/>
-        <dependency id="cordova-plugin-androidx" version="3.0.0"/>
 
         <framework src="com.google.firebase:firebase-messaging:$ANDROID_FIREBASE_MESSAGING_VERSION" />
         <framework src="androidx.core:core:$ANDROIDX_CORE_VERSION" />
