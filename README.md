@@ -10,6 +10,7 @@
 
 - [Supported platforms](#supported-platforms)
 - [Installation](#installation)
+- [Adding configuration files](#adding-configuration-files)
 - [Methods](#methods)
 - [Notification channels on Android 8+](#notification-channels-on-android-8)
 - [Android tips](#android-tips)
@@ -30,6 +31,27 @@ If you get an error about CocoaPods being unable to find compatible versions, ru
     $ pod repo update
 
 Use variables `IOS_FIREBASE_MESSAGING_VERSION`, `ANDROID_FIREBASE_MESSAGING_VERSION` and `ANDROIDX_CORE_VERSION` to override dependency versions on Android.
+
+## Adding configuration files
+
+Cordova supports `resource-file` tag for easy copying resources files. Firebase SDK requires `google-services.json` on Android and `GoogleService-Info.plist` on iOS platforms.
+
+1. Put `google-services.json` and/or `GoogleService-Info.plist` into the root directory of your Cordova project
+2. Add new tag for Android platform
+
+```xml
+<platform name="android">
+    ...
+    <resource-file src="google-services.json" target="app/google-services.json" />
+</platform>
+...
+<platform name="ios">
+    ...
+    <resource-file src="GoogleService-Info.plist" />
+</platform>
+```
+
+This way config files will be copied on `cordova prepare` step.
 
 ## Methods
 In general (for both platforms) you can only rely on custom data fields from a FCM payload.
