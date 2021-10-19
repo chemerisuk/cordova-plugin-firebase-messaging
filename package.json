@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-firebase-messaging",
-  "version": "6.0.0",
+  "version": "6.1.0",
   "description": "Cordova plugin for Firebase Messaging",
   "cordova": {
     "id": "cordova-plugin-firebase-messaging",
