@@ -220,7 +220,13 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
             callbackContext.success(new JSONObject()
                 .put("id", channel.getId())
                 .put("name", channel.getName())
-                .put("description", channel.getDescription()));
+                .put("description", channel.getDescription())
+                .put("importance", channel.getImportance())
+                .put("badge", channel.canShowBadge())
+                .put("light", channel.shouldShowLights())
+                .put("lightColor", channel.getLightColor())
+                .put("sound", channel.getSound())
+                .put("vibration", channel.getVibrationPattern()));
         }
     }
 
@@ -236,7 +242,13 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
             result.put(new JSONObject()
                 .put("id", channel.getId())
                 .put("name", channel.getName())
-                .put("description", channel.getDescription()));
+                .put("description", channel.getDescription())
+                .put("importance", channel.getImportance())
+                .put("badge", channel.canShowBadge())
+                .put("light", channel.shouldShowLights())
+                .put("lightColor", channel.getLightColor())
+                .put("sound", channel.getSound())
+                .put("vibration", channel.getVibrationPattern()));
         }
 
         callbackContext.success(result);
