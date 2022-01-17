@@ -217,16 +217,7 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
         if (channel == null) {
             callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, (String)null));
         } else {
-            callbackContext.success(new JSONObject()
-                .put("id", channel.getId())
-                .put("name", channel.getName())
-                .put("description", channel.getDescription())
-                .put("importance", channel.getImportance())
-                .put("badge", channel.canShowBadge())
-                .put("light", channel.shouldShowLights())
-                .put("lightColor", channel.getLightColor())
-                .put("sound", channel.getSound())
-                .put("vibration", channel.getVibrationPattern()));
+            callbackContext.success(toJSON(channel));
         }
     }
 
@@ -239,16 +230,7 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
         List<NotificationChannel> channels = notificationManager.getNotificationChannels();
         JSONArray result = new JSONArray();
         for (NotificationChannel channel : channels) {
-            result.put(new JSONObject()
-                .put("id", channel.getId())
-                .put("name", channel.getName())
-                .put("description", channel.getDescription())
-                .put("importance", channel.getImportance())
-                .put("badge", channel.canShowBadge())
-                .put("light", channel.shouldShowLights())
-                .put("lightColor", channel.getLightColor())
-                .put("sound", channel.getSound())
-                .put("vibration", channel.getVibrationPattern()));
+            result.put(toJSON(channel));
         }
 
         callbackContext.success(result);
@@ -363,6 +345,21 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
         if (imageUri != null) {
             result.put("imageUrl", imageUri.toString());
         }
+
+        return result;
+    }
+
+    private static JSONObject toJSON(NotificationChannel channel) throws JSONException {
+        JSONObject result = new JSONObject()
+            .put("id", channel.getId())
+            .put("name", channel.getName())
+            .put("description", channel.getDescription())
+            .put("importance", channel.getImportance())
+            .put("badge", channel.canShowBadge())
+            .put("light", channel.shouldShowLights())
+            .put("lightColor", channel.getLightColor())
+            .put("sound", channel.getSound())
+            .put("vibration", channel.getVibrationPattern());
 
         return result;
     }
