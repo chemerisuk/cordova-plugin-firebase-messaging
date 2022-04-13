@@ -71,7 +71,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
-            <service android:name="by.chemerisuk.cordova.firebase.FirebaseMessagingPluginService">
+            <service android:name="by.chemerisuk.cordova.firebase.FirebaseMessagingPluginService" android:exported="true">
                 <intent-filter>
                     <action android:name="com.google.firebase.MESSAGING_EVENT"/>
                 </intent-filter>
