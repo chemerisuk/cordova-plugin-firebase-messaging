@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -107,7 +108,7 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
             });
         } else {
             callbackContext.sendPluginResult(
-                new PluginResult(PluginResult.Status.OK, (String)null));
+                    new PluginResult(PluginResult.Status.OK, (String)null));
         }
     }
 
@@ -277,7 +278,7 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
 
             if (instance != null) {
                 CallbackContext callbackContext = instance.isBackground ?
-                    instance.backgroundCallback : instance.foregroundCallback;
+                        instance.backgroundCallback : instance.foregroundCallback;
                 instance.sendNotification(notificationData, callbackContext);
             }
         } catch (JSONException e) {
@@ -333,13 +334,13 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
 
     private static JSONObject toJSON(RemoteMessage.Notification notification) throws JSONException {
         JSONObject result = new JSONObject()
-            .put("body", notification.getBody())
-            .put("title", notification.getTitle())
-            .put("sound", notification.getSound())
-            .put("icon", notification.getIcon())
-            .put("tag", notification.getTag())
-            .put("color", notification.getColor())
-            .put("clickAction", notification.getClickAction());
+                .put("body", notification.getBody())
+                .put("title", notification.getTitle())
+                .put("sound", notification.getSound())
+                .put("icon", notification.getIcon())
+                .put("tag", notification.getTag())
+                .put("color", notification.getColor())
+                .put("clickAction", notification.getClickAction());
 
         Uri imageUri = notification.getImageUrl();
         if (imageUri != null) {
@@ -349,17 +350,18 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
         return result;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private static JSONObject toJSON(NotificationChannel channel) throws JSONException {
         JSONObject result = new JSONObject()
-            .put("id", channel.getId())
-            .put("name", channel.getName())
-            .put("description", channel.getDescription())
-            .put("importance", channel.getImportance())
-            .put("badge", channel.canShowBadge())
-            .put("light", channel.shouldShowLights())
-            .put("lightColor", channel.getLightColor())
-            .put("sound", channel.getSound())
-            .put("vibration", channel.getVibrationPattern());
+                .put("id", channel.getId())
+                .put("name", channel.getName())
+                .put("description", channel.getDescription())
+                .put("importance", channel.getImportance())
+                .put("badge", channel.canShowBadge())
+                .put("light", channel.shouldShowLights())
+                .put("lightColor", channel.getLightColor())
+                .put("sound", channel.getSound())
+                .put("vibration", channel.getVibrationPattern());
 
         return result;
     }
