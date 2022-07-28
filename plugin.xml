@@ -20,10 +20,8 @@ xmlns:android="http://schemas.android.com/apk/res/android"
         <engine name="cordova-ios" version=">=6.0.0"/>
     </engines>
 
-    <dependency id="cordova-plugin-firebase-analytics" version="~6.1.0"/>
-
     <platform name="ios">
-        <preference name="IOS_FIREBASE_POD_VERSION" default="~> 8.8.0"/>
+        <preference name="IOS_FIREBASE_POD_VERSION" default="9.3.0" />
 
         <config-file target="config.xml" parent="/*">
             <feature name="FirebaseMessaging">
@@ -53,21 +51,27 @@ xmlns:android="http://schemas.android.com/apk/res/android"
             <config>
                 <source url="https://cdn.cocoapods.org/"/>
             </config>
-            <pods>
+            <pods use-frameworks="true">
                 <pod name="Firebase/Messaging" spec="$IOS_FIREBASE_POD_VERSION" />
             </pods>
         </podspec>
     </platform>
 
     <platform name="android">
-        <preference name="ANDROID_FIREBASE_MESSAGING_VERSION" default="22.0.+"/>
-        <preference name="ANDROIDX_CORE_VERSION" default="1.6.+"/>
+        <preference name="ANDROIDX_CORE_VERSION" default="1.6.+" />
+        <preference name="ANDROID_FIREBASE_BOM_VERSION" default="30.3.1" />
 
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="FirebaseMessaging">
                 <param name="android-package" value="by.chemerisuk.cordova.firebase.FirebaseMessagingPlugin" />
                 <param name="onload" value="true" />
             </feature>
+        </config-file>
+
+        <config-file target="config.xml" parent="/*">
+            <preference name="AndroidXEnabled" value="true" />
+            <preference name="GradlePluginGoogleServicesEnabled" value="true" />
+            <preference name="GradlePluginGoogleServicesVersion" value="4.3.13" />
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
@@ -79,9 +83,10 @@ xmlns:android="http://schemas.android.com/apk/res/android"
             <meta-data android:name="com.google.firebase.messaging.default_notification_channel_id" android:value="default"/>
         </config-file>
 
-        <dependency id="cordova-support-android-plugin" version="~1.0.0"/>
+        <dependency id="cordova-support-android-plugin" version="~2.0.1" />
 
-        <framework src="com.google.firebase:firebase-messaging:$ANDROID_FIREBASE_MESSAGING_VERSION" />
+        <framework src="platform('com.google.firebase:firebase-bom:$ANDROID_FIREBASE_BOM_VERSION')" />
+        <framework src="com.google.firebase:firebase-messaging" />
         <framework src="androidx.core:core:$ANDROIDX_CORE_VERSION" />
         <framework src="me.leolin:ShortcutBadger:1.1.22@aar"/>
 
