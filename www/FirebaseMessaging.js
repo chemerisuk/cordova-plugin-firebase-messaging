@@ -60,24 +60,4 @@ module.exports = {
             exec(resolve, reject, PLUGIN_NAME, "requestPermission", [options || {}]);
         });
     },
-    findChannel: function(channelId) {
-        return new Promise(function(resolve, reject) {
-            exec(resolve, reject, PLUGIN_NAME, "findChannel", [channelId]);
-        });
-    },
-    listChannels: function() {
-        return new Promise(function(resolve, reject) {
-            exec(resolve, reject, PLUGIN_NAME, "listChannels", []);
-        });
-    },
-    createChannel: function(options) {
-        return new Promise(function(resolve, reject) {
-            exec(resolve, reject, PLUGIN_NAME, "createChannel", [options]);
-        });
-    },
-    deleteChannel: function(channelId) {
-        return new Promise(function(resolve, reject) {
-            exec(resolve, reject, PLUGIN_NAME, "deleteChannel", [channelId]);
-        });
-    }
 };
