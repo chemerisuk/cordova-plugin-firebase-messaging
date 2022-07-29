@@ -82,7 +82,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
             <meta-data android:name="com.google.firebase.messaging.default_notification_channel_id" android:value="default"/>
         </config-file>
 
-        <dependency id="cordova-support-android-plugin" version="~2.0.2" />
+        <dependency id="cordova-support-android-plugin" version="~2.0.3" />
 
         <framework src="platform('com.google.firebase:firebase-bom:$ANDROID_FIREBASE_BOM_VERSION')" />
         <framework src="com.google.firebase:firebase-messaging" />
