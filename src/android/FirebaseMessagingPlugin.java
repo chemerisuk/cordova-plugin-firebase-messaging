@@ -80,7 +80,7 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
     @CordovaMethod
     private void getToken(CordovaArgs args, CallbackContext callbackContext) throws Exception {
         String type = args.getString(0);
-        if (type.isEmpty()) {
+        if (!type.isEmpty()) {
             callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, (String)null));
         } else {
             String fcmToken = await(firebaseMessaging.getToken());

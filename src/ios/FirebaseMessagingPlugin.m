@@ -28,19 +28,18 @@
 
     UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
     UNAuthorizationOptions authOptions = (UNAuthorizationOptionAlert | UNAuthorizationOptionSound | UNAuthorizationOptionBadge);
-    [center requestAuthorizationWithOptions:authOptions
-                          completionHandler:^(BOOL granted, NSError* err) {
-                              CDVPluginResult *pluginResult;
-                              if (err) {
-                                  pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:err.localizedDescription];
-                              } else if (!granted) {
-                                  pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Notifications permission is not granted"];
-                              } else {
-                                  pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-                              }
+    [center requestAuthorizationWithOptions:authOptions completionHandler:^(BOOL granted, NSError* err) {
+        CDVPluginResult *pluginResult;
+        if (err) {
+          pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:err.localizedDescription];
+        } else if (!granted) {
+          pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Notifications permission is not granted"];
+        } else {
+          pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        }
 
-                              [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-                          }];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }];
 
     [[UIApplication sharedApplication] registerForRemoteNotifications];
 }
@@ -130,31 +129,29 @@
 - (void)subscribe:(CDVInvokedUrlCommand *)command {
     NSString* topic = [NSString stringWithFormat:@"%@", [command.arguments objectAtIndex:0]];
 
-    [[FIRMessaging messaging] subscribeToTopic:topic
-                                    completion:^(NSError* err) {
-                                        CDVPluginResult *pluginResult;
-                                        if (err) {
-                                            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:err.localizedDescription];
-                                        } else {
-                                            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-                                        }
-                                        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-                                    }];
+    [[FIRMessaging messaging] subscribeToTopic:topic completion:^(NSError* err) {
+        CDVPluginResult *pluginResult;
+        if (err) {
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:err.localizedDescription];
+        } else {
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        }
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }];
 }
 
 - (void)unsubscribe:(CDVInvokedUrlCommand *)command {
     NSString* topic = [NSString stringWithFormat:@"%@", [command.arguments objectAtIndex:0]];
 
-    [[FIRMessaging messaging] unsubscribeFromTopic:topic
-                                        completion:^(NSError* err) {
-                                            CDVPluginResult *pluginResult;
-                                            if (err) {
-                                                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:err.localizedDescription];
-                                            } else {
-                                                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-                                            }
-                                            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-                                        }];
+    [[FIRMessaging messaging] unsubscribeFromTopic:topic completion:^(NSError* err) {
+        CDVPluginResult *pluginResult;
+        if (err) {
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:err.localizedDescription];
+        } else {
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        }
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }];
 }
 
 - (void)onMessage:(CDVInvokedUrlCommand *)command {
