@@ -14,13 +14,27 @@
 
 ## Index
 
-<!-- MarkdownTOC levels="2" autolink="true" -->
+<!-- MarkdownTOC levels="2,3" autolink="true" -->
 
 - [Supported platforms](#supported-platforms)
 - [Installation](#installation)
 - [Adding configuration files](#adding-configuration-files)
+    - [Set custom default notification icon \(Android only\)](#set-custom-default-notification-icon-android-only)
+    - [Set custom default notification color \(Android only\)](#set-custom-default-notification-color-android-only)
 - [Type Aliases](#type-aliases)
+    - [PushPayload](#pushpayload)
 - [Functions](#functions)
+    - [clearNotifications](#clearnotifications)
+    - [deleteToken](#deletetoken)
+    - [getBadge](#getbadge)
+    - [getToken](#gettoken)
+    - [onBackgroundMessage](#onbackgroundmessage)
+    - [onMessage](#onmessage)
+    - [onTokenRefresh](#ontokenrefresh)
+    - [requestPermission](#requestpermission)
+    - [setBadge](#setbadge)
+    - [subscribe](#subscribe)
+    - [unsubscribe](#unsubscribe)
 
 <!-- /MarkdownTOC -->
 
@@ -114,7 +128,9 @@ In general (for both platforms) you can only rely on custom data fields.
 
 ## Functions
 
-### **clearNotifications**(): `Promise`<`void`\>
+### clearNotifications
+
+**clearNotifications**(): `Promise`<`void`\>
 
 Clear all notifications from system notification bar.
 
@@ -130,7 +146,11 @@ cordova.plugins.firebase.messaging.clearNotifications();
 
 Callback when operation is completed
 
-### **deleteToken**(): `Promise`<`void`\>
+___
+
+### deleteToken
+
+**deleteToken**(): `Promise`<`void`\>
 
 Delete the Instance ID (Token) and the data associated with it.
 
@@ -148,7 +168,11 @@ cordova.plugins.firebase.messaging.deleteToken();
 
 Callback when operation is completed
 
-### **getBadge**(): `Promise`<`number`\>
+___
+
+### getBadge
+
+**getBadge**(): `Promise`<`number`\>
 
 Gets current badge number (if supported).
 
@@ -166,7 +190,11 @@ cordova.plugins.firebase.messaging.getBadge().then(function(value) {
 
 Promise fulfiled with the current badge value
 
-### **getToken**(`format?`): `Promise`<`string`\>
+___
+
+### getToken
+
+**getToken**(`format?`): `Promise`<`string`\>
 
 Returns the current FCM token.
 
@@ -190,7 +218,11 @@ cordova.plugins.firebase.messaging.getToken().then(function(token) {
 
 Promise fulfiled with the current FCM token
 
-### **onBackgroundMessage**(`callback`, `errorCallback`): `void`
+___
+
+### onBackgroundMessage
+
+**onBackgroundMessage**(`callback`, `errorCallback`): `void`
 
 Registers background push notification callback.
 
@@ -206,14 +238,18 @@ cordova.plugins.firebase.messaging.onBackgroundMessage(function(payload) {
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `callback` | (`payload`: [`PushPayload`](FirebaseMessaging.md#pushpayload)) => `void` | Callback function |
+| `callback` | (`payload`: [`PushPayload`](#pushpayload)) => `void` | Callback function |
 | `errorCallback` | (`error`: `string`) => `void` | Error callback function |
 
 #### Returns
 
 `void`
 
-### **onMessage**(`callback`, `errorCallback`): `void`
+___
+
+### onMessage
+
+**onMessage**(`callback`, `errorCallback`): `void`
 
 Registers foreground push notification callback.
 
@@ -229,14 +265,18 @@ cordova.plugins.firebase.messaging.onMessage(function(payload) {
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `callback` | (`payload`: [`PushPayload`](FirebaseMessaging.md#pushpayload)) => `void` | Callback function |
+| `callback` | (`payload`: [`PushPayload`](#pushpayload)) => `void` | Callback function |
 | `errorCallback` | (`error`: `string`) => `void` | Error callback function |
 
 #### Returns
 
 `void`
 
-### **onTokenRefresh**(`callback`, `errorCallback`): `void`
+___
+
+### onTokenRefresh
+
+**onTokenRefresh**(`callback`, `errorCallback`): `void`
 
 Registers callback to notify when FCM token is updated.
 
@@ -261,7 +301,11 @@ cordova.plugins.firebase.messaging.onTokenRefresh(function() {
 
 `void`
 
-### **requestPermission**(`options`): `Promise`<`void`\>
+___
+
+### requestPermission
+
+**requestPermission**(`options`): `Promise`<`void`\>
 
 Ask for permission to recieve push notifications (will trigger prompt on iOS).
 
@@ -286,7 +330,11 @@ cordova.plugins.firebase.messaging.requestPermission({forceShow: false}).then(fu
 
 Filfiled promise when permission is granted.
 
-### **setBadge**(`badgeValue`): `Promise`<`void`\>
+___
+
+### setBadge
+
+**setBadge**(`badgeValue`): `Promise`<`void`\>
 
 Sets current badge number (if supported).
 
@@ -308,7 +356,11 @@ cordova.plugins.firebase.messaging.setBadge(value);
 
 Callback when operation is completed
 
-### **subscribe**(`topic`): `Promise`<`void`\>
+___
+
+### subscribe
+
+**subscribe**(`topic`): `Promise`<`void`\>
 
 Subscribe to a FCM topic.
 
@@ -330,7 +382,11 @@ cordova.plugins.firebase.messaging.subscribe("news");
 
 Callback when operation is completed
 
-### **unsubscribe**(`topic`): `Promise`<`void`\>
+___
+
+### unsubscribe
+
+**unsubscribe**(`topic`): `Promise`<`void`\>
 
 Unsubscribe from a FCM topic.
 

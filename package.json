@@ -32,22 +32,15 @@
     "cordova-ios"
   ],
   "scripts": {
-    "prepare": "husky install",
-    "version": "perl -i -pe 's/(version=)\"\\d+\\.\\d+\\.\\d+\"/$1\"'$npm_package_version'\"$2/' plugin.xml && git add plugin.xml README.md",
+    "preversion": "npm run docs && rm -rf docs",
+    "version": "perl -i -pe 's/(version=)\"\\d+\\.\\d+\\.\\d+\"/$1\"'$npm_package_version'\"$2/' plugin.xml && git add .",
     "postversion": "git push && git push --tags",
     "predocs": "tsc www/* --declaration --allowJs --checkJs --lib es2015,dom --emitDeclarationOnly --outDir types",
-    "docs": "typedoc ./types",
-    "postdocs": "perl -i -0pe 's/(<!-- TypedocGenerated -->).*/$1\n\n/gms' README.md && cat ./docs/modules/FirebaseMessaging.md >> README.md"
-  },
-  "lint-staged": {
-    "www/**/*.js": [
-      "npm run docs"
-    ]
+    "docs": "typedoc && perl -i -pe 's/README.md#/#/g' ./docs/README.md",
+    "postdocs": "perl -i -0pe 's/(<!-- TypedocGenerated -->).*/$1\n\n/gms' README.md && cat ./docs/README.md >> README.md"
   },
   "devDependencies": {
-    "@colony/typedoc-plugin-markdown": "3.16.0",
-    "husky": "^8.0.1",
-    "lint-staged": "^13.0.3",
-    "typedoc": "^0.23.9"
+    "typedoc": "^0.23.9",
+    "typedoc-plugin-markdown": "^3.13.4"
   }
 }

@@ -1,10 +1,15 @@
 {
   "typedocOptions": {
     "out": "docs",
+    "readme": "none",
+    "entryPoints": "./types",
+    "exclude": "./types/index.d.ts",
     "entryPointStrategy": "expand",
     "hideBreadcrumbs": true,
     "hideInPageTOC": true,
     "hidePageTitle": true,
-    "hideMembersSymbol": true
+    "hideMembersSymbol": true,
+    "disableSources": true,
+    "githubPages": false
   }
 }
