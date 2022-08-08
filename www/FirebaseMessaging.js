@@ -55,7 +55,7 @@ exports.onTokenRefresh =
  *
  * Use `getToken` to generate a new token.
  * @param {() => void} callback Callback function
- * @param {(error: string) => void} errorCallback Error callback function
+ * @param {(error: string) => void} [errorCallback] Error callback function
  *
  * @example
  * cordova.plugins.firebase.messaging.onTokenRefresh(function() {
@@ -71,7 +71,7 @@ exports.onMessage =
  *
  * Registers foreground push notification callback.
  * @param {(payload: PushPayload) => void} callback Callback function
- * @param {(error: string) => void} errorCallback Error callback function
+ * @param {(error: string) => void} [errorCallback] Error callback function
  *
  * @example
  * cordova.plugins.firebase.messaging.onMessage(function(payload) {
@@ -87,7 +87,7 @@ exports.onBackgroundMessage =
  *
  * Registers background push notification callback.
  * @param {(payload: PushPayload) => void} callback Callback function
- * @param {(error: string) => void} errorCallback Error callback function
+ * @param {(error: string) => void} [errorCallback] Error callback function
  *
  * @example
  * cordova.plugins.firebase.messaging.onBackgroundMessage(function(payload) {
