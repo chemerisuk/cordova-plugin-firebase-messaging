@@ -24,38 +24,38 @@ export function unsubscribe(topic: string): Promise<void>;
  *
  * Use `getToken` to generate a new token.
  * @param {() => void} callback Callback function
- * @param {(error: string) => void} errorCallback Error callback function
+ * @param {(error: string) => void} [errorCallback] Error callback function
  *
  * @example
  * cordova.plugins.firebase.messaging.onTokenRefresh(function() {
  *     console.log("Device token updated");
  * });
  */
-export function onTokenRefresh(callback: () => void, errorCallback: (error: string) => void): void;
+export function onTokenRefresh(callback: () => void, errorCallback?: (error: string) => void): void;
 /**
  *
  * Registers foreground push notification callback.
  * @param {(payload: PushPayload) => void} callback Callback function
- * @param {(error: string) => void} errorCallback Error callback function
+ * @param {(error: string) => void} [errorCallback] Error callback function
  *
  * @example
  * cordova.plugins.firebase.messaging.onMessage(function(payload) {
  *     console.log("New foreground FCM message: ", payload);
  * });
  */
-export function onMessage(callback: (payload: PushPayload) => void, errorCallback: (error: string) => void): void;
+export function onMessage(callback: (payload: PushPayload) => void, errorCallback?: (error: string) => void): void;
 /**
  *
  * Registers background push notification callback.
  * @param {(payload: PushPayload) => void} callback Callback function
- * @param {(error: string) => void} errorCallback Error callback function
+ * @param {(error: string) => void} [errorCallback] Error callback function
  *
  * @example
  * cordova.plugins.firebase.messaging.onBackgroundMessage(function(payload) {
  *     console.log("New background FCM message: ", payload);
  * });
  */
-export function onBackgroundMessage(callback: (payload: PushPayload) => void, errorCallback: (error: string) => void): void;
+export function onBackgroundMessage(callback: (payload: PushPayload) => void, errorCallback?: (error: string) => void): void;
 /**
  *
  * Clear all notifications from system notification bar.

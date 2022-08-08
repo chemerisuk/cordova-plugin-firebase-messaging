@@ -222,7 +222,7 @@ ___
 
 ### onBackgroundMessage
 
-**onBackgroundMessage**(`callback`, `errorCallback`): `void`
+**onBackgroundMessage**(`callback`, `errorCallback?`): `void`
 
 Registers background push notification callback.
 
@@ -239,7 +239,7 @@ cordova.plugins.firebase.messaging.onBackgroundMessage(function(payload) {
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `callback` | (`payload`: [`PushPayload`](#pushpayload)) => `void` | Callback function |
-| `errorCallback` | (`error`: `string`) => `void` | Error callback function |
+| `errorCallback?` | (`error`: `string`) => `void` | Error callback function |
 
 #### Returns
 
@@ -249,7 +249,7 @@ ___
 
 ### onMessage
 
-**onMessage**(`callback`, `errorCallback`): `void`
+**onMessage**(`callback`, `errorCallback?`): `void`
 
 Registers foreground push notification callback.
 
@@ -266,7 +266,7 @@ cordova.plugins.firebase.messaging.onMessage(function(payload) {
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `callback` | (`payload`: [`PushPayload`](#pushpayload)) => `void` | Callback function |
-| `errorCallback` | (`error`: `string`) => `void` | Error callback function |
+| `errorCallback?` | (`error`: `string`) => `void` | Error callback function |
 
 #### Returns
 
@@ -276,7 +276,7 @@ ___
 
 ### onTokenRefresh
 
-**onTokenRefresh**(`callback`, `errorCallback`): `void`
+**onTokenRefresh**(`callback`, `errorCallback?`): `void`
 
 Registers callback to notify when FCM token is updated.
 
@@ -295,7 +295,7 @@ cordova.plugins.firebase.messaging.onTokenRefresh(function() {
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `callback` | () => `void` | Callback function |
-| `errorCallback` | (`error`: `string`) => `void` | Error callback function |
+| `errorCallback?` | (`error`: `string`) => `void` | Error callback function |
 
 #### Returns
 
