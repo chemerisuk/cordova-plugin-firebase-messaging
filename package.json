@@ -2,6 +2,7 @@
   "name": "cordova-plugin-firebase-messaging",
   "version": "7.0.2",
   "description": "Cordova plugin for Firebase Messaging",
+  "types": "./types/index.d.ts",
   "cordova": {
     "id": "cordova-plugin-firebase-messaging",
     "platforms": [
