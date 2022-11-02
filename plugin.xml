@@ -84,7 +84,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
 
         <dependency id="cordova-support-android-plugin" version="~2.0.4" />
 
-        <framework src="platform('com.google.firebase:firebase-bom:31.0.2')" />
+        <framework src="platform('com.google.firebase:firebase-bom:$ANDROID_FIREBASE_BOM_VERSION')" />
         <framework src="com.google.firebase:firebase-messaging" />
         <framework src="me.leolin:ShortcutBadger:1.1.22@aar"/>
         <framework src="androidx.activity:activity:1.6.1" />
