@@ -80,7 +80,6 @@ xmlns:android="http://schemas.android.com/apk/res/android"
                 </intent-filter>
             </service>
             <meta-data android:name="com.google.firebase.messaging.default_notification_channel_id" android:value="default"/>
-            <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
         </config-file>
 
         <dependency id="cordova-support-android-plugin" version="~2.0.4" />
