@@ -5,17 +5,14 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
 import androidx.core.app.NotificationManagerCompat;
-import androidx.core.content.ContextCompat;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.activity.result.ActivityResultCaller;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.RemoteMessage;
@@ -29,7 +26,6 @@ import org.json.JSONObject;
 import java.util.Set;
 
 import by.chemerisuk.cordova.support.CordovaMethod;
-import by.chemerisuk.cordova.support.ExecutionThread;
 import by.chemerisuk.cordova.support.ReflectiveCordovaPlugin;
 import me.leolin.shortcutbadger.ShortcutBadger;
 
@@ -51,15 +47,16 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
     private FirebaseMessaging firebaseMessaging;
     private CallbackContext requestPermissionCallback;
 
-    private final ActivityResultLauncher<String> requestPermissionLauncher = registerForActivityResult(
-            new ActivityResultContracts.RequestPermission(), isGranted -> {
-                if (isGranted) {
-                    // FCM SDK (and your app) can post notifications.
-                    requestPermissionCallback.success();
-                } else {
-                    requestPermissionCallback.error("Notifications permission is not granted");
-                }
-            });
+    private final ActivityResultLauncher<String> requestPermissionLauncher = cordova.getActivity()
+            .registerForActivityResult(
+                    new ActivityResultContracts.RequestPermission(), isGranted -> {
+                        if (isGranted) {
+                            // FCM SDK (and your app) can post notifications.
+                            requestPermissionCallback.success();
+                        } else {
+                            requestPermissionCallback.error("Notifications permission is not granted");
+                        }
+                    });
 
     @Override
     protected void pluginInitialize() {
