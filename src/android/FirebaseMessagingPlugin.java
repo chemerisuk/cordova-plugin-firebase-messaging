@@ -26,6 +26,7 @@ import org.json.JSONObject;
 import java.util.Set;
 
 import by.chemerisuk.cordova.support.CordovaMethod;
+import by.chemerisuk.cordova.support.ExecutionThread;
 import by.chemerisuk.cordova.support.ReflectiveCordovaPlugin;
 import me.leolin.shortcutbadger.ShortcutBadger;
 
