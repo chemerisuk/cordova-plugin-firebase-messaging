@@ -1,6 +1,10 @@
-var PLUGIN_NAME = "FirebaseMessaging";
+cordova.define("cordova-plugin-firebase-messaging.FirebaseMessaging", function(require, exports, module) {
+    var PLUGIN_NAME = "FirebaseMessaging";
 // @ts-ignore
-var exec = require("cordova/exec");
+var exec = cordova.require("cordova/exec");
+// import exec from "cordova/exec";
+// var exec = cordova.exec;
+let _exports = module.exports
 
 /**
  *
@@ -16,7 +20,7 @@ var exec = require("cordova/exec");
  * @property {Record<string, any>} [aps] IOS payload, available when message arrives in both foreground and background.
  */
 
-exports.subscribe =
+_exports.subscribe =
 /**
  *
  * Subscribe to a FCM topic.
@@ -32,7 +36,7 @@ function(topic) {
     });
 };
 
-exports.unsubscribe =
+_exports.unsubscribe =
 /**
  *
  * Unsubscribe from a FCM topic.
@@ -48,7 +52,7 @@ function(topic) {
     });
 };
 
-exports.onTokenRefresh =
+_exports.onTokenRefresh =
 /**
  *
  * Registers callback to notify when FCM token is updated.
@@ -66,7 +70,7 @@ function(callback, errorCallback) {
     exec(callback, errorCallback, PLUGIN_NAME, "onTokenRefresh", []);
 };
 
-exports.onMessage =
+_exports.onMessage =
 /**
  *
  * Registers foreground push notification callback.
@@ -82,7 +86,7 @@ function(callback, errorCallback) {
     exec(callback, errorCallback, PLUGIN_NAME, "onMessage", []);
 };
 
-exports.onBackgroundMessage =
+_exports.onBackgroundMessage =
 /**
  *
  * Registers background push notification callback.
@@ -98,7 +102,7 @@ function(callback, errorCallback) {
     exec(callback, errorCallback, PLUGIN_NAME, "onBackgroundMessage", []);
 };
 
-exports.clearNotifications =
+_exports.clearNotifications =
 /**
  *
  * Clear all notifications from system notification bar.
@@ -113,7 +117,7 @@ function() {
     });
 };
 
-exports.deleteToken =
+_exports.deleteToken =
 /**
  *
  * Delete the Instance ID (Token) and the data associated with it.
@@ -130,7 +134,7 @@ function() {
     });
 };
 
-exports.getToken =
+_exports.getToken =
 /**
  *
  * Returns the current FCM token.
@@ -148,7 +152,7 @@ function(format) {
     });
 };
 
-exports.setBadge =
+_exports.setBadge =
 /**
  *
  * Sets current badge number (if supported).
@@ -164,7 +168,7 @@ function(badgeValue) {
     });
 };
 
-exports.getBadge =
+_exports.getBadge =
 /**
  *
  * Gets current badge number (if supported).
@@ -181,7 +185,31 @@ function() {
     });
 };
 
-exports.requestPermission =
+//--------------------------------------------------------
+//------------- GLS
+_exports.findChannel = function(channelId) {
+    return new Promise(function(resolve, reject) {
+        exec(resolve, reject, PLUGIN_NAME, "findChannel", [channelId]);
+    });
+},
+_exports.listChannels = function() {
+    return new Promise(function(resolve, reject) {
+        exec(resolve, reject, PLUGIN_NAME, "listChannels", []);
+    });
+},
+_exports.createChannel = function(options) {
+    return new Promise(function(resolve, reject) {
+        exec(resolve, reject, PLUGIN_NAME, "createChannel", [options]);
+    });
+},
+_exports.deleteChannel = function(channelId) {
+    return new Promise(function(resolve, reject) {
+        exec(resolve, reject, PLUGIN_NAME, "deleteChannel", [channelId]);
+    });
+}
+//--------------------------------------------------------
+
+_exports.requestPermission =
 /**
  *
  * Ask for permission to recieve push notifications (will trigger prompt on iOS).
@@ -205,3 +233,5 @@ function(options) {
         exec(resolve, reject, PLUGIN_NAME, "requestPermission", [options || {}]);
     });
 };
+
+});

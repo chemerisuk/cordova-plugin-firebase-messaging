@@ -30,6 +30,14 @@ import static androidx.core.content.ContextCompat.getSystemService;
 import static com.google.android.gms.tasks.Tasks.await;
 import static by.chemerisuk.cordova.support.ExecutionThread.WORKER;
 
+//--- begin: notification channel imports (GLS)
+import android.app.NotificationChannel;
+import android.media.AudioAttributes;
+import android.content.ContentResolver;
+import org.json.JSONArray;
+import java.util.List;
+import android.os.Build;
+//---- end: notification channel imports
 
 public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
     private static final String TAG = "FCMPlugin";
@@ -242,4 +250,112 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
 
         return result;
     }
+
+    //----------------------------------------------------------------------------------
+    //---- begin: notification channel implementation (GLS)
+    //----------------------------------------------------------------------------------
+    private static JSONObject toJSON(NotificationChannel channel) throws JSONException {
+        JSONObject result = new JSONObject()
+                .put("id", channel.getId())
+                .put("name", channel.getName())
+                .put("description", channel.getDescription())
+                .put("importance", channel.getImportance())
+                .put("badge", channel.canShowBadge())
+                .put("light", channel.shouldShowLights())
+                .put("lightColor", channel.getLightColor())
+                .put("sound", channel.getSound())
+                .put("vibration", channel.getVibrationPattern());
+
+        return result;
+    }
+
+    @CordovaMethod
+    private void createChannel(CordovaArgs args, CallbackContext callbackContext) throws JSONException {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            throw new UnsupportedOperationException("Notification channels are not supported");
+        }
+        JSONObject options = args.getJSONObject(0);
+
+        String channelId = options.getString("id");
+        String channelName = options.getString("name");
+        int importance = options.getInt("importance");
+        NotificationChannel channel = new NotificationChannel(channelId, channelName, importance);
+        channel.setDescription(options.optString("description", ""));
+        channel.setShowBadge(options.optBoolean("badge", true));
+
+        channel.enableLights(options.optBoolean("light", false));
+        channel.setLightColor(options.optInt("lightColor", 0));
+
+        String soundName = options.optString("sound", "default");
+        if (!"default".equals(soundName)) {
+            String packageName = cordova.getActivity().getPackageName();
+            Uri soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + packageName + "/raw/" + soundName);
+            channel.setSound(soundUri, new AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
+                    .build());
+        }
+
+        JSONArray vibrationPattern = options.optJSONArray("vibration");
+        if (vibrationPattern != null) {
+            int patternLength = vibrationPattern.length();
+            long[] patternArray = new long[patternLength];
+            for (int i = 0; i < patternLength; i++) {
+                patternArray[i] = vibrationPattern.getLong(i);
+            }
+            channel.setVibrationPattern(patternArray);
+            channel.enableVibration(true);
+        } else {
+            channel.enableVibration(options.optBoolean("vibration", true));
+        }
+
+        notificationManager.createNotificationChannel(channel);
+
+        callbackContext.success();
+    }
+
+    @CordovaMethod
+    private void findChannel(CordovaArgs args, CallbackContext callbackContext) throws JSONException {
+        String channelId = args.getString(0);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            throw new UnsupportedOperationException("Notification channels are not supported");
+        }
+
+        NotificationChannel channel = notificationManager.getNotificationChannel(channelId);
+        if (channel == null) {
+            callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, (String)null));
+        } else {
+            callbackContext.success(toJSON(channel));
+        }
+    }
+
+    @CordovaMethod
+    private void listChannels(CallbackContext callbackContext) throws JSONException {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            throw new UnsupportedOperationException("Notification channels are not supported");
+        }
+
+        List<NotificationChannel> channels = notificationManager.getNotificationChannels();
+        JSONArray result = new JSONArray();
+        for (NotificationChannel channel : channels) {
+            result.put(toJSON(channel));
+        }
+
+        callbackContext.success(result);
+    }
+
+    @CordovaMethod
+    private void deleteChannel(CordovaArgs args, CallbackContext callbackContext) throws JSONException {
+        String channelId = args.getString(0);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            throw new UnsupportedOperationException("Notification channels are not supported");
+        }
+
+        notificationManager.deleteNotificationChannel(channelId);
+
+        callbackContext.success();
+    }
+    //----------------------------------------------------------------------------------
+    //---- end: notification channel implementation (GLS)
+    //----------------------------------------------------------------------------------
 }
