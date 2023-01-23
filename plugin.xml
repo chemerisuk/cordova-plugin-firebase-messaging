@@ -58,7 +58,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
     </platform>
 
     <platform name="android">
-        <preference name="ANDROID_FIREBASE_BOM_VERSION" default="30.3.1" />
+        <preference name="ANDROID_FIREBASE_BOM_VERSION" default="31.0.2" />
 
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="FirebaseMessaging">
@@ -87,6 +87,8 @@ xmlns:android="http://schemas.android.com/apk/res/android"
         <framework src="platform('com.google.firebase:firebase-bom:$ANDROID_FIREBASE_BOM_VERSION')" />
         <framework src="com.google.firebase:firebase-messaging" />
         <framework src="me.leolin:ShortcutBadger:1.1.22@aar"/>
+        <framework src="androidx.activity:activity:1.6.1" />
+        <framework src="androidx.fragment:fragment:1.5.4" />
 
         <source-file src="src/android/FirebaseMessagingPlugin.java"
             target-dir="src/by/chemerisuk/cordova/firebase/" />
