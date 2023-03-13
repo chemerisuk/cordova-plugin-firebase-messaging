@@ -204,4 +204,28 @@ function(options) {
 
         exec(resolve, reject, PLUGIN_NAME, "requestPermission", [options || {}]);
     });
+}
+
+exports.findChannel = function(channelId) {
+        return new Promise(function(resolve, reject) {
+            exec(resolve, reject, PLUGIN_NAME, "findChannel", [channelId]);
+        });
+    };
+
+exports.listChannels = function() {
+    return new Promise(function(resolve, reject) {
+        exec(resolve, reject, PLUGIN_NAME, "listChannels", []);
+    });
+};
+
+exports.createChannel = function(options) {
+    return new Promise(function(resolve, reject) {
+        exec(resolve, reject, PLUGIN_NAME, "createChannel", [options]);
+    });
+};
+
+exports.deleteChannel = function(channelId) {
+    return new Promise(function(resolve, reject) {
+        exec(resolve, reject, PLUGIN_NAME, "deleteChannel", [channelId]);
+    })
 };
