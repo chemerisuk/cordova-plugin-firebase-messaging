@@ -156,6 +156,12 @@
 
 - (void)onMessage:(CDVInvokedUrlCommand *)command {
     self.notificationCallbackId = command.callbackId;
+
+    if (self.lastNotification) {
+        [self sendBackgroundNotification:self.lastNotification];
+
+        self.lastNotification = nil;
+    }
 }
 
 - (void)onBackgroundMessage:(CDVInvokedUrlCommand *)command {
