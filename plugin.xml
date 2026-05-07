@@ -20,7 +20,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
         <engine name="cordova-ios" version=">=6.0.0"/>
     </engines>
 
-    <platform name="ios">
+    <platform name="ios" package="swift">
         <preference name="IOS_FIREBASE_POD_VERSION" default="10.17.0" />
 
         <config-file target="config.xml" parent="/*">
@@ -52,7 +52,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
                 <source url="https://cdn.cocoapods.org/"/>
             </config>
             <pods use-frameworks="true">
-                <pod name="Firebase/Messaging" spec="$IOS_FIREBASE_POD_VERSION" />
+                <pod name="Firebase/Messaging" spec="$IOS_FIREBASE_POD_VERSION" nospm="true" />
             </pods>
         </podspec>
     </platform>
