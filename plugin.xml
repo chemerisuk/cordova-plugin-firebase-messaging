@@ -21,7 +21,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
     </engines>
 
     <platform name="ios" package="swift">
-        <preference name="IOS_FIREBASE_POD_VERSION" default="10.17.0" />
+        <preference name="IOS_FIREBASE_POD_VERSION" default="12.13.0" />
 
         <config-file target="config.xml" parent="/*">
             <feature name="FirebaseMessaging">
@@ -30,6 +30,9 @@ xmlns:android="http://schemas.android.com/apk/res/android"
             </feature>
         </config-file>
 
+        <config-file target="*-Info.plist" parent="FirebaseSdkVersion">
+            <string>$IOS_FIREBASE_POD_VERSION</string>
+        </config-file>
         <config-file target="*-Info.plist" parent="UIBackgroundModes">
             <array>
                 <string>remote-notification</string>
