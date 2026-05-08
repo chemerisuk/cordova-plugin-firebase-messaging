@@ -2,7 +2,7 @@
 #import "FirebaseMessagingPlugin.h"
 #import <objc/runtime.h>
 
-@implementation AppDelegate (FirebaseMessagingPlugin)
+@implementation CDVAppDelegate (FirebaseMessagingPlugin)
 
 // Borrowed from http://nshipster.com/method-swizzling/
 + (void)load {
