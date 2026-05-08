@@ -17,7 +17,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
     <engines>
         <engine name="cordova" version=">=10.0.0"/>
         <engine name="cordova-android" version=">=11.0.0"/>
-        <engine name="cordova-ios" version=">=6.0.0"/>
+        <engine name="cordova-ios" version=">=7.0.0"/>
     </engines>
 
     <platform name="ios" package="swift">
@@ -45,10 +45,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
             <string>production</string>
         </config-file>
 
-        <header-file src="src/ios/AppDelegate+FirebaseMessagingPlugin.h" />
-        <source-file src="src/ios/AppDelegate+FirebaseMessagingPlugin.m" />
-        <header-file src="src/ios/FirebaseMessagingPlugin.h" />
-        <source-file src="src/ios/FirebaseMessagingPlugin.m" />
+        <source-file src="src/ios/FirebaseMessagingPlugin.swift" />
 
         <podspec>
             <config>
