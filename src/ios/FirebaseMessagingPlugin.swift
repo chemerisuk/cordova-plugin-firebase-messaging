@@ -2,6 +2,7 @@ import Foundation
 import FirebaseCore
 import FirebaseMessaging
 import UserNotifications
+import Cordova
 
 @objc(FirebaseMessagingPlugin)
 class FirebaseMessagingPlugin: CDVPlugin {
@@ -14,9 +15,7 @@ class FirebaseMessagingPlugin: CDVPlugin {
 
     override func pluginInitialize() {
         super.pluginInitialize()
-        print("Starting Firebase Messaging plugin (Swift)")
 
-        // Инициализация Firebase, если она еще не выполнена
         if FirebaseApp.app() == nil {
             FirebaseApp.configure()
         }
@@ -62,18 +61,16 @@ class FirebaseMessagingPlugin: CDVPlugin {
         let type = command.arguments[0] as? String ?? ""
 
         if type.isEmpty {
-            // Получение FCM токена
-            Messaging.messaging().token { token, error in
+            Messaging.messaging().token { fcmToken, error in
                 let result: CDVPluginResult
                 if let error = error {
                     result = CDVPluginResult(status: CDVCommandStatus_ERROR, messageAs: error.localizedDescription)
                 } else {
-                    result = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: token)
+                    result = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: fcmToken!)
                 }
                 self.commandDelegate.send(result, callbackId: command.callbackId)
             }
         } else if type.hasPrefix("apns-") {
-            // Получение APNS токена
             if let apnsToken = Messaging.messaging().apnsToken {
                 let result: CDVPluginResult
                 if type == "apns-string" {
@@ -84,7 +81,7 @@ class FirebaseMessagingPlugin: CDVPlugin {
                 }
                 self.commandDelegate.send(result, callbackId: command.callbackId)
             } else {
-                self.commandDelegate.send(CDVPluginResult(status: CDVCommandStatus_OK, messageAs: nil), callbackId: command.callbackId)
+                self.commandDelegate.send(CDVPluginResult(status: CDVCommandStatus_OK), callbackId: command.callbackId)
             }
         }
     }
@@ -93,7 +90,7 @@ class FirebaseMessagingPlugin: CDVPlugin {
     func subscribe(command: CDVInvokedUrlCommand) {
         let topic = String(describing: command.arguments[0])
         Messaging.messaging().subscribe(toTopic: topic) { error in
-            let result = error == nil ? CDVPluginResult(status: CDVCommandStatus_OK) : CDVPluginResult(status: CDVCommandStatus_ERROR, messageAs: error?.localizedDescription)
+            let result = error == nil ? CDVPluginResult(status: CDVCommandStatus_OK) : CDVPluginResult(status: CDVCommandStatus_ERROR, messageAs: error?.localizedDescription ?? "")
             self.commandDelegate.send(result, callbackId: command.callbackId)
         }
     }
@@ -115,7 +112,7 @@ extension FirebaseMessagingPlugin: MessagingDelegate {
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
         if let callbackId = self.tokenRefreshCallbackId, let token = fcmToken {
             let result = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: token)
-            result?.keepCallback = true
+            result.keepCallback = true
             self.commandDelegate.send(result, callbackId: callbackId)
         }
     }
