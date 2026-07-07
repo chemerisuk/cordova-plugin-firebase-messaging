@@ -12,19 +12,15 @@ module.exports = function(context) {
     const iosPlatformPath = path.join(projectRoot, 'platforms', 'ios');
     if (!isIosTarget && !fs.existsSync(iosPlatformPath)) return;
 
-    // 2. Fetch preferences defined in plugin.xml (both iOS-specific and global)
+    // 2. Safely get preferences from pluginInfo
     const pluginInfo = opts.plugin && opts.plugin.pluginInfo;
     if (!pluginInfo) return;
 
-    const prefs = {
-        ...(pluginInfo.getPreferences() || {}),
-        ...(pluginInfo.getPreferences('ios') || {})
-    };
-
+    const prefs = { ...(pluginInfo.getPreferences() || {}), ...(pluginInfo.getPreferences('ios') || {}) };
     const varNames = Object.keys(prefs);
     if (varNames.length === 0) return;
 
-    // 3. Define all possible paths where Package.swift can reside
+    // 3. Define dynamic paths based on dynamic plugin ID
     const pluginId = opts.plugin.id;
     if (!pluginId) return;
 
@@ -33,9 +29,7 @@ module.exports = function(context) {
         path.join(iosPlatformPath, 'packages', pluginId, 'Package.swift')
     ];
 
-    const cliVariables = opts.cli_variables || {};
-
-    // 4. Loop through all paths and apply replacements for plugin preferences
+    // 4. Update Package.swift inline in all locations
     packagePaths.forEach(packagePath => {
         if (!fs.existsSync(packagePath)) return;
 
@@ -43,12 +37,11 @@ module.exports = function(context) {
         let isModified = false;
 
         varNames.forEach(varName => {
-            // CLI value takes precedence, falls back to plugin.xml preference value
-            const targetValue = cliVariables[varName] || prefs[varName];
+            // Cordova automatically injects CLI variables into process.env during hooks execution
+            const targetValue = process.env[varName] || opts.cli_variables?.[varName] || prefs[varName];
             if (!targetValue) return;
 
             const searchRegex = new RegExp('\\$' + varName, 'g');
-
             if (searchRegex.test(content)) {
                 content = content.replace(searchRegex, targetValue);
                 isModified = true;
