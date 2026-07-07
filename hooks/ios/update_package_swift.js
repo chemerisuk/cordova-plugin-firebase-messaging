@@ -5,6 +5,7 @@ const path = require('path');
 
 module.exports = function(context) {
     const opts = context.opts || {};
+    console.log('context.opts', JSON.stringify(context.opts, 2, ' '));
     const projectRoot = opts.projectRoot || path.resolve(__dirname, '../../');
 
     // 1. Quick exit if not an iOS environment
@@ -20,15 +21,14 @@ module.exports = function(context) {
     if (!targetValue) {
         const { PluginInfoProvider } = require('cordova-common');
         const pluginInfo = new PluginInfoProvider().get(opts.plugin.dir);
-        targetValue = pluginInfo.getPreferences('ios')[varName] || pluginInfo.getPreferences()[varName];
+        targetValue = pluginInfo.getPreferences('ios')[varName];
     }
 
-    // Dynamic plugin ID retrieval (replaces the hardcoded string)
-    const pluginId = opts.plugin && opts.plugin.id;
+    const pluginId = opts.plugin?.id;
     if (!targetValue || !pluginId) return;
 
     // 3. Define all possible paths where Package.swift can reside
-    const searchRegex = /\$IOS_FIREBASE_POD_VERSION/g;
+    const searchRegex = new RegExp('\\$' + varName, 'g');
     const packagePaths = [
         path.join(opts.plugin.dir, 'Package.swift'),
         path.join(iosPlatformPath, 'packages', pluginId, 'Package.swift')
