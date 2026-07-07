@@ -7,16 +7,12 @@ module.exports = function(context) {
     const opts = context.opts || {};
     const projectRoot = opts.projectRoot || path.resolve(__dirname, '../../');
 
-    const pkgJSON = require(path.join(projectRoot, 'package.json'));
-
-    console.log('pkgJSON', pkgJSON);
-
     // 1. Quick exit if not an iOS environment
     const isIosTarget = opts.platforms && opts.platforms.includes('ios');
     const iosPlatformPath = path.join(projectRoot, 'platforms', 'ios');
     if (!isIosTarget && !fs.existsSync(iosPlatformPath)) return;
 
-    // 2. Safely get preferences from pluginInfo
+    // 2. Safely get references from pluginInfo (for fallback defaults)
     const pluginInfo = opts.plugin && opts.plugin.pluginInfo;
     if (!pluginInfo) return;
 
@@ -24,7 +20,7 @@ module.exports = function(context) {
     const varNames = Object.keys(prefs);
     if (varNames.length === 0) return;
 
-    // 3. Define dynamic paths based on dynamic plugin ID
+    // 3. Define paths based on dynamic plugin ID
     const pluginId = opts.plugin.id;
     if (!pluginId) return;
 
@@ -33,7 +29,20 @@ module.exports = function(context) {
         path.join(iosPlatformPath, 'packages', pluginId, 'Package.swift')
     ];
 
-    // 4. Update Package.swift inline in all locations
+    // 4. Parse variables directly from CORDOVA_CMDLINE to avoid Cordova lifecycle bugs
+    const cmdLine = process.env.CORDOVA_CMDLINE || '';
+    const cliVariables = {};
+
+    varNames.forEach(varName => {
+        // Regex to extract '--variable VAR_NAME=VALUE' or '--variable=VAR_NAME=VALUE' from raw CLI string
+        const varRegex = new RegExp('--variable\\s+' + varName + '=["\']?([^"\'\\s]+)["\']?|--variable=' + varName + '=["\']?([^"\'\\s]+)["\']?');
+        const match = cmdLine.match(varRegex);
+        if (match) {
+            cliVariables[varName] = match[1] || match[2];
+        }
+    });
+
+    // 5. Update Package.swift inline in all locations
     packagePaths.forEach(packagePath => {
         if (!fs.existsSync(packagePath)) return;
 
@@ -41,13 +50,13 @@ module.exports = function(context) {
         let isModified = false;
 
         varNames.forEach(varName => {
-            const targetValue = process.env[varName] || opts.cli_variables?.[varName] || prefs[varName];
+            const targetValue = cliVariables[varName] || prefs[varName];
             if (!targetValue) return;
 
-            // 1. RegExp for the first execution (matches the placeholder with the trailing comment)
+            // Matches initial placeholder with the comment target
             const placeholderRegex = new RegExp('\\$' + varName + '(?=.*\\/\\/\\s*cpm:' + varName + ')', 'g');
 
-            // 2. RegExp for subsequent executions (matches exact: "version" targeted by the specific trailing comment)
+            // Matches any previously written exact: "version" with the comment target
             const exactCommentRegex = new RegExp('(exact:\\s*["\'])([^"\']+)(["\'](?=.*\\/\\/\\s*cpm:' + varName + '))', 'g');
 
             if (placeholderRegex.test(content)) {
