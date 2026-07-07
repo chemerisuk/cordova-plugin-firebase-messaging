@@ -4,8 +4,15 @@ const fs = require('fs');
 const path = require('path');
 
 module.exports = function(context) {
-    // 1. Check if the active platform is iOS
-    if (!context.opts.platforms.includes('ios')) {
+    // 1. Enhanced safe check for iOS platform
+    const projectRoot = context.opts.projectRoot || path.resolve(__dirname, '../../');
+    const iosPlatformPath = path.join(projectRoot, 'platforms', 'ios');
+
+    const hasIosPlatform = context.opts && context.opts.platforms && context.opts.platforms.includes('ios');
+    const hasIosDirectory = fs.existsSync(iosPlatformPath);
+
+    // If it's not an iOS-targeted build/install and the iOS directory doesn't exist yet, skip execution
+    if (!hasIosPlatform && !hasIosDirectory) {
         return;
     }
 
@@ -30,7 +37,7 @@ module.exports = function(context) {
     let targetValue = cliVariables[varName];
 
     if (!targetValue && pluginInfo) {
-        const platformPrefs = pluginInfo.getPreferences(context.opts.platforms) || {};
+        const platformPrefs = pluginInfo.getPreferences('ios') || {};
         const globalPrefs = pluginInfo.getPreferences() || {};
         targetValue = platformPrefs[varName] || globalPrefs[varName];
     }
