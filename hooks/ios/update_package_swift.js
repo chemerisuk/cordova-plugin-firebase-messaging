@@ -35,6 +35,7 @@ module.exports = function(context) {
 
     console.log('process.env', process.env);
     console.log('process.argv', process.argv);
+    console.log('context', context);
 
     varNames.forEach(varName => {
         // Regex to extract '--variable VAR_NAME=VALUE' or '--variable=VAR_NAME=VALUE' from raw CLI string
