@@ -5,9 +5,14 @@ const path = require('path');
 
 module.exports = function(context) {
     const opts = context.opts || {};
+    const projectRoot = opts.projectRoot || path.resolve(__dirname, '../../');
 
-    if (!opts.platforms || !opts.platforms.includes('ios')) return;
+    // 1. Quick exit if not an iOS environment
+    const isIosTarget = opts.platforms && opts.platforms.includes('ios');
+    const hasIosDir = fs.existsSync(path.join(projectRoot, 'platforms', 'ios'));
+    if (!isIosTarget && !hasIosDir) return;
 
+    // 2. Fetch the variable value (CLI choice overrides plugin.xml default)
     const varName = 'IOS_FIREBASE_POD_VERSION';
     const cliVariables = opts.cli_variables || {};
     let targetValue = cliVariables[varName];
@@ -18,27 +23,25 @@ module.exports = function(context) {
         targetValue = pluginInfo.getPreferences('ios')[varName] || pluginInfo.getPreferences()[varName];
     }
 
-    if (!targetValue) return;
+    if (!targetValue) {
+        console.warn(`⚠️ Variable ${varName} not found. Skipping.`);
+        return;
+    }
 
-    const projectRoot = opts.projectRoot || path.resolve(__dirname, '../../');
-    const searchRegex = /\$IOS_FIREBASE_POD_VERSION/g;
+    // 3. Update Package.swift inline
+    const packagePath = path.join(opts.plugin.dir, 'Package.swift');
+    if (fs.existsSync(packagePath)) {
+        let content = fs.readFileSync(packagePath, 'utf8');
+        const searchRegex = /\$IOS_FIREBASE_POD_VERSION/g;
 
-    const pluginId = opts.plugin.id;
-    if (!pluginId) return;
-
-    const packagePaths = [
-        path.join(opts.plugin.dir, 'Package.swift'),
-        path.join(projectRoot, 'platforms', 'ios', 'packages', pluginId, 'Package.swift')
-    ];
-
-    packagePaths.forEach(packagePath => {
-        if (fs.existsSync(packagePath)) {
-            let content = fs.readFileSync(packagePath, 'utf8');
-
-            if (searchRegex.test(content)) {
-                content = content.replace(searchRegex, targetValue);
-                fs.writeFileSync(packagePath, content, 'utf8');
-            }
+        if (searchRegex.test(content)) {
+            content = content.replace(searchRegex, targetValue);
+            fs.writeFileSync(packagePath, content, 'utf8');
+            console.log(`✅ Package.swift updated with version: "${targetValue}"`);
+        } else {
+            console.warn(`⚠️ Placeholder $IOS_FIREBASE_POD_VERSION not found.`);
         }
-    });
+    } else {
+        console.warn('❌ Package.swift not found.');
+    }
 };
