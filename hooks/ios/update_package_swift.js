@@ -12,20 +12,30 @@ module.exports = function(context) {
     const iosPlatformPath = path.join(projectRoot, 'platforms', 'ios');
     if (!isIosTarget && !fs.existsSync(iosPlatformPath)) return;
 
-    // 2. Extract variable value from opts.cmdLine or fallback to pluginInfo preferences
+    // 2. Reuse standard Node.js argv parser logic (simulate clean env parsing)
     const varName = 'IOS_FIREBASE_POD_VERSION';
     let targetValue = null;
 
-    if (opts.cmdLine) {
-        // Matches both --variable KEY=VALUE and --variable=KEY=VALUE
-        const varRegex = new RegExp('--variable\\s+' + varName + '=["\']?([^"\'\\s]+)["\']?|--variable=' + varName + '=["\']?([^"\'\\s]+)["\']?');
-        const match = opts.cmdLine.match(varRegex);
-        if (match) {
-            targetValue = match[1] || match[2];
+    if (Array.isArray(process.argv)) {
+        // Parse raw terminal arguments into a key-value dictionary object
+        const cliVars = process.argv.reduce((acc, arg, index, arr) => {
+            if (arg === '--variable' && arr[index + 1]) {
+                const [k, v] = arr[index + 1].split('=');
+                if (k) acc[k.trim()] = v;
+            } else if (arg.startsWith('--variable=')) {
+                const [k, v] = arg.replace('--variable=', '').split('=');
+                if (k) acc[k.trim()] = v;
+            }
+            return acc;
+        }, {});
+
+        // Safely extract and clean the target variable if it exists
+        if (cliVars[varName]) {
+            targetValue = cliVars[varName].replace(/^['"]|['"]$/g, '').trim();
         }
     }
 
-    // Fallback to plugin.xml preference default value if not found in cmdLine
+    // Fallback to plugin.xml preference default value if CLI variable is missing
     if (!targetValue && opts.plugin?.pluginInfo) {
         const pluginInfo = opts.plugin.pluginInfo;
         targetValue = pluginInfo.getPreferences('ios')[varName] || pluginInfo.getPreferences()[varName];
