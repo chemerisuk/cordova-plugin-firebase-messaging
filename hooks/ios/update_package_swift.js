@@ -9,8 +9,8 @@ module.exports = function(context) {
 
     // 1. Quick exit if not an iOS environment
     const isIosTarget = opts.platforms && opts.platforms.includes('ios');
-    const hasIosDir = fs.existsSync(path.join(projectRoot, 'platforms', 'ios'));
-    if (!isIosTarget && !hasIosDir) return;
+    const iosPlatformPath = path.join(projectRoot, 'platforms', 'ios');
+    if (!isIosTarget && !fs.existsSync(iosPlatformPath)) return;
 
     // 2. Fetch the variable value (CLI choice overrides plugin.xml default)
     const varName = 'IOS_FIREBASE_POD_VERSION';
@@ -28,20 +28,23 @@ module.exports = function(context) {
         return;
     }
 
-    // 3. Update Package.swift inline
-    const packagePath = path.join(opts.plugin.dir, 'Package.swift');
-    if (fs.existsSync(packagePath)) {
-        let content = fs.readFileSync(packagePath, 'utf8');
-        const searchRegex = /\$IOS_FIREBASE_POD_VERSION/g;
+    // 3. Define all possible paths where Package.swift can reside
+    const searchRegex = /\$IOS_FIREBASE_POD_VERSION/g;
+    const packagePaths = [
+        path.join(opts.plugin.dir, 'Package.swift'),
+        path.join(iosPlatformPath, 'packages', 'cordova-plugin-firebase-messaging', 'Package.swift')
+    ];
 
-        if (searchRegex.test(content)) {
-            content = content.replace(searchRegex, targetValue);
-            fs.writeFileSync(packagePath, content, 'utf8');
-            console.log(`✅ Package.swift updated with version: "${targetValue}"`);
-        } else {
-            console.warn(`⚠️ Placeholder $IOS_FIREBASE_POD_VERSION not found.`);
+    // 4. Update Package.swift inline in all locations
+    packagePaths.forEach(packagePath => {
+        if (fs.existsSync(packagePath)) {
+            let content = fs.readFileSync(packagePath, 'utf8');
+
+            if (searchRegex.test(content)) {
+                content = content.replace(searchRegex, targetValue);
+                fs.writeFileSync(packagePath, content, 'utf8');
+                console.log(`✅ Package.swift updated at: ${packagePath}`);
+            }
         }
-    } else {
-        console.warn('❌ Package.swift not found.');
-    }
+    });
 };
