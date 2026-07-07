@@ -7,6 +7,10 @@ module.exports = function(context) {
     const opts = context.opts || {};
     const projectRoot = opts.projectRoot || path.resolve(__dirname, '../../');
 
+    const pkgJSON = require(path.join(projectRoot, 'package.json'));
+
+    console.log('pkgJSON', pkgJSON);
+
     // 1. Quick exit if not an iOS environment
     const isIosTarget = opts.platforms && opts.platforms.includes('ios');
     const iosPlatformPath = path.join(projectRoot, 'platforms', 'ios');
@@ -37,13 +41,20 @@ module.exports = function(context) {
         let isModified = false;
 
         varNames.forEach(varName => {
-            // Cordova automatically injects CLI variables into process.env during hooks execution
             const targetValue = process.env[varName] || opts.cli_variables?.[varName] || prefs[varName];
             if (!targetValue) return;
 
-            const searchRegex = new RegExp('\\$' + varName, 'g');
-            if (searchRegex.test(content)) {
-                content = content.replace(searchRegex, targetValue);
+            // 1. RegExp for the first execution (matches the placeholder with the trailing comment)
+            const placeholderRegex = new RegExp('\\$' + varName + '(?=.*\\/\\/\\s*cpm:' + varName + ')', 'g');
+
+            // 2. RegExp for subsequent executions (matches exact: "version" targeted by the specific trailing comment)
+            const exactCommentRegex = new RegExp('(exact:\\s*["\'])([^"\']+)(["\'](?=.*\\/\\/\\s*cpm:' + varName + '))', 'g');
+
+            if (placeholderRegex.test(content)) {
+                content = content.replace(placeholderRegex, targetValue);
+                isModified = true;
+            } else if (exactCommentRegex.test(content)) {
+                content = content.replace(exactCommentRegex, `$1${targetValue}$3`);
                 isModified = true;
             }
         });
