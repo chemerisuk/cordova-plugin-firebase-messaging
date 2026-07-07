@@ -12,67 +12,44 @@ module.exports = function(context) {
     const iosPlatformPath = path.join(projectRoot, 'platforms', 'ios');
     if (!isIosTarget && !fs.existsSync(iosPlatformPath)) return;
 
-    // 2. Safely get references from pluginInfo (for fallback defaults)
-    const pluginInfo = opts.plugin && opts.plugin.pluginInfo;
-    if (!pluginInfo) return;
+    // 2. Extract variable value from opts.cmdLine or fallback to pluginInfo preferences
+    const varName = 'IOS_FIREBASE_POD_VERSION';
+    let targetValue = null;
 
-    const prefs = { ...(pluginInfo.getPreferences() || {}), ...(pluginInfo.getPreferences('ios') || {}) };
-    const varNames = Object.keys(prefs);
-    if (varNames.length === 0) return;
+    if (opts.cmdLine) {
+        // Matches both --variable KEY=VALUE and --variable=KEY=VALUE
+        const varRegex = new RegExp('--variable\\s+' + varName + '=["\']?([^"\'\\s]+)["\']?|--variable=' + varName + '=["\']?([^"\'\\s]+)["\']?');
+        const match = opts.cmdLine.match(varRegex);
+        if (match) {
+            targetValue = match[1] || match[2];
+        }
+    }
 
-    // 3. Define paths based on dynamic plugin ID
-    const pluginId = opts.plugin.id;
-    if (!pluginId) return;
+    // Fallback to plugin.xml preference default value if not found in cmdLine
+    if (!targetValue && opts.plugin?.pluginInfo) {
+        const pluginInfo = opts.plugin.pluginInfo;
+        targetValue = pluginInfo.getPreferences('ios')[varName] || pluginInfo.getPreferences()[varName];
+    }
 
+    const pluginId = opts.plugin && opts.plugin.id;
+    if (!targetValue || !pluginId) return;
+
+    // 3. Define paths where Package.swift can reside
     const packagePaths = [
         path.join(opts.plugin.dir, 'Package.swift'),
         path.join(iosPlatformPath, 'packages', pluginId, 'Package.swift')
     ];
 
-    // 4. Parse variables directly from CORDOVA_CMDLINE to avoid Cordova lifecycle bugs
-    const cmdLine = process.env.CORDOVA_CMDLINE || '';
-    const cliVariables = {};
+    // 4. Perform direct replace for $IOS_FIREBASE_POD_VERSION inline
+    const searchRegex = new RegExp('\\$' + varName, 'g');
 
-    console.log('process.env', process.env);
-    console.log('process.argv', process.argv);
-    console.log('context', context);
-
-    varNames.forEach(varName => {
-        // Regex to extract '--variable VAR_NAME=VALUE' or '--variable=VAR_NAME=VALUE' from raw CLI string
-        const varRegex = new RegExp('--variable\\s+' + varName + '=["\']?([^"\'\\s]+)["\']?|--variable=' + varName + '=["\']?([^"\'\\s]+)["\']?');
-        const match = cmdLine.match(varRegex);
-        if (match) {
-            cliVariables[varName] = match[1] || match[2];
-        }
-    });
-
-    // 5. Update Package.swift inline in all locations
     packagePaths.forEach(packagePath => {
         if (!fs.existsSync(packagePath)) return;
 
         let content = fs.readFileSync(packagePath, 'utf8');
-        let isModified = false;
 
-        varNames.forEach(varName => {
-            const targetValue = cliVariables[varName] || prefs[varName];
-            if (!targetValue) return;
-
-            // Matches initial placeholder with the comment target
-            const placeholderRegex = new RegExp('\\$' + varName + '(?=.*\\/\\/\\s*cpm:' + varName + ')', 'g');
-
-            // Matches any previously written exact: "version" with the comment target
-            const exactCommentRegex = new RegExp('(exact:\\s*["\'])([^"\']+)(["\'](?=.*\\/\\/\\s*cpm:' + varName + '))', 'g');
-
-            if (placeholderRegex.test(content)) {
-                content = content.replace(placeholderRegex, targetValue);
-                isModified = true;
-            } else if (exactCommentRegex.test(content)) {
-                content = content.replace(exactCommentRegex, `$1${targetValue}$3`);
-                isModified = true;
-            }
-        });
-
-        if (isModified) {
+        if (searchRegex.test(content)) {
+            content = content.replace(searchRegex, targetValue);
             fs.writeFileSync(packagePath, content, 'utf8');
         }
     });
