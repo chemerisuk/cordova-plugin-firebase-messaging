@@ -21,15 +21,24 @@ module.exports = function(context) {
     if (!targetValue) return;
 
     const projectRoot = opts.projectRoot || path.resolve(__dirname, '../../');
-    const packagePath = path.join(projectRoot, 'platforms', 'ios', 'packages', 'cordova-plugin-firebase-messaging', 'Package.swift');
+    const searchRegex = /\$IOS_FIREBASE_POD_VERSION/g;
 
-    if (fs.existsSync(packagePath)) {
-        let content = fs.readFileSync(packagePath, 'utf8');
-        const searchRegex = /\$IOS_FIREBASE_POD_VERSION/g;
+    const pluginId = opts.plugin.id;
+    if (!pluginId) return;
 
-        if (searchRegex.test(content)) {
-            content = content.replace(searchRegex, targetValue);
-            fs.writeFileSync(packagePath, content, 'utf8');
+    const packagePaths = [
+        path.join(opts.plugin.dir, 'Package.swift'),
+        path.join(projectRoot, 'platforms', 'ios', 'packages', pluginId, 'Package.swift')
+    ];
+
+    packagePaths.forEach(packagePath => {
+        if (fs.existsSync(packagePath)) {
+            let content = fs.readFileSync(packagePath, 'utf8');
+
+            if (searchRegex.test(content)) {
+                content = content.replace(searchRegex, targetValue);
+                fs.writeFileSync(packagePath, content, 'utf8');
+            }
         }
-    }
+    });
 };
