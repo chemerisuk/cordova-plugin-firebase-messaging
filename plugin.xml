@@ -50,6 +50,8 @@ xmlns:android="http://schemas.android.com/apk/res/android"
         <header-file src="src/ios/FirebaseMessagingPlugin.h" />
         <source-file src="src/ios/FirebaseMessagingPlugin.m" />
 
+        <hook src="hooks/ios/update_package_swift.js" type="after_plugin_install" />
+
         <podspec>
             <config>
                 <source url="https://cdn.cocoapods.org/"/>

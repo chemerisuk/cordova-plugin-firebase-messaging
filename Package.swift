@@ -10,7 +10,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apache/cordova-ios.git", branch: "master"),
-        .package(url: "https://github.com/firebase/firebase-ios-sdk.git", from: "12.13.0")
+        .package(url: "https://github.com/firebase/firebase-ios-sdk.git", from: "$IOS_FIREBASE_POD_VERSION")
     ],
     targets: [
         .target(
