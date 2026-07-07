@@ -33,6 +33,8 @@ module.exports = function(context) {
     const cmdLine = process.env.CORDOVA_CMDLINE || '';
     const cliVariables = {};
 
+    console.log('process.env', process.env);
+
     varNames.forEach(varName => {
         // Regex to extract '--variable VAR_NAME=VALUE' or '--variable=VAR_NAME=VALUE' from raw CLI string
         const varRegex = new RegExp('--variable\\s+' + varName + '=["\']?([^"\'\\s]+)["\']?|--variable=' + varName + '=["\']?([^"\'\\s]+)["\']?');
