@@ -4,42 +4,59 @@ const fs = require('fs');
 const path = require('path');
 
 module.exports = function(context) {
-    const { PluginInfoProvider } = context.requireCordovaModule('cordova-common');
-    const pluginInfoProvider = new PluginInfoProvider();
-    const pluginInfo = pluginInfoProvider.getPluginInfo(context.opts.plugin.dir);
-
-    // Новое имя переменной
-    const varName = 'IOS_FIREBASE_POD_VERSION';
-
-    const cliVariables = context.opts.cli_variables || {};
-    let targetValue = cliVariables[varName];
-
-    if (!targetValue) {
-        targetValue = pluginInfo.getPreferences(context.opts.platforms)[varName]
-                      || pluginInfo.getPreferences()[varName];
-    }
-
-    if (!targetValue) {
-        console.warn(`⚠️ Переменная ${varName} не найдена ни в CLI, ни в plugin.xml. Пропуск.`);
+    // 1. Check if the active platform is iOS
+    if (!context.opts.platforms.includes('ios')) {
         return;
     }
 
+    // 2. Import cordova-common using standard Node.js require for Cordova 13+
+    const cordovaCommon = require('cordova-common');
+    const PluginInfoProvider = cordovaCommon.PluginInfoProvider;
+
+    let pluginInfo;
+    try {
+        const provider = new PluginInfoProvider();
+        pluginInfo = provider.get(context.opts.plugin.dir);
+    } catch (e) {
+        console.error('❌ Failed to initialize PluginInfoProvider:', e);
+        return;
+    }
+
+    // Target variable name
+    const varName = 'IOS_FIREBASE_POD_VERSION';
+
+    // 3. Resolve the value: CLI variable takes precedence over plugin.xml default preference
+    const cliVariables = context.opts.cli_variables || {};
+    let targetValue = cliVariables[varName];
+
+    if (!targetValue && pluginInfo) {
+        const platformPrefs = pluginInfo.getPreferences(context.opts.platforms) || {};
+        const globalPrefs = pluginInfo.getPreferences() || {};
+        targetValue = platformPrefs[varName] || globalPrefs[varName];
+    }
+
+    if (!targetValue) {
+        console.warn(`⚠️ Variable ${varName} not found in CLI variables or plugin.xml preferences. Skipping.`);
+        return;
+    }
+
+    // 4. Resolve path to Package.swift inside the plugin directory and replace the placeholder
     const packagePath = path.join(context.opts.plugin.dir, 'Package.swift');
 
     if (fs.existsSync(packagePath)) {
         let packageContent = fs.readFileSync(packagePath, 'utf8');
 
-        // Новый плейсхолдер для поиска (экранируем знак $, так как это спецсимвол в RegExp)
+        // Escape the $ sign for the RegExp matching
         const searchValue = '\\$IOS_FIREBASE_POD_VERSION';
 
         if (packageContent.match(new RegExp(searchValue, 'g'))) {
             packageContent = packageContent.replace(new RegExp(searchValue, 'g'), targetValue);
             fs.writeFileSync(packagePath, packageContent, 'utf8');
-            console.log(`✅ Package.swift успешно обновлен. Версия Firebase Pod: "${targetValue}"`);
+            console.log(`✅ Package.swift successfully updated with version: "${targetValue}"`);
         } else {
-            console.warn(`⚠️ Плейсхолдер $IOS_FIREBASE_POD_VERSION не найден в Package.swift.`);
+            console.warn(`⚠️ Placeholder $IOS_FIREBASE_POD_VERSION not found in Package.swift.`);
         }
     } else {
-        console.warn('❌ Файл Package.swift не найден в директории плагина.');
+        console.warn('❌ Package.swift file not found in the plugin directory.');
     }
 };
