@@ -23,16 +23,15 @@ module.exports = function(context) {
         targetValue = pluginInfo.getPreferences('ios')[varName] || pluginInfo.getPreferences()[varName];
     }
 
-    if (!targetValue) {
-        console.warn(`⚠️ Variable ${varName} not found. Skipping.`);
-        return;
-    }
+    // Dynamic plugin ID retrieval (replaces the hardcoded string)
+    const pluginId = opts.plugin && opts.plugin.id;
+    if (!targetValue || !pluginId) return;
 
     // 3. Define all possible paths where Package.swift can reside
     const searchRegex = /\$IOS_FIREBASE_POD_VERSION/g;
     const packagePaths = [
         path.join(opts.plugin.dir, 'Package.swift'),
-        path.join(iosPlatformPath, 'packages', 'cordova-plugin-firebase-messaging', 'Package.swift')
+        path.join(iosPlatformPath, 'packages', pluginId, 'Package.swift')
     ];
 
     // 4. Update Package.swift inline in all locations
@@ -43,7 +42,6 @@ module.exports = function(context) {
             if (searchRegex.test(content)) {
                 content = content.replace(searchRegex, targetValue);
                 fs.writeFileSync(packagePath, content, 'utf8');
-                console.log(`✅ Package.swift updated at: ${packagePath}`);
             }
         }
     });
