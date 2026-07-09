@@ -1,8 +1,7 @@
 #import <Cordova/CDVAppDelegate.h>
 
 @import UserNotifications;
-@import FirebaseMessaging;
 
-@interface CDVAppDelegate (FirebaseMessagingPlugin) <FIRMessagingDelegate, UNUserNotificationCenterDelegate>
+@interface CDVAppDelegate (FirebaseMessagingPlugin) <UNUserNotificationCenterDelegate>
 
 @end

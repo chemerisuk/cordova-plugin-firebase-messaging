@@ -51,7 +51,7 @@ If you get an error about CocoaPods being unable to find compatible versions, ru
     
     $ pod repo update
 
-Use variables `IOS_FIREBASE_POD_VERSION` and `ANDROID_FIREBASE_BOM_VERSION` to override dependency versions on Android:
+Use variables `IOS_FIREBASE_POD_VERSION` and `ANDROID_FIREBASE_BOM_VERSION` to override SDK versions for different platforms:
 
     $ cordova plugin add cordova-plugin-firebase-messaging \
         --variable IOS_FIREBASE_POD_VERSION="9.3.0" \
