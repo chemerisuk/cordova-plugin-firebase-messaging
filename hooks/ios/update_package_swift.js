@@ -9,6 +9,7 @@ module.exports = function(context) {
     const iosPlatformPath = path.join(projectRoot, 'platforms', 'ios');
 
     console.log('package.json', require(path.join(projectRoot, 'package.json')));
+    console.log('context', JSON.stringify(context, 2, ' '));
 
     // 2. Reuse standard Node.js argv parser logic (simulate clean env parsing)
     const varName = 'IOS_FIREBASE_POD_VERSION';
