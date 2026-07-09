@@ -5,12 +5,10 @@ const path = require('path');
 
 module.exports = function(context) {
     const opts = context.opts || {};
-    const projectRoot = opts.projectRoot || path.resolve(__dirname, '../../');
-
-    // 1. Quick exit if not an iOS environment
-    const isIosTarget = opts.platforms && opts.platforms.includes('ios');
+    const projectRoot = context.opts.projectRoot;
     const iosPlatformPath = path.join(projectRoot, 'platforms', 'ios');
-    if (!isIosTarget && !fs.existsSync(iosPlatformPath)) return;
+
+    console.log('package.json', require(path.join(projectRoot, 'package.json')));
 
     // 2. Reuse standard Node.js argv parser logic (simulate clean env parsing)
     const varName = 'IOS_FIREBASE_POD_VERSION';
