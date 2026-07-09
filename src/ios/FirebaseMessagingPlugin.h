@@ -1,5 +1,4 @@
-#import <Cordova/CDV.h>
-#import "AppDelegate.h"
+#import <Cordova/Cordova.h>
 
 @import UserNotifications;
 

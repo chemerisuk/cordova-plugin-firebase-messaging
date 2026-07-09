@@ -1,4 +1,3 @@
-
 package by.chemerisuk.cordova.firebase;
 
 import android.Manifest;
