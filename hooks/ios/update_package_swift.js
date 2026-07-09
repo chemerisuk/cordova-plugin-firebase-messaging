@@ -23,7 +23,7 @@ module.exports = function(context) {
         let content = fs.readFileSync(packagePath, 'utf8');
 
         for (const varName in pluginVariables) {
-            content = content.replaceAll(`${varName}`, pluginVariables[varName]);
+            content = content.replaceAll(`$${varName}`, pluginVariables[varName]);
         }
 
         fs.writeFileSync(packagePath, content, 'utf8');
