@@ -97,24 +97,63 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
        willPresentNotification:(UNNotification *)notification
          withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler {
+    // 1. Safe completion handler wrapper to prevent double invocation
+    __block BOOL completionHandlerCalled = NO;
+    void (^safeCompletionHandler)(UNNotificationPresentationOptions) = ^(UNNotificationPresentationOptions options) {
+        if (!completionHandlerCalled) {
+            completionHandlerCalled = YES;
+            completionHandler(options);
+        }
+    };
+
+    // 2. Pass notification to the plugin
     NSDictionary *userInfo = notification.request.content.userInfo;
     FirebaseMessagingPlugin* fcmPlugin = [self getPluginInstance];
 
     [fcmPlugin sendNotification:userInfo];
 
-    completionHandler([self getPluginInstance].forceShow);
+    // Default options from configuration
+    UNNotificationPresentationOptions defaultOptions = [self getPluginInstance].forceShow;
+
+    // 3. Forward the call to preserve chain of responsibility
+    SEL originalSelector = @selector(userNotificationCenter:willPresentNotification:withCompletionHandler:);
+    if ([super respondsToSelector:originalSelector]) {
+        IMP superMethodImp = [super methodForSelector:originalSelector];
+        void (*fwdCall)(id, SEL, UNUserNotificationCenter *, UNNotification *, void (^)(UNNotificationPresentationOptions)) = (void *)superMethodImp;
+        fwdCall(self, originalSelector, center, notification, safeCompletionHandler);
+    } else {
+        safeCompletionHandler(defaultOptions);
+    }
 }
 
 // handle notification messages after display notification is tapped by the user
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
 didReceiveNotificationResponse:(UNNotificationResponse *)response
          withCompletionHandler:(void (^)(void))completionHandler {
+    // 1. Thread-safe block to prevent duplicate completionHandler execution
+    __block BOOL completionHandlerCalled = NO;
+    void (^safeCompletionHandler)(void) = ^{
+        if (!completionHandlerCalled) {
+            completionHandlerCalled = YES;
+            completionHandler();
+        }
+    };
+
+    // 2. Forward payload to plugin
     NSDictionary *userInfo = response.notification.request.content.userInfo;
     FirebaseMessagingPlugin* fcmPlugin = [self getPluginInstance];
+    if (fcmPlugin) {
+        [fcmPlugin sendBackgroundNotification:userInfo];
+    }
 
-    [fcmPlugin sendBackgroundNotification:userInfo];
-
-    completionHandler();
+    // 3. Forward to super (handles potential conflicts with other plugins)
+    SEL selector = @selector(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:);
+    if ([super respondsToSelector:selector]) {
+        void (*superImp)(id, SEL, UNUserNotificationCenter *, UNNotificationResponse *, void (^)(void)) = (void *)[super methodForSelector:selector];
+        superImp(self, selector, center, response, safeCompletionHandler);
+    } else {
+        safeCompletionHandler();
+    }
 }
 
 @end
