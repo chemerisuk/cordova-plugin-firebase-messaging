@@ -11,6 +11,25 @@ module.exports = function(context) {
     console.log('package.json', require(path.join(projectRoot, 'package.json')));
     console.log('context', JSON.stringify(context, 2, ' '));
 
+    // Check if the plugin info exists in the current context
+    if (!opts.plugin || !opts.plugin.pluginInfo) {
+        console.log('[Hook] Plugin info not found in context.');
+        return;
+    }
+
+    // Extract variables passed via --variable CLI arguments
+    const pluginVariables = opts.plugin.pluginInfo.cli_variables || {};
+
+    // Replace 'MY_VARIABLE_NAME' with your actual variable key
+    const targetVariable = pluginVariables['MY_VARIABLE_NAME'];
+
+    if (!targetVariable) {
+        console.log('[Hook] Variable MY_VARIABLE_NAME is missing. Skipping modification.');
+        return;
+    }
+
+    console.log(`[Hook] Found variable value: ${targetVariable}`);
+
     // 2. Reuse standard Node.js argv parser logic (simulate clean env parsing)
     const varName = 'IOS_FIREBASE_POD_VERSION';
     let targetValue = null;
