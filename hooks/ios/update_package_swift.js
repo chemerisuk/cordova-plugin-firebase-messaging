@@ -20,15 +20,7 @@ module.exports = function(context) {
     // Extract variables passed via --variable CLI arguments
     const pluginVariables = opts.plugin.pluginInfo.cli_variables || {};
 
-    // Replace 'MY_VARIABLE_NAME' with your actual variable key
-    const targetVariable = pluginVariables['MY_VARIABLE_NAME'];
-
-    if (!targetVariable) {
-        console.log('[Hook] Variable MY_VARIABLE_NAME is missing. Skipping modification.');
-        return;
-    }
-
-    console.log(`[Hook] Found variable value: ${targetVariable}`);
+    console.log('pluginVariables', pluginVariables);
 
     // 2. Reuse standard Node.js argv parser logic (simulate clean env parsing)
     const varName = 'IOS_FIREBASE_POD_VERSION';
