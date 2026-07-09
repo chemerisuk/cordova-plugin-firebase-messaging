@@ -53,6 +53,15 @@
     return [self.viewController getCommandInstance:@"FirebaseMessaging"];
 }
 
+// Unified Helper to call Super
+static void firebase_execute_fwd(id self, Class superClass, SEL selector, void(^fwdBlock)(IMP superMethodImp)) {
+    if ([superClass instancesRespondToSelector:selector]) {
+        fwdBlock([superClass instanceMethodForSelector:selector]);
+    } else {
+        fwdBlock(NULL);
+    }
+}
+
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
 fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
     // 1. Thread-safe block wrapper to prevent duplicate completionHandler execution.
@@ -73,23 +82,14 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
         [fcmPlugin sendNotification:userInfo];
     }
 
-    // 3. Clean approach to forward the call to the original implementation (super)
-    // This dynamically fetches the original IMP to bypass performSelector limitations with 3 arguments.
-    SEL originalSelector = @selector(application:didReceiveRemoteNotification:fetchCompletionHandler:);
-
-    if ([super respondsToSelector:originalSelector]) {
-        // Get the implementation of the super class method directly
-        IMP superMethodImp = [super methodForSelector:originalSelector];
-
-        // Cast the implementation function pointer to match the method signature
-        void (*fwdCall)(id, SEL, UIApplication *, NSDictionary *, void (^)(UIBackgroundFetchResult)) = (void *)superMethodImp;
-
-        // Execute the original method implementation seamlessly
-        fwdCall(self, originalSelector, application, userInfo, safeCompletionHandler);
-    } else {
-        // Fallback fallback if no other plugin or main AppDelegate implements this method
-        safeCompletionHandler(UIBackgroundFetchResultNewData);
-    }
+    firebase_execute_fwd(self, [super class], _cmd, ^(IMP superMethodImp) {
+        if (superMethodImp) {
+            void (*fwdCall)(id, SEL, UIApplication *, NSDictionary *, void (^)(UIBackgroundFetchResult)) = (void *)superMethodImp;
+            fwdCall(self, _cmd, application, userInfo, safeCompletionHandler);
+        } else {
+            safeCompletionHandler(UIBackgroundFetchResultNewData);
+        }
+    });
 }
 
 # pragma mark - UNUserNotificationCenterDelegate
@@ -107,23 +107,16 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
     };
 
     // 2. Pass notification to the plugin
-    NSDictionary *userInfo = notification.request.content.userInfo;
     FirebaseMessagingPlugin* fcmPlugin = [self getPluginInstance];
+    [fcmPlugin sendNotification:notification.request.content.userInfo];
 
-    [fcmPlugin sendNotification:userInfo];
-
-    // Default options from configuration
-    UNNotificationPresentationOptions defaultOptions = [self getPluginInstance].forceShow;
-
-    // 3. Forward the call to preserve chain of responsibility
-    SEL originalSelector = @selector(userNotificationCenter:willPresentNotification:withCompletionHandler:);
-    if ([super respondsToSelector:originalSelector]) {
-        IMP superMethodImp = [super methodForSelector:originalSelector];
-        void (*fwdCall)(id, SEL, UNUserNotificationCenter *, UNNotification *, void (^)(UNNotificationPresentationOptions)) = (void *)superMethodImp;
-        fwdCall(self, originalSelector, center, notification, safeCompletionHandler);
-    } else {
-        safeCompletionHandler(defaultOptions);
-    }
+    firebase_execute_fwd(self, [super class], _cmd, ^(IMP superMethodImp) {
+        if (superMethodImp) {
+            ((void (*)(id, SEL, UNUserNotificationCenter *, UNNotification *, void (^)(UNNotificationPresentationOptions)))superMethodImp)(self, _cmd, center, notification, safeCompletionHandler);
+        } else {
+            safeCompletionHandler(fcmPlugin.forceShow);
+        }
+    });
 }
 
 // handle notification messages after display notification is tapped by the user
@@ -140,20 +133,18 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
     };
 
     // 2. Forward payload to plugin
-    NSDictionary *userInfo = response.notification.request.content.userInfo;
     FirebaseMessagingPlugin* fcmPlugin = [self getPluginInstance];
-    if (fcmPlugin) {
-        [fcmPlugin sendBackgroundNotification:userInfo];
-    }
+    [fcmPlugin sendBackgroundNotification:response.notification.request.content.userInfo];
 
     // 3. Forward to super (handles potential conflicts with other plugins)
-    SEL selector = @selector(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:);
-    if ([super respondsToSelector:selector]) {
-        void (*superImp)(id, SEL, UNUserNotificationCenter *, UNNotificationResponse *, void (^)(void)) = (void *)[super methodForSelector:selector];
-        superImp(self, selector, center, response, safeCompletionHandler);
-    } else {
-        safeCompletionHandler();
-    }
+    firebase_execute_fwd(self, [super class], _cmd, ^(IMP superMethodImp) {
+        if (superMethodImp) {
+            void (*fwdCall)(id, SEL, UNUserNotificationCenter *, UNNotificationResponse *, void (^)(void)) = (void *)superMethodImp;
+            fwdCall(self, _cmd, center, response, safeCompletionHandler);
+        } else {
+            safeCompletionHandler();
+        }
+    });
 }
 
 @end
