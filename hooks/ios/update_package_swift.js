@@ -5,17 +5,11 @@ const path = require('path');
 
 module.exports = function(context) {
     const opts = context.opts || {};
-    const projectRoot = context.opts.projectRoot;
-    const iosPlatformPath = path.join(projectRoot, 'platforms', 'ios');
+    const pluginId = opts.plugin && opts.plugin.id;
+    const iosPlatformPath = path.join(opts.projectRoot, 'platforms', 'ios');
+
     const iosJsonPath = path.join(iosPlatformPath, 'ios.json');
     const iosJson = JSON.parse(fs.readFileSync(iosJsonPath, 'utf8'));
-
-    if (!opts.plugin || !opts.plugin.pluginInfo) {
-        console.log('[Hook] Plugin info not found in context.');
-        return;
-    }
-
-    const pluginId = opts.plugin && opts.plugin.id;
     const pluginVariables = iosJson.installed_plugins[pluginId] || {};
 
     const packagePaths = [
