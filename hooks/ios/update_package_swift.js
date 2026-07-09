@@ -22,6 +22,8 @@ module.exports = function(context) {
 
     console.log('pluginVariables', pluginVariables);
 
+    console.log('ios.json', require(path.join(projectRoot, 'platforms', 'ios', 'ios.json')));
+
     // 2. Reuse standard Node.js argv parser logic (simulate clean env parsing)
     const varName = 'IOS_FIREBASE_POD_VERSION';
     let targetValue = null;
