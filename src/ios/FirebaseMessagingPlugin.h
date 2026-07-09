@@ -1,8 +1,9 @@
 #import <Cordova/Cordova.h>
 
 @import UserNotifications;
+@import FirebaseMessaging;
 
-@interface FirebaseMessagingPlugin : CDVPlugin
+@interface FirebaseMessagingPlugin : CDVPlugin<FIRMessagingDelegate>
 - (void)requestPermission:(CDVInvokedUrlCommand*)command;
 - (void)clearNotifications:(CDVInvokedUrlCommand*)command;
 - (void)deleteToken:(CDVInvokedUrlCommand*)command;

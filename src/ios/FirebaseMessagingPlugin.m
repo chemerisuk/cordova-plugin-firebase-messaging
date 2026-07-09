@@ -9,6 +9,9 @@
 - (void)pluginInitialize {
     NSLog(@"Starting Firebase Messaging plugin");
 
+    // Set this plugin instance as the official Firebase Messaging delegate
+    [FIRMessaging messaging].delegate = self;
+
     if(![FIRApp defaultApp]) {
         [FIRApp configure];
     }
@@ -189,9 +192,13 @@
     }
 }
 
-- (void)sendToken:(NSString *)fcmToken {
+#pragma mark - FIRMessagingDelegate Implementation
+
+// 3. Official Firebase SDK callback. Fires automatically on launch and when token refreshes
+- (void)messaging:(FIRMessaging *)messaging didReceiveRegistrationToken:(NSString *)fcmToken {
     if (self.tokenRefreshCallbackId) {
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [pluginResult setKeepCallbackAsBool:YES];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:self.tokenRefreshCallbackId];
     }
 }

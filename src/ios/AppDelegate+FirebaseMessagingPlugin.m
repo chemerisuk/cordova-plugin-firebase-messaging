@@ -65,12 +65,6 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
     completionHandler(UIBackgroundFetchResultNewData);
 }
 
-- (void)messaging:(FIRMessaging *)messaging didReceiveRegistrationToken:(NSString *)fcmToken {
-    FirebaseMessagingPlugin* fcmPlugin = [self getPluginInstance];
-
-    [fcmPlugin sendToken:fcmToken];
-}
-
 # pragma mark - UNUserNotificationCenterDelegate
 // handle incoming notification messages while app is in the foreground
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
