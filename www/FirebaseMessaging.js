@@ -205,3 +205,17 @@ function(options) {
         exec(resolve, reject, PLUGIN_NAME, "requestPermission", [options || {}]);
     });
 };
+
+
+exports.checkNotificationStatus =
+/**
+ *
+ * Checks and returns a status int on wether or not Push notifications are authorized.
+ * @param {() => void} success Callback function
+ * @param {(error: string) => void} [error] Error callback function
+ */
+function () {
+    return new Promise(function(resolve, reject) {
+        exec(resolve, reject, PLUGIN_NAME, "checkNotificationStatus", []);
+    });
+};
