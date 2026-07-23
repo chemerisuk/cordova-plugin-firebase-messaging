@@ -47,14 +47,14 @@
 
     $ cordova plugin add cordova-plugin-firebase-messaging
 
-If you get an error about CocoaPods being unable to find compatible versions, run
+For cordova IOS below version 8: if you get an error about CocoaPods being unable to find compatible versions, run
     
     $ pod repo update
 
-Use variables `IOS_FIREBASE_POD_VERSION` and `ANDROID_FIREBASE_BOM_VERSION` to override SDK versions for different platforms:
+Use variables `IOS_FIREBASE_SDK_VERSION` and `ANDROID_FIREBASE_BOM_VERSION` to override SDK versions for different platforms:
 
     $ cordova plugin add cordova-plugin-firebase-messaging \
-        --variable IOS_FIREBASE_POD_VERSION="9.3.0" \
+        --variable IOS_FIREBASE_SDK_VERSION="9.3.0" \
         --variable ANDROID_FIREBASE_BOM_VERSION="30.3.1"
 
 ## Adding configuration files
