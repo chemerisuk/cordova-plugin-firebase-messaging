@@ -21,7 +21,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
     </engines>
 
     <platform name="ios" package="swift">
-        <preference name="IOS_FIREBASE_SDK_VERSION" default="12.13.0" />
+        <preference name="IOS_FIREBASE_SDK_VERSION" default="12.16.0" />
 
         <config-file target="config.xml" parent="/*">
             <feature name="FirebaseMessaging">
@@ -60,7 +60,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
     </platform>
 
     <platform name="android">
-        <preference name="ANDROID_FIREBASE_BOM_VERSION" default="32.5.0" />
+        <preference name="ANDROID_FIREBASE_BOM_VERSION" default="34.16.0" />
 
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="FirebaseMessaging">
