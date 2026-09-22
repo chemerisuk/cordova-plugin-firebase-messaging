@@ -70,7 +70,6 @@ xmlns:android="http://schemas.android.com/apk/res/android"
         </config-file>
 
         <config-file target="config.xml" parent="/*">
-            <preference name="AndroidXEnabled" value="true" />
             <preference name="GradlePluginGoogleServicesEnabled" value="true" />
             <preference name="GradlePluginGoogleServicesVersion" value="4.4.0" />
         </config-file>
@@ -88,6 +87,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
 
         <framework src="platform('com.google.firebase:firebase-bom:$ANDROID_FIREBASE_BOM_VERSION')" />
         <framework src="com.google.firebase:firebase-messaging" />
+        <framework src="androidx.localbroadcastmanager:localbroadcastmanager:1.0.0" />
         <framework src="me.leolin:ShortcutBadger:1.1.22@aar"/>
 
         <source-file src="src/android/FirebaseMessagingPlugin.java"
