@@ -15,6 +15,7 @@
 - (void)onMessage:(CDVInvokedUrlCommand*)command;
 - (void)onBackgroundMessage:(CDVInvokedUrlCommand*)command;
 - (void)onTokenRefresh:(CDVInvokedUrlCommand*)command;
+- (void)checkNotificationStatus:(CDVInvokedUrlCommand*)command;
 - (void)sendToken:(NSString*)fcmToken;
 - (void)sendNotification:(NSDictionary*)userInfo;
 - (void)sendBackgroundNotification:(NSDictionary*)userInfo;

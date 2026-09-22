@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.RemoteMessage;
@@ -47,6 +48,7 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
     private NotificationManager notificationManager;
     private FirebaseMessaging firebaseMessaging;
     private CallbackContext requestPermissionCallback;
+    private CallbackContext checkNotificationStatusCallback;
 
     @Override
     protected void pluginInitialize() {
@@ -145,6 +147,35 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
             PermissionHelper.requestPermission(this, 0, Manifest.permission.POST_NOTIFICATIONS);
         } else {
             callbackContext.error("Notifications permission is not granted");
+        }
+    }
+
+    @CordovaMethod
+    private void checkNotificationStatus(CallbackContext callbackContext) throws JSONException {
+        if (Build.VERSION.SDK_INT >= 33) {
+            Context context = cordova.getActivity().getApplicationContext();
+            int permissionCheck = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS);
+
+            /* To keep the results the same as iOS, we will use the same values
+               but we'll only have 2 states: denied and authorized
+                var _notifStatusEnums = {
+                    0: "notDetermined",
+                    1: "denied",
+                    2: "authorized",
+                    3: "provisional",
+                    4: "ephemeral",
+                };
+            */
+            if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
+                // The permission is authorized
+                callbackContext.success(2); 
+            } else {
+                // The permission is denied
+                callbackContext.success(1);
+            }
+        } else {
+            // The permission is authorized by default for older android versions
+            callbackContext.success(2);
         }
     }
 
