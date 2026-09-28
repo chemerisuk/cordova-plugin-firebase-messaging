@@ -58,9 +58,19 @@ exports.on = async function* (eventName, signal) {
             streamController = controller;
 
             exec(
-                (data) => controller.enqueue(data),
-                (error) => controller.error(new Error(error)),
-                PLUGIN_NAME, eventName, []
+                (data) => {
+                    if (controller.desiredSize !== null) {
+                        controller.enqueue(data);
+                    }
+                },
+                (error) => {
+                    if (controller.desiredSize !== null) {
+                        controller.error(new Error(error));
+                    }
+                },
+                PLUGIN_NAME,
+                eventName,
+                []
             );
         },
         cancel() {
@@ -68,9 +78,13 @@ exports.on = async function* (eventName, signal) {
         }
     });
 
-    signal?.addEventListener('abort', () => {
-        streamController.close()
-    }, { once: true });
+    const cleanup = () => {
+        if (streamController.desiredSize !== null) {
+            reader.cancel().catch(() => {});
+        }
+    };
+
+    signal?.addEventListener('abort', cleanup, { once: true });
 
     const reader = stream.getReader();
     try {
@@ -80,8 +94,9 @@ exports.on = async function* (eventName, signal) {
             yield value;
         }
     } finally {
+        signal?.removeEventListener('abort', cleanup);
+        cleanup();
         reader.releaseLock();
-        streamController.close();
     }
 };
 
