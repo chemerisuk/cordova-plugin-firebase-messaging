@@ -48,6 +48,75 @@ function(topic) {
     });
 };
 
+exports.on = async function* (eventName, signal) {
+    const valueQueue = [];
+    let resolveNextValue = null;
+    let isAborted = false;
+
+    // Helper to completely clean up resources
+    const cleanup = () => {
+        isAborted = true;
+        // 1. Tell Native to release the callback context and stop listeners
+        exec(null, null, PLUGIN_NAME, eventName, []);
+        // 2. Flush any pending promises so the loop can terminate
+        if (resolveNextValue) {
+            resolveNextValue({ value: undefined, done: true });
+            resolveNextValue = null;
+        }
+    };
+
+    // Listen for the external abort event (e.g., user logout)
+    if (signal) {
+        if (signal.aborted) return; // Already aborted before starting
+        signal.addEventListener('abort', cleanup, { once: true });
+    }
+
+    // Start the native persistent listener
+    exec(
+        (newToken) => {
+            if (isAborted) return;
+            if (resolveNextValue) {
+                resolveNextValue({ value: newToken, done: false });
+                resolveNextValue = null;
+            } else {
+                valueQueue.push(newToken);
+            }
+        },
+        (error) => {
+            throw new Error(error);
+        },
+        PLUGIN_NAME,
+        eventName,
+        []
+    );
+
+    try {
+        while (!isAborted) {
+            if (valueQueue.length > 0) {
+                yield valueQueue.shift();
+            } else {
+                // Wait for native to push data OR for the abort cleanup to wake us up
+                const nextDelivery = await new Promise((resolve) => {
+                    resolveNextValue = resolve;
+                });
+
+                // If cleanup woke us up with a 'done: true' object, break the loop
+                if (nextDelivery && nextDelivery.done) {
+                    break;
+                }
+
+                yield nextDelivery.value;
+            }
+        }
+    } finally {
+        // This block runs no matter how the loop ends (break, return, or unhandled error)
+        if (signal) {
+            signal.removeEventListener('abort', cleanup);
+        }
+        cleanup();
+    }
+}
+
 exports.onTokenRefresh =
 /**
  *
