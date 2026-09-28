@@ -72,11 +72,15 @@ exports.on = async function* (eventName, signal) {
         streamController.close()
     }, { once: true });
 
+    const reader = stream.getReader();
     try {
-        for await (const chunk of stream) {
-            yield chunk;
+        while (true) {
+            const { value, done } = await reader.read();
+            if (done) break;
+            yield value;
         }
     } finally {
+        reader.releaseLock();
         streamController.close();
     }
 };
