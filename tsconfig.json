@@ -1,15 +1,41 @@
 {
   "typedocOptions": {
+    "plugin": [
+      "typedoc-plugin-markdown"
+    ],
     "out": "docs",
     "readme": "none",
     "entryPoints": "./types",
-    "exclude": "./types/index.d.ts",
     "entryPointStrategy": "expand",
-    "hideBreadcrumbs": true,
-    "hideInPageTOC": true,
-    "hidePageTitle": true,
-    "hideMembersSymbol": true,
+    "exclude": "./types/index.d.ts",
     "disableSources": true,
-    "githubPages": false
+    "githubPages": false,
+    "router": "module",
+
+    "useHTMLAnchors": true,
+    "expandParameters": true,
+
+    "hideBreadcrumbs": true,
+    "hidePageTitle": true,
+    "hidePageHeader": true,
+
+    "parametersFormat": "table",
+    "interfacePropertiesFormat": "table",
+    "classPropertiesFormat": "table",
+    "typeDeclarationFormat": "table",
+    "enumMembersFormat": "table",
+    "propertiesFormat": "table",
+
+    "tableColumnSettings": {
+      "hideSources": true,
+      "hideDefaults": false,
+      "hideInherited": true,
+      "leftAlignHeaders": true
+    },
+
+    "compilerOptions": {
+      "target": "es2018",
+      "skipLibCheck": true
+    }
   }
 }
