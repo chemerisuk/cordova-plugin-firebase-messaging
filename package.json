@@ -34,13 +34,16 @@
   ],
   "scripts": {
     "preversion": "npm run docs && rm -rf docs",
-    "version": "perl -i -pe 's/(version=)\"\\d+\\.\\d+\\.\\d+\"/$1\"'$npm_package_version'\"$2/' plugin.xml && git add .",
+    "version": "perl -i -pe 's/(version=)\"\\d+\\.\\d+\\.\\d+\"/$1\"'$npm_package_version'\"$2/' plugin.xml && npm run changelog && git add .",
     "postversion": "git push && git push --tags",
     "predocs": "tsc www/* --declaration --allowJs --checkJs --lib es2018,dom --emitDeclarationOnly --outDir types",
     "docs": "typedoc && perl -i -pe 's/README.md#/#/g' ./docs/README.md",
-    "postdocs": "perl -i -0pe 's/(<!-- TypedocGenerated -->).*/$1\n\n/gms' README.md && cat ./docs/README.md >> README.md"
+    "postdocs": "perl -i -0pe 's/(<!-- TypedocGenerated -->).*/$1\n\n/gms' README.md && cat ./docs/README.md >> README.md",
+    "changelog": "conventional-changelog -p conventionalcommits -i CHANGELOG.md -s"
   },
   "devDependencies": {
+    "conventional-changelog": "^8.1.3",
+    "conventional-changelog-conventionalcommits": "^10.4.0",
     "typedoc": "~0.28.0",
     "typedoc-plugin-markdown": "~4.13.0"
   }
