@@ -48,7 +48,105 @@ function(topic) {
     });
 };
 
-exports.on = async function* (eventName, signal) {
+exports.onTokenRefresh =
+/**
+ *
+ * Registers callback to notify when FCM token is updated.
+ *
+ * Use `getToken` to generate a new token.
+ * @param {() => void} callback Callback function
+ * @param {(error: string) => void} [errorCallback] Error callback function
+ *
+ * @example
+ * cordova.plugins.firebase.messaging.onTokenRefresh(function() {
+ *     console.log("Device token updated");
+ * });
+ */
+function(callback, errorCallback) {
+    exec(callback, errorCallback, PLUGIN_NAME, "onTokenRefresh", []);
+};
+
+exports.onMessage =
+/**
+ *
+ * Registers foreground push notification callback.
+ * @param {(payload: PushPayload) => void} callback Callback function
+ * @param {(error: string) => void} [errorCallback] Error callback function
+ *
+ * @example
+ * cordova.plugins.firebase.messaging.onMessage(function(payload) {
+ *     console.log("New foreground FCM message: ", payload);
+ * });
+ */
+function(callback, errorCallback) {
+    exec(callback, errorCallback, PLUGIN_NAME, "onMessage", []);
+};
+
+exports.onBackgroundMessage =
+/**
+ *
+ * Registers background push notification callback.
+ * @param {(payload: PushPayload) => void} callback Callback function
+ * @param {(error: string) => void} [errorCallback] Error callback function
+ *
+ * @example
+ * cordova.plugins.firebase.messaging.onBackgroundMessage(function(payload) {
+ *     console.log("New background FCM message: ", payload);
+ * });
+ */
+function(callback, errorCallback) {
+    exec(callback, errorCallback, PLUGIN_NAME, "onBackgroundMessage", []);
+};
+
+/**
+ * Event name triggered when a new Firebase Cloud Messaging (FCM) or push notification token is generated.
+ * @constant
+ * @type {string}
+ */
+exports.TOKEN_REFRESH_EVENT = 'onTokenRefresh';
+
+/**
+ * Event name triggered when a new push notification or message is received while the application is in the foreground.
+ * @constant
+ * @type {string}
+ */
+exports.MESSAGE_EVENT = 'onMessage';
+
+/**
+ * Event name triggered when a data message or push notification is received while the application is in the background or terminated.
+ * @constant
+ * @type {string}
+ */
+exports.BACKGROUND_MESSAGE_EVENT = 'onBackgroundMessage';
+
+exports.on =
+/**
+ * Creates an asynchronous iterable stream (Async Generator) for a specific native Cordova event.
+ * Uses the Web Streams API under the hood to safely manage backpressure, queuing, and memory cleanup.
+ *
+ * @example
+ * const firebaseMessaging = cordova.plugins.firebase.messaging;
+ * const controller = new AbortController();
+ *
+ * async function listenTokenRefresh() {
+ *   try {
+ *     const fcmMessageStream = firebaseMessaging.on(firebaseMessaging.MESSAGE_EVENT, controller.signal);
+ *     for await (const message of fcmMessageStream) {
+ *       console.log('Received message from FCM:', message);
+ *     }
+ *   } catch (error) {
+ *     console.error('Stream encountered an error:', error);
+ *   }
+ * }
+ *
+ * // To stop listening and clean up native resources later:
+ * // controller.abort();
+ *
+ * @param {string} eventName - The name of the native event/action to listen to.
+ * @param {AbortSignal} [signal] - An optional AbortSignal instance to trigger unsubscription and release resources.
+ * @returns {AsyncGenerator<any, void, unknown>} An async generator that yields data chunks sent from the native layer.
+ */
+async function* (eventName, signal) {
     if (signal?.aborted) return;
 
     let streamController;
@@ -98,56 +196,6 @@ exports.on = async function* (eventName, signal) {
         cleanup();
         reader.releaseLock();
     }
-};
-
-exports.onTokenRefresh =
-/**
- *
- * Registers callback to notify when FCM token is updated.
- *
- * Use `getToken` to generate a new token.
- * @param {() => void} callback Callback function
- * @param {(error: string) => void} [errorCallback] Error callback function
- *
- * @example
- * cordova.plugins.firebase.messaging.onTokenRefresh(function() {
- *     console.log("Device token updated");
- * });
- */
-function(callback, errorCallback) {
-    exec(callback, errorCallback, PLUGIN_NAME, "onTokenRefresh", []);
-};
-
-exports.onMessage =
-/**
- *
- * Registers foreground push notification callback.
- * @param {(payload: PushPayload) => void} callback Callback function
- * @param {(error: string) => void} [errorCallback] Error callback function
- *
- * @example
- * cordova.plugins.firebase.messaging.onMessage(function(payload) {
- *     console.log("New foreground FCM message: ", payload);
- * });
- */
-function(callback, errorCallback) {
-    exec(callback, errorCallback, PLUGIN_NAME, "onMessage", []);
-};
-
-exports.onBackgroundMessage =
-/**
- *
- * Registers background push notification callback.
- * @param {(payload: PushPayload) => void} callback Callback function
- * @param {(error: string) => void} [errorCallback] Error callback function
- *
- * @example
- * cordova.plugins.firebase.messaging.onBackgroundMessage(function(payload) {
- *     console.log("New background FCM message: ", payload);
- * });
- */
-function(callback, errorCallback) {
-    exec(callback, errorCallback, PLUGIN_NAME, "onBackgroundMessage", []);
 };
 
 exports.clearNotifications =
