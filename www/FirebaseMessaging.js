@@ -251,9 +251,56 @@ async function* createEventStream(eventName, signal) {
     }
 }
 
-exports.streamTokenRefresh = (signal) => createEventStream('TokenRefresh', signal);
-exports.streamMessage = (signal) => createEventStream('Message', signal);
-exports.streamBackgroundMessage = (signal) => createEventStream('BackgroundMessage', signal);
+exports.streamTokenRefresh =
+/**
+ * Subscribes to the FCM token refresh event stream.
+ *
+ * @example
+ * const controller = new AbortController();
+ * for await (const token of FirebaseMessaging.streamTokenRefresh(controller.signal)) {
+ *     console.log("New FCM Token arrived:", token);
+ * }
+ *
+ * @param {AbortSignal} [signal] - An optional signal to abort the stream.
+ * @returns {AsyncGenerator<string, void, unknown>} An async generator yielding refreshed token strings.
+ */
+function (signal) {
+    return createEventStream('TokenRefresh', signal);
+}
+
+exports.streamMessage =
+/**
+ * Subscribes to the stream of incoming push notifications received while the app is in the foreground.
+ *
+ * @example
+ * const controller = new AbortController();
+ * for await (const message of FirebaseMessaging.streamMessage(controller.signal)) {
+ *     console.log("Received a foreground push notification:", message);
+ * }
+ *
+ * @param {AbortSignal} [signal] - An optional signal to abort the stream.
+ * @returns {AsyncGenerator<PushPayload, void, unknown>} An async generator yielding message payloads.
+ */
+function(signal) {
+    return createEventStream('Message', signal);
+}
+
+exports.streamBackgroundMessage =
+/**
+ * Subscribes to the stream of incoming push notifications received while the app is in the background.
+ *
+ * @example
+ * const controller = new AbortController();
+ * for await (const message of FirebaseMessaging.streamBackgroundMessage(controller.signal)) {
+ *     console.log("Received a background push notification:", message);
+ * }
+ *
+ * @param {AbortSignal} [signal] - An optional signal to abort the stream.
+ * @returns {AsyncGenerator<PushPayload, void, unknown>} An async generator yielding message payloads.
+ */
+function(signal) {
+    return createEventStream('BackgroundMessage', signal);
+}
 
 exports.clearNotifications =
 /**
