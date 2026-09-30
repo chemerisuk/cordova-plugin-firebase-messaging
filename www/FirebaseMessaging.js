@@ -206,7 +206,7 @@ async function* createEventStream(eventName, signal) {
     const unsubscribe = () => new Promise((resolve, reject) => {
         if (nativeCallbackRegistered) {
             nativeCallbackRegistered = false;
-            exec(resolve, reject, PLUGIN_NAME, /*"off" + */eventName, []);
+            exec(resolve, reject, PLUGIN_NAME, "off" + eventName, []);
         } else {
             resolve();
         }
@@ -226,7 +226,7 @@ async function* createEventStream(eventName, signal) {
                     }
                 },
                 PLUGIN_NAME,
-                /*"on" + */eventName,
+                "on" + eventName,
                 []
             );
         },
@@ -251,9 +251,9 @@ async function* createEventStream(eventName, signal) {
     }
 }
 
-exports.streamTokenRefresh = (signal) => createEventStream('onTokenRefresh', signal);
-exports.streamMessage = (signal) => createEventStream('onMessage', signal);
-exports.streamBackgroundMessage = (signal) => createEventStream('onBackgroundMessage', signal);
+exports.streamTokenRefresh = (signal) => createEventStream('TokenRefresh', signal);
+exports.streamMessage = (signal) => createEventStream('Message', signal);
+exports.streamBackgroundMessage = (signal) => createEventStream('BackgroundMessage', signal);
 
 exports.clearNotifications =
 /**

@@ -160,6 +160,16 @@
     self.notificationCallbackId = command.callbackId;
 }
 
+- (void)offMessage:(CDVInvokedUrlCommand*)command {
+    if (self.notificationCallbackId != nil) {
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
+                                    callbackId:self.notificationCallbackId];
+        self.notificationCallbackId = nil;
+    }
+    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
+                                callbackId:command.callbackId];
+}
+
 - (void)onBackgroundMessage:(CDVInvokedUrlCommand *)command {
     self.backgroundNotificationCallbackId = command.callbackId;
 
@@ -170,8 +180,28 @@
     }
 }
 
+- (void)offBackgroundMessage:(CDVInvokedUrlCommand*)command {
+    if (self.backgroundNotificationCallbackId != nil) {
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
+                                    callbackId:self.backgroundNotificationCallbackId];
+        self.backgroundNotificationCallbackId = nil;
+    }
+    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
+                                callbackId:command.callbackId];
+}
+
 - (void)onTokenRefresh:(CDVInvokedUrlCommand *)command {
     self.tokenRefreshCallbackId = command.callbackId;
+}
+
+- (void)offTokenRefresh:(CDVInvokedUrlCommand*)command {
+    if (self.tokenRefreshCallbackId != nil) {
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
+                                    callbackId:self.tokenRefreshCallbackId];
+        self.tokenRefreshCallbackId = nil;
+    }
+    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
+                                callbackId:command.callbackId];
 }
 
 - (void)sendNotification:(NSDictionary *)userInfo {
