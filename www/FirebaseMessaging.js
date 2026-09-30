@@ -198,6 +198,63 @@ async function* (eventName, signal) {
     }
 };
 
+async function* createEventStream(eventName, signal) {
+    if (signal?.aborted) return;
+
+    let nativeCallbackRegistered = true;
+
+    const unsubscribe = () => new Promise((resolve, reject) => {
+        if (nativeCallbackRegistered) {
+            nativeCallbackRegistered = false;
+            exec(resolve, reject, PLUGIN_NAME, /*"off" + */eventName, []);
+        } else {
+            resolve();
+        }
+    });
+
+    const stream = new ReadableStream({
+        start(controller) {
+            exec(
+                (data) => {
+                    if (nativeCallbackRegistered && controller.desiredSize !== null) {
+                        controller.enqueue(data);
+                    }
+                },
+                (error) => {
+                    if (nativeCallbackRegistered && controller.desiredSize !== null) {
+                        controller.error(new Error(error));
+                    }
+                },
+                PLUGIN_NAME,
+                /*"on" + */eventName,
+                []
+            );
+        },
+        cancel: unsubscribe
+    });
+
+    const reader = stream.getReader();
+    const cleanup = () => reader.cancel().catch(() => {});
+
+    signal?.addEventListener('abort', cleanup, { once: true });
+
+    try {
+        while (true) {
+            const { value, done } = await reader.read();
+            if (done) break;
+            yield value;
+        }
+    } finally {
+        signal?.removeEventListener('abort', cleanup);
+        await unsubscribe().catch(() => {});
+        reader.releaseLock();
+    }
+}
+
+exports.streamTokenRefresh = (signal) => createEventStream('onTokenRefresh', signal);
+exports.streamMessage = (signal) => createEventStream('onMessage', signal);
+exports.streamBackgroundMessage = (signal) => createEventStream('onBackgroundMessage', signal);
+
 exports.clearNotifications =
 /**
  *
