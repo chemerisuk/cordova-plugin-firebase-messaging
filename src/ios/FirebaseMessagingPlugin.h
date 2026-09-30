@@ -13,8 +13,11 @@
 - (void)subscribe:(CDVInvokedUrlCommand*)command;
 - (void)unsubscribe:(CDVInvokedUrlCommand*)command;
 - (void)onMessage:(CDVInvokedUrlCommand*)command;
+- (void)offMessage:(CDVInvokedUrlCommand*)command;
 - (void)onBackgroundMessage:(CDVInvokedUrlCommand*)command;
+- (void)offBackgroundMessage:(CDVInvokedUrlCommand*)command;
 - (void)onTokenRefresh:(CDVInvokedUrlCommand*)command;
+- (void)offTokenRefresh:(CDVInvokedUrlCommand*)command;
 - (void)sendToken:(NSString*)fcmToken;
 - (void)sendNotification:(NSDictionary*)userInfo;
 - (void)sendBackgroundNotification:(NSDictionary*)userInfo;
