@@ -100,8 +100,26 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
     }
 
     @CordovaMethod
+    private void offTokenRefresh(CallbackContext callbackContext) {
+        if (instance.tokenRefreshCallback != null) {
+            instance.tokenRefreshCallback.success();
+            instance.tokenRefreshCallback = null;
+        }
+        callbackContext.success();
+    }
+
+    @CordovaMethod
     private void onMessage(CallbackContext callbackContext) {
         instance.foregroundCallback = callbackContext;
+    }
+
+    @CordovaMethod
+    private void offMessage(CallbackContext callbackContext) {
+        if (instance.foregroundCallback != null) {
+            instance.foregroundCallback.success();
+            instance.foregroundCallback = null;
+        }
+        callbackContext.success();
     }
 
     @CordovaMethod
@@ -112,6 +130,15 @@ public class FirebaseMessagingPlugin extends ReflectiveCordovaPlugin {
             sendNotification(lastBundle, callbackContext);
             lastBundle = null;
         }
+    }
+
+    @CordovaMethod
+    private void offBackgroundMessage(CallbackContext callbackContext) {
+        if (instance.backgroundCallback != null) {
+            instance.backgroundCallback.success();
+            instance.backgroundCallback = null;
+        }
+        callbackContext.success();
     }
 
     @CordovaMethod
