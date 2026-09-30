@@ -56,36 +56,45 @@ export function onMessage(callback: (payload: PushPayload) => void, errorCallbac
  * });
  */
 export function onBackgroundMessage(callback: (payload: PushPayload) => void, errorCallback?: (error: string) => void): void;
-export const TOKEN_REFRESH_EVENT: string;
-export const MESSAGE_EVENT: string;
-export const BACKGROUND_MESSAGE_EVENT: string;
 /**
- * Creates an asynchronous iterable stream (Async Generator) for a specific native Cordova event.
- * Uses the Web Streams API under the hood to safely manage backpressure, queuing, and memory cleanup.
+ * Subscribes to the FCM token refresh event stream.
  *
  * @example
- * const firebaseMessaging = cordova.plugins.firebase.messaging;
  * const controller = new AbortController();
- *
- * async function listenTokenRefresh() {
- *   try {
- *     const fcmMessageStream = firebaseMessaging.on(firebaseMessaging.MESSAGE_EVENT, controller.signal);
- *     for await (const message of fcmMessageStream) {
- *       console.log('Received message from FCM:', message);
- *     }
- *   } catch (error) {
- *     console.error('Stream encountered an error:', error);
- *   }
+ * for await (const token of FirebaseMessaging.streamTokenRefresh(controller.signal)) {
+ *     console.log("New FCM Token arrived:", token);
  * }
  *
- * // To stop listening and clean up native resources later:
- * // controller.abort();
- *
- * @param {string} eventName - The name of the native event/action to listen to.
- * @param {AbortSignal} [signal] - An optional AbortSignal instance to trigger unsubscription and release resources.
- * @returns {AsyncGenerator<any, void, unknown>} An async generator that yields data chunks sent from the native layer.
+ * @param {AbortSignal} [signal] - An optional signal to abort the stream.
+ * @returns {AsyncGenerator<string, void, unknown>} An async generator yielding refreshed token strings.
  */
-export function on(eventName: string, signal?: AbortSignal): AsyncGenerator<any, void, unknown>;
+export function streamTokenRefresh(signal?: AbortSignal): AsyncGenerator<string, void, unknown>;
+/**
+ * Subscribes to the stream of incoming push notifications received while the app is in the foreground.
+ *
+ * @example
+ * const controller = new AbortController();
+ * for await (const message of FirebaseMessaging.streamMessage(controller.signal)) {
+ *     console.log("Received a foreground push notification:", message);
+ * }
+ *
+ * @param {AbortSignal} [signal] - An optional signal to abort the stream.
+ * @returns {AsyncGenerator<PushPayload, void, unknown>} An async generator yielding message payloads.
+ */
+export function streamMessage(signal?: AbortSignal): AsyncGenerator<PushPayload, void, unknown>;
+/**
+ * Subscribes to the stream of incoming push notifications received while the app is in the background.
+ *
+ * @example
+ * const controller = new AbortController();
+ * for await (const message of FirebaseMessaging.streamBackgroundMessage(controller.signal)) {
+ *     console.log("Received a background push notification:", message);
+ * }
+ *
+ * @param {AbortSignal} [signal] - An optional signal to abort the stream.
+ * @returns {AsyncGenerator<PushPayload, void, unknown>} An async generator yielding message payloads.
+ */
+export function streamBackgroundMessage(signal?: AbortSignal): AsyncGenerator<PushPayload, void, unknown>;
 /**
  *
  * Clear all notifications from system notification bar.
